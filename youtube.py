@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 import youtube_dl
 import whisper
 import warnings
@@ -55,6 +56,7 @@ def save_to_mp3(url):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
+        'nocheckcertificate': True
      }
 
     with youtube_dl.YoutubeDL(options) as downloader:
@@ -63,16 +65,18 @@ def save_to_mp3(url):
         return downloader.prepare_filename(downloader.extract_info(url, download=False)).replace(".m4a", ".mp3").replace(".webm", ".mp3")
 
 #YOUTUBE URL INSERT HERE   
-youtube_url = "https://www.youtube.com/watch?v=T61UxZzYutw"
+youtube_url = "https://www.youtube.com/watch?v=0juvbDj4Xns"
 filename = save_to_mp3(youtube_url)
 
 #Pathfolder
-desktop_path = "C:/Users/kris_/Python/YTcontent/"
-folder_name = "YTcontent"
-file_name = 'ytyt.mp3'
+desktop_path = "/Users/adrian.mohnacs/Python/YTcontent/"
+# two parameters if we already have an mp3
+# folder_name = "YTcontent"
+# file_name = 'ytyt.mp3'
 file_path = os.path.join(desktop_path, filename)
 
-sound = file_path 
+# sound = file_path 
+sound = filename
 model = whisper.load_model("medium")
 result = model.transcribe(sound, fp16=False)
 yttrans = (result['text'])
