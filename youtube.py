@@ -130,8 +130,8 @@ def dropbox_upload_file(local_path, local_file, dropbox_file_path):
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 dbx = dropbox_connect()        
 
-#YOUTUBE URL INSERT HERE   
-youtube_url = "https://www.youtube.com/watch?v=5HdhvGkvk8c"
+#YOUTUBE URL PROMPT HERE   
+youtube_url = input("Please enter your Youtube URL to generate content from: ")
 filename = save_to_mp3(youtube_url)
 transcriptname = mp3_to_transcript(filename)
 
