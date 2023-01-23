@@ -1,0 +1,5 @@
+Create a quiz game with 5 questions and answers from the following text:
+
+<<FEED>>
+
+CREATE A QUIZ GAME WITH 5 QUESTIONS AND ANSWERS FROM THE TEXT ABOVE:
