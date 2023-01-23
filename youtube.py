@@ -186,69 +186,14 @@ transcriptname = mp3_to_transcript(filename)
 #MAIN FUNCTION
 if __name__ == '__main__':
     transcript_to_summary(transcriptname, filename)
-
+    
     source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog")
-    #Blog Post
-    # feedin = open_file(transcriptname)
-    # text1 = open_file('prompts/blog.txt').replace('<<FEED>>', feedin)
-    # finaltext = gpt_3(text1)
-    # print('\n\n\n', 'Blog Post:\n\n', finaltext)
-    # save_file('outputs/blog_output.txt', finaltext)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide")
-    #Step-by-Step
-    # feedin10 = open_file('outputs/summary_output.txt')
-    # text20 = open_file('prompts/stepguide.txt').replace('<<FEED>>', feedin10)
-    # finaltext10 = gpt_3(text20)
-    # print('\n\n\n', 'Step-by-Step Guide:\n\n', finaltext10)
-    # save_file('outputs/stepguide_output.txt', finaltext10)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/socialmedia.txt', "socialmedia")
-    #Social
-    # feedin1 = open_file('outputs/summary_output.txt')
-    # text2 = open_file('prompts/socialmedia.txt').replace('<<FEED>>', feedin1)
-    # finaltext1 = gpt_3(text2)
-    # print('\n\n\n', 'Social Media:\n\n', finaltext1)
-    # save_file('outputs/socialmedia_output.txt', finaltext1)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual")
-    #Visual
-    # feedin2 = open_file('outputs/summary_output.txt')
-    # text3 = open_file('prompts/visual.txt').replace('<<FEED>>', feedin2)
-    # finaltext2 = gpt_3(text3)
-    # print('\n\n\n', 'Visual:\n\n', finaltext2)
-    # save_file('outputs/visual_output.txt', finaltext2)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways")
-    #Takeaways
-    # feedin3 = open_file('outputs/summary_output.txt')
-    # text4 = open_file('prompts/takeaways.txt').replace('<<FEED>>', feedin3)
-    # finaltext3 = gpt_3(text4)
-    # print('\n\n\n', 'Takeaways:\n\n', finaltext3)
-    # save_file('outputs/takeaways_output.txt', finaltext3)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript")
-    #Short Video
-    # feedin4 = open_file('outputs/summary_output.txt')
-    # text5 = open_file('prompts/script.txt').replace('<<SUM>>', feedin4)
-    # finaltext4 = gpt_3(text5)
-    # print('\n\n\n', 'Youtube Script:\n\n', finaltext4)
-    # save_file('outputs/script_output.txt', finaltext4)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/story.txt', "story")
-    #Story
-    # feedin5 = open_file('outputs/summary_output.txt')
-    # text6 = open_file('prompts/story.txt').replace('<<FEED>>', feedin5)
-    # finaltext5 = gpt_3(text6)
-    # print('\n\n\n', 'Story:\n\n', finaltext5)
-    # save_file('outputs/story_output.txt', finaltext5)
-    
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/quiz.txt', "quiz")
-    #Quiz
-    # feedin6 = open_file('outputs/summary_output.txt')
-    # text7 = open_file('prompts/quiz.txt').replace('<<FEED>>', feedin6)
-    # finaltext6 = gpt_3(text7)
-    # print('\n\n\n', 'Quiz:\n\n', finaltext6)
-    # save_file('outputs/quiz_output.txt', finaltext6)
     
     
