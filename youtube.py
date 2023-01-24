@@ -11,17 +11,27 @@ import openai
 from time import time,sleep
 import textwrap
 import re
-from datetime import datetime
-
 import pathlib
 import pandas as pd
 import dropbox
 from dropbox.exceptions import AuthError
+import tweepy
+import dropbox
 
 import appsecrets
 
-# Original 7 content functions
+#Initializations
+def initialize_tweepy():
+    # Authenticate to Twitter
+    auth = tweepy.OAuthHandler(appsecrets.TWITTER_API_KEY, appsecrets.TWITTER_API_SECRET)
+    auth.set_access_token(appsecrets.TWITTER_API_AUTH_TOKEN, appsecrets.TWITTER_API_AUTH_SECRET)
 
+    return tweepy.API(
+        auth, wait_on_rate_limit=True,
+        wait_on_rate_limit_notify=True
+    )
+
+# Original 7 content functions
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
         return infile.read()
@@ -110,7 +120,7 @@ def transcript_to_summary(transcriptname, filename):
     save_file('outputs/summary_output.txt', '\n\n'.join(result))
     dropbox_upload_file('outputs', 'summary_output.txt', '/' + filename.replace(".mp3", "") + '/' + 'summary_output.txt')
 
-def source_to_content(filename, feedin_source, prompt_source, type):
+def source_to_content(filename, feedin_source, prompt_source, type, upload_func):
         """Convert a single file of language to another using chat GPT and upload to dropbox
         
         Args:
@@ -131,7 +141,8 @@ def source_to_content(filename, feedin_source, prompt_source, type):
         print('\n\n\n', type + ' post:\n\n', finaltext)
 
         save_file('outputs/'+type+'_output.txt', finaltext)
-        dropbox_upload_file('outputs', type + '_output.txt', '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
+        upload_func(finaltext)
+        # dropbox_upload_file('outputs', type + '_output.txt', '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
         remove_file('outputs/'+type+'_output.txt')
 
 # Dropbox functions
@@ -172,11 +183,25 @@ def dropbox_upload_file(local_path, local_file, dropbox_file_path):
 
             return meta
     except Exception as e:
-        print('*****Error uploading file to Dropbox: ' + str(e))     
+        print('*****Error uploading file to Dropbox: ' + str(e))  
+
+# Twitter Upload
+def sendTweet(tweet):
+    tweepy_api.update_status("Test tweet from Tweepy Python")   
+
+def emptyWithParam(default):
+    print("hit dummy upload")
 
 # Initializations
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
-dbx = dropbox_connect()        
+dbx = dropbox_connect()       
+tweepy_api = initialize_tweepy()
+try:
+    api.verify_credentials()
+    print("Authentication OK")
+except:
+    print("Error during authentication") 
+
 
 #YOUTUBE URL PROMPT HERE   
 youtube_url = input("Please enter your Youtube URL to generate content from: ")
@@ -187,15 +212,15 @@ transcriptname = mp3_to_transcript(filename)
 if __name__ == '__main__':
     transcript_to_summary(transcriptname, filename)
     
-    source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/linkedin.txt', "LinkedIn")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/tweetstorm.txt', "TweetStorm")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/email.txt', "Email")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/story.txt', "story")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/quiz.txt', "quiz")
+    source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/linkedin.txt', "LinkedIn", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/tweetstorm.txt', "TweetStorm", sendTweet)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/email.txt', "Email", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/story.txt', "story", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/quiz.txt', "quiz", emptyWithParam)
     
     
