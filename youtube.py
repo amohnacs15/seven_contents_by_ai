@@ -189,7 +189,9 @@ if __name__ == '__main__':
     
     source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog")
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide")
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/socialmedia.txt', "socialmedia")
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/linkedin.txt', "LinkedIn")
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/tweetstorm.txt', "TweetStorm")
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/email.txt', "Email")
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual")
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways")
     source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript")
