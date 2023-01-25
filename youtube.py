@@ -16,9 +16,14 @@ import pandas as pd
 import dropbox
 from dropbox.exceptions import AuthError
 import tweepy
-import dropbox
 
 import appsecrets
+
+
+
+
+
+
 
 #Initializations
 def initialize_tweepy():
@@ -26,10 +31,7 @@ def initialize_tweepy():
     auth = tweepy.OAuthHandler(appsecrets.TWITTER_API_KEY, appsecrets.TWITTER_API_SECRET)
     auth.set_access_token(appsecrets.TWITTER_API_AUTH_TOKEN, appsecrets.TWITTER_API_AUTH_SECRET)
 
-    return tweepy.API(
-        auth, wait_on_rate_limit=True,
-        wait_on_rate_limit_notify=True
-    )
+    return tweepy.API(auth)
 
 # Original 7 content functions
 def open_file(filepath):
@@ -50,13 +52,13 @@ def remove_file(filepath):
 #GPT-3 Function        
 def gpt_3 (prompt):
     response = openai.Completion.create(
-    model="text-davinci-003",
-    prompt=prompt,
-    temperature=1.2,
-    max_tokens=1000,
-    top_p=1,
-    frequency_penalty=0,
-    presence_penalty=0
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=1.2,
+        max_tokens=1000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
     )
     text = response['choices'][0]['text'].strip()
     return text
@@ -140,22 +142,28 @@ def source_to_content(filename, feedin_source, prompt_source, type, upload_func)
         
         print('\n\n\n', type + ' post:\n\n', finaltext)
 
-        save_file('outputs/'+type+'_output.txt', finaltext)
-        upload_func(finaltext)
-        # dropbox_upload_file('outputs', type + '_output.txt', '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
-        remove_file('outputs/'+type+'_output.txt')
+        saveFilePath = 'outputs/'+type+'_output.txt'
 
-# Dropbox functions
+        save_file(saveFilePath, finaltext)
+        upload_func(saveFilePath, finaltext)
+        # dropbox_upload_file(saveFilePath, '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
+        # remove_file(saveFilePath)
+
+
+
+
+
+
 
 def dropbox_connect():
-    """Create a connection to Dropbox."""
-    print("Initializing Dropbox API...") 
-    try:
-        dbx = dropbox.Dropbox(appsecrets.DROPBOX_APP_TOKEN)
-        print('*****Dropbox initialized successfully')
-    except AuthError as e:
-        print('*****Error connecting to Dropbox with access token: ' + str(e))
-    return dbx
+        """Create a connection to Dropbox."""
+        print("Initializing Dropbox API...") 
+        try:
+            dbx = dropbox.Dropbox(appsecrets.DROPBOX_APP_TOKEN)
+            print('*****Dropbox initialized successfully')
+        except AuthError as e:
+            print('*****Error connecting to Dropbox')
+        return dbx
 
 def dropbox_upload_file(local_path, local_file, dropbox_file_path):
     """Upload a file from the local machine to a path in the Dropbox app directory.
@@ -183,28 +191,44 @@ def dropbox_upload_file(local_path, local_file, dropbox_file_path):
 
             return meta
     except Exception as e:
-        print('*****Error uploading file to Dropbox: ' + str(e))  
+        print('*****Error uploading file to Dropbox: ' + str(e))          
 
 # Twitter Upload
-def sendTweet(tweet):
-    tweepy_api.update_status("Test tweet from Tweepy Python")   
+def sendTweet(filePath, tweet):
+    # Using readlines()
+    tweetFile = open(filePath, 'r')
+    tweets = tweetFile.readlines()
 
-def emptyWithParam(default):
+    # Strips the newline character
+    for tweet in tweets:
+        if (tweet.strip()):
+            print("Tweet sent......." + tweet)
+            #tweepy_api.update_status(status = tweet)   
+
+def emptyWithParam(init, default):
     print("hit dummy upload")
+
+
+
+
+
+
 
 # Initializations
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
+
 dbx = dropbox_connect()       
 tweepy_api = initialize_tweepy()
 try:
-    api.verify_credentials()
+    tweepy_api.verify_credentials()
     print("Authentication OK")
 except:
-    print("Error during authentication") 
-
+    print("Error during Tweepy authentication") 
 
 #YOUTUBE URL PROMPT HERE   
-youtube_url = input("Please enter your Youtube URL to generate content from: ")
+youtube_url = input("\n\n\nPlease enter your Youtube URL to generate content from:")
+print("Let's get started...")
+print("\n\n\n")
 filename = save_to_mp3(youtube_url)
 transcriptname = mp3_to_transcript(filename)
 
