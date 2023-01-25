@@ -11,17 +11,30 @@ import openai
 from time import time,sleep
 import textwrap
 import re
-from datetime import datetime
-
 import pathlib
 import pandas as pd
 import dropbox
 from dropbox.exceptions import AuthError
+import tweepy
+import replicate
 
 import appsecrets
 
-# Original 7 content functions
 
+
+
+
+
+
+#Initializations
+def initialize_tweepy():
+    # Authenticate to Twitter
+    auth = tweepy.OAuthHandler(appsecrets.TWITTER_API_KEY, appsecrets.TWITTER_API_SECRET)
+    auth.set_access_token(appsecrets.TWITTER_API_AUTH_TOKEN, appsecrets.TWITTER_API_AUTH_SECRET)
+
+    return tweepy.API(auth)
+
+# Original 7 content functions
 def open_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as infile:
         return infile.read()
@@ -40,13 +53,13 @@ def remove_file(filepath):
 #GPT-3 Function        
 def gpt_3 (prompt):
     response = openai.Completion.create(
-    model="text-davinci-003",
-    prompt=prompt,
-    temperature=1.2,
-    max_tokens=1000,
-    top_p=1,
-    frequency_penalty=0,
-    presence_penalty=0
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=1.2,
+        max_tokens=1000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
     )
     text = response['choices'][0]['text'].strip()
     return text
@@ -110,7 +123,7 @@ def transcript_to_summary(transcriptname, filename):
     save_file('outputs/summary_output.txt', '\n\n'.join(result))
     dropbox_upload_file('outputs', 'summary_output.txt', '/' + filename.replace(".mp3", "") + '/' + 'summary_output.txt')
 
-def source_to_content(filename, feedin_source, prompt_source, type):
+def source_to_content(filename, feedin_source, prompt_source, type, upload_func):
         """Convert a single file of language to another using chat GPT and upload to dropbox
         
         Args:
@@ -130,21 +143,28 @@ def source_to_content(filename, feedin_source, prompt_source, type):
         
         print('\n\n\n', type + ' post:\n\n', finaltext)
 
-        save_file('outputs/'+type+'_output.txt', finaltext)
-        dropbox_upload_file('outputs', type + '_output.txt', '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
-        remove_file('outputs/'+type+'_output.txt')
+        saveFilePath = 'outputs/'+type+'_output.txt'
 
-# Dropbox functions
+        save_file(saveFilePath, finaltext)
+        upload_func(saveFilePath, finaltext)
+        # dropbox_upload_file(saveFilePath, '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
+        # remove_file(saveFilePath)
+
+
+
+
+
+#DROPBOX UPLOAD
 
 def dropbox_connect():
-    """Create a connection to Dropbox."""
-    print("Initializing Dropbox API...") 
-    try:
-        dbx = dropbox.Dropbox(appsecrets.DROPBOX_APP_TOKEN)
-        print('*****Dropbox initialized successfully')
-    except AuthError as e:
-        print('*****Error connecting to Dropbox with access token: ' + str(e))
-    return dbx
+        """Create a connection to Dropbox."""
+        print("Initializing Dropbox API...") 
+        try:
+            dbx = dropbox.Dropbox(appsecrets.DROPBOX_APP_TOKEN)
+            print('*****Dropbox initialized successfully')
+        except AuthError as e:
+            print('*****Error connecting to Dropbox')
+        return dbx
 
 def dropbox_upload_file(local_path, local_file, dropbox_file_path):
     """Upload a file from the local machine to a path in the Dropbox app directory.
@@ -172,83 +192,118 @@ def dropbox_upload_file(local_path, local_file, dropbox_file_path):
 
             return meta
     except Exception as e:
-        print('*****Error uploading file to Dropbox: ' + str(e))     
+        print('*****Error uploading file to Dropbox: ' + str(e))          
+
+
+
+
+
+
+
+
+# TWITTER
+
+def sendTweet(filePath, tweet):
+    # Using readlines()
+    tweetFile = open(filePath, 'r')
+    tweets = tweetFile.readlines()
+
+    # Strips the newline character
+    for tweet in tweets:
+        if (tweet.strip()):
+            print("Tweet sent......." + tweet)
+            #tweepy_api.update_status(status = tweet)   
+
+def emptyWithParam(init, default):
+    print("hit dummy upload")
+
+
+
+
+
+#MIDHOURNEY IMAGES
+
+def createMidjourneyImage(visual_prompt):
+    model = replicate.models.get("tstramer/midjourney-diffusion")
+    version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")
+
+    # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
+    inputs = {
+        # Input prompt
+        'prompt': "a photo of an astronaut riding a horse on mars",
+
+        # Specify things to not see in the output
+        # 'negative_prompt': ...,
+
+        # Width of output image. Maximum size is 1024x768 or 768x1024 because
+        # of memory limits
+        'width': 768,
+
+        # Height of output image. Maximum size is 1024x768 or 768x1024 because
+        # of memory limits
+        'height': 768,
+
+        # Prompt strength when using init image. 1.0 corresponds to full
+        # destruction of information in init image
+        'prompt_strength': 0.8,
+
+        # Number of images to output.
+        # Range: 1 to 4
+        'num_outputs': 1,
+
+        # Number of denoising steps
+        # Range: 1 to 500
+        'num_inference_steps': 50,
+
+        # Scale for classifier-free guidance
+        # Range: 1 to 20
+        'guidance_scale': 7.5,
+
+        # Choose a scheduler.
+        'scheduler': "DPMSolverMultistep",
+
+        # Random seed. Leave blank to randomize the seed
+        # 'seed': ...,
+    }
+
+    # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#output-schema
+    output = version.predict(**inputs)
+    print("*************midjourney output")
+    print(output)
+
+
 
 # Initializations
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
-dbx = dropbox_connect()        
+
+dbx = dropbox_connect()       
+tweepy_api = initialize_tweepy()
+try:
+    tweepy_api.verify_credentials()
+    print("Authentication OK")
+except:
+    print("Error during Tweepy authentication") 
 
 #YOUTUBE URL PROMPT HERE   
-youtube_url = input("Please enter your Youtube URL to generate content from: ")
+youtube_url = input("\n\n\nPlease enter your Youtube URL to generate content from:")
+print("Let's get started...")
+print("\n\n\n")
 filename = save_to_mp3(youtube_url)
 transcriptname = mp3_to_transcript(filename)
 
 #MAIN FUNCTION
 if __name__ == '__main__':
     transcript_to_summary(transcriptname, filename)
-
-    source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog")
-    #Blog Post
-    # feedin = open_file(transcriptname)
-    # text1 = open_file('prompts/blog.txt').replace('<<FEED>>', feedin)
-    # finaltext = gpt_3(text1)
-    # print('\n\n\n', 'Blog Post:\n\n', finaltext)
-    # save_file('outputs/blog_output.txt', finaltext)
     
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide")
-    #Step-by-Step
-    # feedin10 = open_file('outputs/summary_output.txt')
-    # text20 = open_file('prompts/stepguide.txt').replace('<<FEED>>', feedin10)
-    # finaltext10 = gpt_3(text20)
-    # print('\n\n\n', 'Step-by-Step Guide:\n\n', finaltext10)
-    # save_file('outputs/stepguide_output.txt', finaltext10)
-    
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/socialmedia.txt', "socialmedia")
-    #Social
-    # feedin1 = open_file('outputs/summary_output.txt')
-    # text2 = open_file('prompts/socialmedia.txt').replace('<<FEED>>', feedin1)
-    # finaltext1 = gpt_3(text2)
-    # print('\n\n\n', 'Social Media:\n\n', finaltext1)
-    # save_file('outputs/socialmedia_output.txt', finaltext1)
-    
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual")
-    #Visual
-    # feedin2 = open_file('outputs/summary_output.txt')
-    # text3 = open_file('prompts/visual.txt').replace('<<FEED>>', feedin2)
-    # finaltext2 = gpt_3(text3)
-    # print('\n\n\n', 'Visual:\n\n', finaltext2)
-    # save_file('outputs/visual_output.txt', finaltext2)
-    
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways")
-    #Takeaways
-    # feedin3 = open_file('outputs/summary_output.txt')
-    # text4 = open_file('prompts/takeaways.txt').replace('<<FEED>>', feedin3)
-    # finaltext3 = gpt_3(text4)
-    # print('\n\n\n', 'Takeaways:\n\n', finaltext3)
-    # save_file('outputs/takeaways_output.txt', finaltext3)
-    
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript")
-    #Short Video
-    # feedin4 = open_file('outputs/summary_output.txt')
-    # text5 = open_file('prompts/script.txt').replace('<<SUM>>', feedin4)
-    # finaltext4 = gpt_3(text5)
-    # print('\n\n\n', 'Youtube Script:\n\n', finaltext4)
-    # save_file('outputs/script_output.txt', finaltext4)
-    
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/story.txt', "story")
-    #Story
-    # feedin5 = open_file('outputs/summary_output.txt')
-    # text6 = open_file('prompts/story.txt').replace('<<FEED>>', feedin5)
-    # finaltext5 = gpt_3(text6)
-    # print('\n\n\n', 'Story:\n\n', finaltext5)
-    # save_file('outputs/story_output.txt', finaltext5)
-    
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/quiz.txt', "quiz")
-    #Quiz
-    # feedin6 = open_file('outputs/summary_output.txt')
-    # text7 = open_file('prompts/quiz.txt').replace('<<FEED>>', feedin6)
-    # finaltext6 = gpt_3(text7)
-    # print('\n\n\n', 'Quiz:\n\n', finaltext6)
-    # save_file('outputs/quiz_output.txt', finaltext6)
+    source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/linkedin.txt', "LinkedIn", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/tweetstorm.txt', "TweetStorm", sendTweet)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/email.txt', "Email", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/story.txt', "story", emptyWithParam)
+    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/quiz.txt', "quiz", emptyWithParam)
     
     
