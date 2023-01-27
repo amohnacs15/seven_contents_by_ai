@@ -17,6 +17,7 @@ import dropbox
 from dropbox.exceptions import AuthError
 import tweepy
 import replicate
+import shopify
 
 import appsecrets
 
@@ -25,14 +26,6 @@ import appsecrets
 
 
 
-
-#Initializations
-def initialize_tweepy():
-    # Authenticate to Twitter
-    auth = tweepy.OAuthHandler(appsecrets.TWITTER_API_KEY, appsecrets.TWITTER_API_SECRET)
-    auth.set_access_token(appsecrets.TWITTER_API_AUTH_TOKEN, appsecrets.TWITTER_API_AUTH_SECRET)
-
-    return tweepy.API(auth)
 
 # Original 7 content functions
 def open_file(filepath):
@@ -154,16 +147,15 @@ def source_to_content(filename, feedin_source, prompt_source, type, upload_func)
 
 
 
-#DROPBOX UPLOAD
+#DROPBOX 
 
-def dropbox_connect():
+def initialize_dropbox():
         """Create a connection to Dropbox."""
-        print("Initializing Dropbox API...") 
         try:
             dbx = dropbox.Dropbox(appsecrets.DROPBOX_APP_TOKEN)
-            print('*****Dropbox initialized successfully')
+            print('Dropbox Initialized Successfully')
         except AuthError as e:
-            print('*****Error connecting to Dropbox')
+            print('Error Connecting to Dropbox')
         return dbx
 
 def dropbox_upload_file(local_path, local_file, dropbox_file_path):
@@ -188,11 +180,11 @@ def dropbox_upload_file(local_path, local_file, dropbox_file_path):
         with local_file_path.open("rb") as f:
             meta = dbx.files_upload(f.read(), dropbox_file_path, mode=dropbox.files.WriteMode("overwrite"))
 
-            print("*****upload success of " + local_file)
+            print("Upload success of " + local_file)
 
             return meta
     except Exception as e:
-        print('*****Error uploading file to Dropbox: ' + str(e))          
+        print('Error uploading file to Dropbox: ' + str(e))          
 
 
 
@@ -202,6 +194,18 @@ def dropbox_upload_file(local_path, local_file, dropbox_file_path):
 
 
 # TWITTER
+def initialize_tweepy():
+    # Authenticate to Twitter
+    auth = tweepy.OAuthHandler(appsecrets.TWITTER_API_KEY, appsecrets.TWITTER_API_SECRET)
+    auth.set_access_token(appsecrets.TWITTER_API_AUTH_TOKEN, appsecrets.TWITTER_API_AUTH_SECRET)
+
+    api = tweepy.API(auth)
+    try:
+        api.verify_credentials()
+        print("Twitter Authentication OK")
+    except:
+        print("Error during Tweepy authentication") 
+    return api    
 
 def sendTweet(filePath, tweet):
     # Using readlines()
@@ -221,71 +225,108 @@ def emptyWithParam(init, default):
 
 
 
+
 #MIDHOURNEY IMAGES
 
-def createMidjourneyImage(visual_prompt):
-    model = replicate.models.get("tstramer/midjourney-diffusion")
-    version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")
+# def createMidjourneyImage(visual_prompt, width, height):
+#     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
+#     model = api.models.get("tstramer/midjourney-diffusion")
+#     version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")
 
-    # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
-    inputs = {
-        # Input prompt
-        'prompt': "a photo of an astronaut riding a horse on mars",
+#     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
+#     inputs = {
+#         # Input prompt
+#         'prompt': "mdjrny-v4 style  pharah from overwatch, character portrait, portrait, close up, concept art, intricate details, highly detailed, vintage sci - fi poster, retro future, in the style of chris foss, rodger dean, moebius, michael whelan, and gustave dore",
 
-        # Specify things to not see in the output
-        # 'negative_prompt': ...,
+#         # Specify things to not see in the output # 'negative_prompt': ...,
 
-        # Width of output image. Maximum size is 1024x768 or 768x1024 because
-        # of memory limits
-        'width': 768,
+#         # Width of output image. Maximum size is 1024x768 or 768x1024 because # of memory limits
+#         'width': width,
 
-        # Height of output image. Maximum size is 1024x768 or 768x1024 because
-        # of memory limits
-        'height': 768,
+#         # Height of output image. Maximum size is 1024x768 or 768x1024 because of memory limits
+#         'height': height,
 
-        # Prompt strength when using init image. 1.0 corresponds to full
-        # destruction of information in init image
-        'prompt_strength': 0.8,
+#         # Prompt strength when using init image. 1.0 corresponds to full destruction of information in init image
+#         'prompt_strength': 0.8,
 
-        # Number of images to output.
-        # Range: 1 to 4
-        'num_outputs': 1,
+#         # Number of images to output. # Range: 1 to 4
+#         'num_outputs': 1,
 
-        # Number of denoising steps
-        # Range: 1 to 500
-        'num_inference_steps': 50,
+#         # Number of denoising steps # Range: 1 to 500
+#         'num_inference_steps': 50,
 
-        # Scale for classifier-free guidance
-        # Range: 1 to 20
-        'guidance_scale': 7.5,
+#         # Scale for classifier-free guidance # Range: 1 to 20
+#         'guidance_scale': 7.5,
 
-        # Choose a scheduler.
-        'scheduler': "DPMSolverMultistep",
+#         # Choose a scheduler.
+#         'scheduler': "DPMSolverMultistep",
 
-        # Random seed. Leave blank to randomize the seed
-        # 'seed': ...,
-    }
+#         # Random seed. Leave blank to randomize the seed
+#         # 'seed': ...,
+#     }
 
-    # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#output-schema
-    output = version.predict(**inputs)
-    print("*************midjourney output")
-    print(output)
+#     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#output-schema
+#     output = version.predict(**inputs)
+#     print("midjourney output")
+#     print(output[0])
+#     output[0]
+
+
+
+
+
+
+
+
+# Shopify Blog Upload
+def initialize_shopify():
+    # Configure store details
+    shop_url = 'osaka-cosplay.myshopify.com'
+    admin_api_key = appsecrets.SHOPIFY_ADMIN_API_TOKEN
+    api_version = '2023-01'
+    # Create and activate a new session
+    session = shopify.Session(shop_url, api_version, admin_api_key)
+    shopify.ShopifyResource.activate_session(session)
+
+def upload_shopify_blog_article(filePath, blog):
+    blogfile = open(filePath, 'r')
+    bloglines = blogfile.readlines()
+
+    title = bloglines[0].replace("# H1: ", " ").strip()
+    title = bloglines[0].replace("#H1 - ", " ").strip()
+    title = bloglines[0].replace("#H1 ", " ").strip()
+    title = bloglines[0].replace("#", " ").strip()
+    
+    new_blog = shopify.Blog.create({"title": title})
+    if (new_blog.save()):
+        new_article = shopify.Article()
+
+        new_article.title = title
+        new_article.author = "Caregiver Modern"
+        new_article.blog_id = new_blog.id
+        new_article.body_html = blogs
+        # new_article.image = createMidjourneyImage("default", 1024, 768)
+        new_article.published = 'TRUE'
+        new_article.save()
+        print ("Shopify article upload successful")
+    else:
+        print (blog.errors.full_messages())
+
+
+
 
 
 
 # Initializations
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 
-dbx = dropbox_connect()       
+initialize_shopify()
+dbx = initialize_dropbox()       
 tweepy_api = initialize_tweepy()
-try:
-    tweepy_api.verify_credentials()
-    print("Authentication OK")
-except:
-    print("Error during Tweepy authentication") 
+
 
 #YOUTUBE URL PROMPT HERE   
-youtube_url = input("\n\n\nPlease enter your Youtube URL to generate content from:")
+youtube_url = input("\n\n\nPlease enter your Youtube URL to generate content from -> ")
 print("Let's get started...")
 print("\n\n\n")
 filename = save_to_mp3(youtube_url)
@@ -293,17 +334,19 @@ transcriptname = mp3_to_transcript(filename)
 
 #MAIN FUNCTION
 if __name__ == '__main__':
+    summary_ouput = 'outputs/summary_output.txt'
+
     transcript_to_summary(transcriptname, filename)
     
-    source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/stepguide.txt', "stepguide", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/linkedin.txt', "LinkedIn", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/tweetstorm.txt', "TweetStorm", sendTweet)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/email.txt', "Email", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/visual.txt', "visual", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/takeaways.txt', "takeaways", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/script.txt', "youtubescript", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/story.txt', "story", emptyWithParam)
-    source_to_content(filename, 'outputs/summary_output.txt', 'prompts/quiz.txt', "quiz", emptyWithParam)
+    source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog", upload_shopify_blog_article)
+    source_to_content(filename, summary_ouput, 'prompts/stepguide.txt', "stepguide", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/linkedin.txt', "LinkedIn", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/tweetstorm.txt', "TweetStorm", sendTweet)
+    source_to_content(filename, summary_ouput, 'prompts/email.txt', "Email", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/visual.txt', "visual", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/takeaways.txt', "takeaways", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/script.txt', "youtubescript", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/story.txt', "story", emptyWithParam)
+    source_to_content(filename, summary_ouput, 'prompts/quiz.txt', "quiz", emptyWithParam)
     
     

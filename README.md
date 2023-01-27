@@ -20,3 +20,6 @@ Run the script
 3. Run the script
 
 Discord if you have any Questions
+
+### My Personal Notes
+install everything with pip3
