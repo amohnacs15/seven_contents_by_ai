@@ -1,0 +1,23 @@
+Step 1: Gather physical attributes on each watermelon such as size, shape, fatness/thinness of rind, presence of pimples, color/variation in dark green stripes.
+
+Step 2: Input this information in the machine learning model.
+
+Step 3: Eat the watermelon and log if it’s good or bad once done.
+
+Step 4: Carefully record the results of each watermelon in the machine learning model.
+
+Step 5: Over time, increase the number of inputs until you have 10 years of consistent data
+
+Step 6: Run analysis models on this data to build a machine learning model which will give insights how often certain attributes is correlated with good or bad watermelon.
+
+Step 7: Building on the machine model, continue specific attributes discovery in different regions and specify a cutting edge model.
+
+Step 8: Assess the accuracy of the model with results from deployed in field tests as conditions may vary and traits considered good/bad may differ from region, season and farmer practice.
+
+Step 9: Gather opinions for one back case scientific trials about characteristics synergy and occurence rates.
+
+Step 10: Repeat data input and across different regions. 
+
+Step 11: Embrace certainty percentage until there the model is able to correctly predict a successful choice of good watermelon with percentage surety.
+
+Step 12: Start using this machine model backed scientifically and regulatorly approved to help select watermelons in the future.

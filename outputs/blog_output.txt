@@ -1,0 +1,18 @@
+#H1: Gaining accuracy in predicting whether a watermelon is good or bad with the help of Machine Learning
+
+Humans have used their senses over the centuries to tell whether a watermelon is good or bad. However, with the advancement in technology and with the help of Machine Learning, it is now possible to gain better accuracy in making the same decision.
+
+##H2: Traditional Method Vs Machine Learning
+
+The traditional method of determining the goodness or badness of a watermelon has been done using the one's own observations - either by pushing it to see if it is soft, or that it has a certain smell. As such, a plethora of variables involved in deciding the high-quality of the watermelon separates human judgement from what the Machine Learning can offer - that is, high precision and reliability.
+
+##H2: How Machine Learning helps
+
+
+While relying on Machine Learning one not only have a better chance of predicting which watermelon is good or bad, but can also keep records of all the attributes of the watermelon that they have tested over the span of a decade and analyze them to gain deeper knowledge. 
+
+By feeding all the details of watermelon detail regarding it thickness, sweetness, and the like into the ML model and getting the certainty of it being good or bad in terms of percentage you can be sure to trust the results you have received.
+
+##H2: Conclusion 
+
+In conclusion, with a machine learning model, it is no more is a gamble to tell whether a watermelon is goodor bad - because with the certain precision offered from such models, you can easily trust them to make the determinations for good.

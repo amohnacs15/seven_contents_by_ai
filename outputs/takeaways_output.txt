@@ -1,0 +1,7 @@
+Summary: This text discusses the potential of a machine learning model to identify whether a watermelon is good or bad. By inputting physical attributes into the model and revising it with the results of tasting the watermelon after 10 years, it can eventually learn to identify good watermelons with surety.
+
+Key Takeaways: 
+- Machine learning models can be used to identify good or bad watermelons. 
+- physical attributes can be used to train the model
+- consistent analysis over a ten year timeframe can help hone the machine’s learning accuracy
+- the model can then be relied on to select future watermelons with surety.
