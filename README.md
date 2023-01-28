@@ -23,3 +23,5 @@ Discord if you have any Questions
 
 ### My Personal Notes
 install everything with pip3
+
+[If our linked in token is no good then follow the instructions here to get a new one from the browser window](https://www.jcchouinard.com/linkedin-api/)
