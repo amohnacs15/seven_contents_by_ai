@@ -1,5 +1,4 @@
-from instagramdefinition import getCreds, makeApiCall
-# import from instagramdebugtoken import debugAccessToken
+from ig_definition import getCreds, makeApiCall
 import datetime
 
 def debugAccessToken() :

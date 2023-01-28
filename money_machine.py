@@ -24,7 +24,7 @@ import json
 import argparse
 
 import appsecrets
-from instagramdebugtoken import debugAccessToken
+from ig_debug_token import debugAccessToken
 
 
 
@@ -130,7 +130,6 @@ def transcript_to_summary(transcriptname, filename):
         print('\n\n\n', count, 'out of', len(chunks), 'Compressions', ' : ', summary)
         result.append(summary)
     save_file('outputs/summary_output.txt', '\n\n'.join(result))
-    dropbox_upload_file('outputs', 'summary_output.txt', '/' + filename.replace(".mp3", "") + '/' + 'summary_output.txt')
 
 def source_to_content(filename, feedin_source, prompt_source, type, upload_func):
         """Convert a single file of language to another using chat GPT and upload to dropbox
@@ -286,6 +285,9 @@ def createMidjourneyImage(visual_prompt, width, height):
     print("midjourney output")
     print(output[0])
     output[0]
+
+
+
 
 
 
