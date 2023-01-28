@@ -24,7 +24,9 @@ import json
 import argparse
 
 import appsecrets
-from ig_debug_token import debugAccessToken
+from ig_debug_token import getIgDebugAccessToken
+from ig_post_content import sendIgImagePost, sendIgVideoPost
+
 
 
 
@@ -157,6 +159,8 @@ def source_to_content(filename, feedin_source, prompt_source, type, upload_func)
         upload_func(saveFilePath, finaltext)
         # dropbox_upload_file(saveFilePath, '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
         # remove_file(saveFilePath)
+
+
 
 
 
@@ -296,56 +300,10 @@ def createMidjourneyImage(visual_prompt, width, height):
 
 
 
-# FACEBOOK / INSTAGRAM
-
-redirect_uri = 'https://amohnacs15.github.io/'
-auth_url = 'https://api.instagram.com/'
-graph_url = 'https://graph.instagram.com/'
 
 
-# def get_meta_authorization_window():
-#     url = auth_url + 'oauth/authorize'
-#     param = dict()
-#     param['client_id'] = appsecrets.META_APP_ID
-#     param['redirect_uri'] = redirect_uri
-#     param['scope'] = 'user_profile,user_media'
-#     param['response_type'] = 'code'
-#     parameters = urllib.parse.urlencode(param)
-#     url = url +'?'+ parameters
-#     open_url(url)
-
-def postInstagramQuote():
-# curl -i -X GET "https://graph.facebook.com/{graph-api-version}/oauth/access_token?  
-#     grant_type=fb_exchange_token&          
-#     client_id={app-id}&
-#     client_secret={app-secret}&
-#     fb_exchange_token={your-access-token}"
 
 
-    #Post the Image
-    image_location_1 = 'https://replicate.com/p/6nq6twzf6nfvrpf56yh3iq7ta4'
-    post_url = 'https://graph.facebook.com/v15.0/{}/media'.format(appsecrets.META_USER_ID)
-    payload = {
-        'image_url': image_location_1,
-        'caption': 'Get jobs online on https://careers-portal.co.za #career #hiring #jobs #job #jobssouthafrica #hiringnow',
-        'access_token': appsecrets.INSTAGRAM_GRAPH_API_ACCESS_TOKEN
-    }
-    r = requests.post(post_url, data=payload)
-    print(r.text)
-    result = json.loads(r.text)
-    if 'id' in result:
-        creation_id = result['id']
-        second_url = 'https://graph.facebook.com/v10.0/{}/media_publish'.format(appsecrets.META_USER_ID)
-        second_payload = {
-            'creation_id': creation_id,
-            'access_token': appsecrets.INSTAGRAM_GRAPH_API_ACCESS_TOKEN
-        }
-        r = requests.post(second_url, data=second_payload)
-        print('--------Just posted to instagram--------')
-        print(r.text)
-    else:
-        print('HOUSTON we have a problem')
-            
 
 
 
@@ -387,7 +345,7 @@ def upload_shopify_blog_article(filePath, blog):
 
 #################End of function. Beginning of execution######################
 
-debugAccessToken()
+getIgDebugAccessToken()
 # Initializations
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 
@@ -404,17 +362,17 @@ initialize_shopify()
 dbx = initialize_dropbox()       
 tweepy_api = initialize_tweepy()
 
-# filename = save_to_mp3(youtube_url)
-# transcriptname = mp3_to_transcript(filename)
+filename = save_to_mp3(youtube_url)
+transcriptname = mp3_to_transcript(filename)
 
 #MAIN FUNCTION
 if __name__ == '__main__':
     summary_ouput = 'outputs/summary_output.txt'
 
-    # transcript_to_summary(transcriptname, filename)
+    transcript_to_summary(transcriptname, filename)
     
-    # source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog", upload_shopify_blog_article)
-    # source_to_content(filename, summary_ouput, 'prompts/stepguide.txt', "stepguide", emptyWithParam)
+    # source_to_content(filename, transcriptname, 'prompts/blog.txt', "Blog", upload_shopify_blog_article)
+    # source_to_content(filename, summary_ouput, 'prompts/instagram_facebook.txt', "Instagram", sendIgImagePost)
     # source_to_content(filename, summary_ouput, 'prompts/linkedin.txt', "LinkedIn", emptyWithParam)
     # source_to_content(filename, summary_ouput, 'prompts/tweetstorm.txt', "TweetStorm", sendTweet)
     # source_to_content(filename, summary_ouput, 'prompts/email.txt', "Email", emptyWithParam)

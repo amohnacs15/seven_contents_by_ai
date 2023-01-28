@@ -1,7 +1,7 @@
 from ig_definition import getCreds, makeApiCall
 import datetime
 
-def debugAccessToken() :
+def getIgDebugAccessToken() :
 	
     params = getCreds()
     params['debug'] = 'yes' # set debug
