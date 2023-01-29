@@ -25,3 +25,7 @@ Discord if you have any Questions
 install everything with pip3
 
 [If our linked in token is no good then follow the instructions here to get a new one from the browser window](https://www.jcchouinard.com/linkedin-api/)
+
+Our Meta Graph tokens expire very quickly, after one day.  You will need to go back [here](https://developers.facebook.com/tools/explorer/) and get your access tokens:
+- access token for specific pages/IG
+- access token for user
