@@ -1,6 +1,6 @@
 # Original 7 content functions
 #GPT-3 Function        
-import utils
+import utility.utils as utils
 import openai
 import youtube_dl
 import whisper
@@ -45,7 +45,7 @@ def save_to_mp3(url):
     """
 
     options = {
-        'outtmpl': 'downloads/%(title)s-%(id)s.%(ext)s',
+        'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -111,7 +111,7 @@ def source_to_content(filename, feedin_source, prompt_source, type, upload_func)
         
         print('\n\n\n', type + ' post:\n\n', finaltext)
 
-        saveFilePath = 'outputs/'+type+'_output.txt'
+        saveFilePath = 'outputs/'+type+'_Output.txt'
 
         utils.save_file(saveFilePath, finaltext)
         upload_func(saveFilePath, finaltext)
