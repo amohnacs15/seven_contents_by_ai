@@ -1,9 +1,10 @@
-import requests
+# Instagram
 import json
-
+import requests
 import appsecrets
+import meta_tokens
 
-def getCreds() :
+def getFbCredentials():
 	""" Get creds required for use in the applications
 	
 	Returns:
@@ -11,14 +12,15 @@ def getCreds() :
 	"""
 
 	creds = dict() # dictionary to hold everything
-	creds['access_token'] = appsecrets.INSTAGRAM_GRAPH_API_ACCESS_TOKEN # access token for use with all api calls
+	creds['access_token'] = appsecrets.META_SHORT_LIVED_USER_ID_TOKEN # access token for use with all api calls
 	creds['graph_domain'] = 'https://graph.facebook.com/' # base domain for api calls
 	creds['graph_version'] = 'v15.0' # version of the api we are hitting
 	creds['endpoint_base'] = creds['graph_domain'] + creds['graph_version'] + '/' # base endpoint with domain and version
-	creds['instagram_account_id'] = appsecrets.INSTAGRAM_GRAPH_API_PAGE_ID # users instagram account id
+	creds['debug'] = 'no'
 
-	return creds
+	return creds	
 
+#Reuse this facebook and instagram
 def makeApiCall( url, endpointParams, type ) :
 	""" Request data from endpoint with params
 	
@@ -42,3 +44,13 @@ def makeApiCall( url, endpointParams, type ) :
 	response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 
 	return response # get and return content
+
+def displayApiCallData( response ) :
+	""" Print out to cli response from api call """
+
+	print ("\nURL: ") # title
+	print (response['url']) # display url hit
+	print ("\nEndpoint Params: ") # title
+	print (response['endpoint_params_pretty']) # display params passed to the endpoint
+	print ("\nResponse: ") # title
+	print (response['json_data_pretty']) # make look pretty for cli	
