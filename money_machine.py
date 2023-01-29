@@ -25,7 +25,6 @@ print("\n\n")
 print("Let's make some money...")
 print("\n\n")
 
-meta_post_content.sendFbImagePost("", "sample post right here to make sure it all works with new token")
 shopify_blog_content.initialize_shopify()
 dbx = dropbox_upload.initialize_dropbox()       
 tweepy_api = twitter_post_content.initialize_tweepy()
@@ -45,7 +44,7 @@ if __name__ == '__main__':
     # gpt.source_to_content(filename, summary_ouput, 'prompts/linkedin.txt', "LinkedIn", emptyWithParam)
     # gpt.source_to_content(filename, summary_ouput, 'prompts/tweetstorm.txt', "TweetStorm", twitter_post_content.sendTweet)
     # gpt.source_to_content(filename, summary_ouput, 'prompts/email.txt', "Email", emptyWithParam)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts/visual.txt', "visual", emptyWithParam)
+    # gpt.source_to_content(filename, summary_ouput, 'prompts/visual.txt', "visual", emptyWithParam) # using unsplash get an array of image urls that can be accessed globally
     # gpt.source_to_content(filename, summary_ouput, 'prompts/takeaways.txt', "takeaways", emptyWithParam)
     # gpt.source_to_content(filename, summary_ouput, 'prompts/script.txt', "youtubescript", emptyWithParam)
     # gpt.source_to_content(filename, summary_ouput, 'prompts/story.txt', "story", emptyWithParam)

@@ -1,5 +1,25 @@
 #Image Creation and Downloads
 import replicate
+import appsecrets
+import requests
+import json
+
+def getUnsplashImageUrl( search_query ):
+    url = 'https://api.unsplash.com/photos/random'
+    params = {
+        'query': search_query
+    }
+    headers = {
+        'Accept-Version': "v1",
+        'Authorization': 'Client-ID ' + appsecrets.UNSPLASH_ACCESS_KEY
+    }
+    response = requests.get( 
+        url = url, 
+        params = params,
+        headers = headers
+    )
+    json_content = json.loads( response.content )
+    return json_content['urls']['regular']
 
 
 def createAiImage(visual_prompt, width, height):

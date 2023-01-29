@@ -106,7 +106,7 @@ def sendIgImagePost( media_url, caption ):
     params = meta_tokens.getLongLivedAccessCreds() # get creds from defines
     
     params['media_type'] = 'IMAGE' # type of asset
-    params['media_url'] = 'https://justinstolpe.com/sandbox/ig_publish_content_img.png' # url on public server for the post
+    params['media_url'] = media_url # url on public server for the post
     params['caption'] = caption
 
     imageMediaObjectResponse = createIgMediaObject( params ) # create a media object through the api
@@ -172,13 +172,13 @@ def sendIgVideoPost( media_url, caption ):
     print( "\tResponse:" ) # label
     print( contentPublishingApiLimit['json_data_pretty'] ) # json response from ig api
 
-def sendFbImagePost( filename, post ):
+def sendFbImagePost( filename, post, image_url ):
 	params = meta_tokens.getFbPageAccessToken()
 
-	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/feed'
-	image_location = 'http://image.careers-portal.co.za/f_output.jpg'
+	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
 	payload = {
-		'message': post,
+		'url': image_url,
+		'message': post, 
 		'access_token': params['page_access_token']
 	}
 	#Send the POST request
