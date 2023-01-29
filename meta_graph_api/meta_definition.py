@@ -18,26 +18,6 @@ def getFbCredentials():
 	creds['endpoint_base'] = creds['graph_domain'] + creds['graph_version'] + '/' # base endpoint with domain and version
 	creds['debug'] = 'no'
 
-	return creds
-
-def getIgCredentials() :
-	""" Get creds required for use in the applications
-	
-	Returns:
-		dictonary: credentials needed globally
-	"""
-	long_lived_token = meta_tokens.getIgLongLivedAccessCreds()
-
-	creds = dict() # dictionary to hold everything
-	creds['access_token'] = long_lived_token
-	creds['client_id'] = appsecrets.META_APP_ID
-	creds['client_secret'] = appsecrets.META_APP_SECRET
-	creds['graph_domain'] = 'https://graph.facebook.com/' # base domain for api calls
-	creds['graph_version'] = 'v15.0' # version of the api we are hitting
-	creds['endpoint_base'] = creds['graph_domain'] + creds['graph_version'] + '/' # base endpoint with domain and version
-	creds['instagram_account_id'] = appsecrets.INSTAGRAM_GRAPH_API_PAGE_ID # users instagram account id
-	creds['debug'] = 'no'
-
 	return creds	
 
 #Reuse this facebook and instagram

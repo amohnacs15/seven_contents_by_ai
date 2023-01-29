@@ -25,7 +25,7 @@ print("\n\n")
 print("Let's make some money...")
 print("\n\n")
 
-meta_post_content.sendIgImagePost("", "sample post right here to make sure it all works with new token")
+meta_post_content.sendFbImagePost("", "sample post right here to make sure it all works with new token")
 shopify_blog_content.initialize_shopify()
 dbx = dropbox_upload.initialize_dropbox()       
 tweepy_api = twitter_post_content.initialize_tweepy()

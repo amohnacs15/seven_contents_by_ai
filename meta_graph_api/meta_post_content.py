@@ -103,7 +103,7 @@ def getContentPublishingLimit( params ) :
 	return makeApiCall( url, endpointParams, 'GET' ) # make the api call
 
 def sendIgImagePost( media_url, caption ):
-    params = meta_tokens.getIgLongLivedAccessCreds() # get creds from defines
+    params = meta_tokens.getLongLivedAccessCreds() # get creds from defines
     
     params['media_type'] = 'IMAGE' # type of asset
     params['media_url'] = 'https://justinstolpe.com/sandbox/ig_publish_content_img.png' # url on public server for the post
@@ -136,7 +136,7 @@ def sendIgImagePost( media_url, caption ):
 
 def sendIgVideoPost( media_url, caption ):
 
-    params = meta_tokens.getIgLongLivedAccessCreds() # get creds from defines
+    params = meta_tokens.getLongLivedAccessCreds() # get creds from defines
 
     params['media_type'] = 'VIDEO' # type of asset
     params['media_url'] = media_url # url on public server for the post
@@ -173,13 +173,13 @@ def sendIgVideoPost( media_url, caption ):
     print( contentPublishingApiLimit['json_data_pretty'] ) # json response from ig api
 
 def sendFbImagePost( filename, post ):
-	# token = meta_tokens.getIgAccessToken('facebook')
+	params = meta_tokens.getFbPageAccessToken()
 
-	post_url = 'https://graph.facebook.com/{}/feed'.format(appsecrets.FACEBOOK_GRAPH_API_PAGE_ID)
+	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/feed'
 	image_location = 'http://image.careers-portal.co.za/f_output.jpg'
 	payload = {
 		'message': post,
-		'access_token': "token"
+		'access_token': params['page_access_token']
 	}
 	#Send the POST request
 	r = requests.post(post_url, data=payload)
