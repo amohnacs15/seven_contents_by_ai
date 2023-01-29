@@ -1,5 +1,9 @@
-# 1-Video-7-Content-Pieces
-A script to turn one YouTube video into 7 pieces of content
+# AI Content Machine
+A script to turn one YouTube video into content.  Uploads automatically to:
+- Twitter
+- Shopify Blogs
+- Instagram
+- Facebook
 
 Install Lib:
 pip install git+https://github.com/openai/whisper.git 
