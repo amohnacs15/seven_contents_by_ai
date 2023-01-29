@@ -1,3 +1,6 @@
+![artwork-digital-art-dark-cthulhu-red-eyes-hd-wallpaper-thumb](https://user-images.githubusercontent.com/7444521/215304936-dd08274a-5862-4947-ac58-5e9eecf5c77c.jpeg)
+
+
 # AI Content Machine
 A script to turn one YouTube video into content.  Uploads automatically to:
 - Twitter
