@@ -6,11 +6,11 @@ A script to turn one YouTube video into content.  Uploads automatically to:
 - Facebook
 
 Install Lib:
-pip install git+https://github.com/openai/whisper.git 
-pip install numpy
-pip install openai
-pip install Youtube_dl
-pip install textwrap
+- pip install git+https://github.com/openai/whisper.git 
+- pip install numpy
+- pip install openai
+- pip install Youtube_dl
+- pip install textwrap
 
 Install FFmpeg - Links in YouTube Tutorial:
 https://youtu.be/o-jQHQzjEjo
