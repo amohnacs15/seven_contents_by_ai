@@ -25,3 +25,4 @@ urllib3==1.26.7
 Werkzeug==2.0.2
 youtube_dl==2021.12.17
 dropbox==11.36.0
+azure-cognitiveservices-speech==1.25.0

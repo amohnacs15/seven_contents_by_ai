@@ -22,7 +22,7 @@ def dropbox_upload_file(dbx, local_path, local_file, dropbox_file_path):
         dropbox_file_path (str): The path to the file in the Dropbox app directory.
 
     Example:
-        source_to_content(filename, transcriptname, 'prompts/blog.txt', "blog")
+        source_to_content(filename, transcriptname, 'prompts_input/blog.txt', "blog")
 
     Returns:
         meta: The Dropbox file metadata.
