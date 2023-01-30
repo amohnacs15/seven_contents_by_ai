@@ -11,11 +11,11 @@ import media.gpt as gpt
 import text_posts.twitter_post_content as twitter_post_content
 import uploads.dropbox_upload as dropbox_upload
 from media.gpt_write_story import create_story_and_scenes
+import media.speech_synthesis as speech_syn
 
-
+#placeholder
 def emptyWithParam(init, default):
     print("hit dummy upload")
-
 
 # Initializations
 
@@ -34,8 +34,6 @@ shopify_blog_content.initialize_shopify()
 dbx = dropbox_upload.initialize_dropbox()       
 tweepy_api = twitter_post_content.initialize_tweepy()
 
-
-
 filename = gpt.save_to_mp3(youtube_url)
 transcriptname = gpt.mp3_to_transcript(filename)
 
@@ -45,15 +43,14 @@ if __name__ == '__main__':
 
     gpt.transcript_to_summary(transcriptname, filename)
     
-    # gpt.source_to_content(filename, transcriptname, 'prompts_input/blog.txt', "Blog", shopify_blog_content.upload_shopify_blog_article)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/instagram.txt', "Instagram", meta_post_content.sendIgImagePost)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/facebook.txt', "Facebook", meta_post_content.sendFbImagePost)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/linkedin.txt', "LinkedIn", emptyWithParam)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/tweetstorm.txt', "TweetStorm", twitter_post_content.sendTweet)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/email.txt', "Email", emptyWithParam)
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/visual.txt', "visual", emptyWithParam) # using unsplash get an array of image urls that can be accessed globally
-    # gpt.source_to_content(filename, summary_ouput, 'prompts_input/script.txt', "youtubescript", emptyWithParam)
-    gpt.source_to_content(filename, summary_ouput, 'prompts_input/story.txt', "Story", emptyWithParam)
-    create_story_and_scenes()
+    # gpt.source_to_content(filename, transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/instagram.txt', "instagram", meta_post_content.sendIgImagePost)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/facebook.txt', "facebook", meta_post_content.sendFbImagePost)
     
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.sendTweet)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/email.txt', "email", emptyWithParam)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/script.txt', "youtubescript", emptyWithParam)
+    gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', "story", create_story_and_scenes)
     
+    # on hold
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/linkedin.txt', "linkedin", emptyWithParam)

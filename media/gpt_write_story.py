@@ -7,6 +7,7 @@ from pprint import pprint
 from uuid import uuid4
 import utility.utils as utils
 import appsecrets
+import media.speech_synthesis as speech_synth
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
@@ -25,8 +26,7 @@ def split_story_into_scenes(folder_path):
     with open(f"{folder_path}/scene{i}.txt", "w", encoding='UTF-8') as scene_file:
       scene_file.write(scene)
         
-
-def gpt3_completion(
+def gpt3_story_scene(
     prompt, 
     engine='text-davinci-003', 
     temp=0, 
@@ -65,14 +65,17 @@ def gpt3_completion(
             
 
     
-def create_story_and_scenes():
-    main1 = utils.open_file("outputs/Story_Output.txt")
-    storyscene = utils.open_file('prompts_input/scenes.txt').replace('<<STORY>>', main1)
-    completion = gpt3_completion(storyscene)
+def create_story_and_scenes( filename, story ):
+
+    speech_synth.text_to_speech( story )
+
+    # main_story = utils.open_file( "outputs/Story_Output.txt" )
+    storyscene = utils.open_file('input_prompts/scenes.txt').replace('<<STORY>>', story)
+    gpt_story_scene = gpt3_story_scene(storyscene)
     # print('\n\n', completion)
     #Fill in YOUR pathfolder ex "C:/Users/kris_/Python/the_story/"
-    pathfolder = "story_scenes_output"
-    utils.save_file(pathfolder + '/storyscene.txt', completion)
+    pathfolder = "output_story_scenes"
+    utils.save_file(pathfolder + '/storyscene.txt', gpt_story_scene)
     split_story_into_scenes(pathfolder)
     scenes = [utils.open_file(f'{pathfolder}/scene1.txt'),
               utils.open_file(f'{pathfolder}/scene2.txt'),
@@ -89,8 +92,8 @@ def create_story_and_scenes():
     utils.save_file(pathfolder + filename, '')
     for scene1 in scenes:
         count += 1    
-        mjv4 = utils.open_file('prompts_input/mjv4prompts.txt').replace('<<SCENE>>', scene1)
-        desc = gpt3_completion(mjv4)
+        mjv4 = utils.open_file('input_prompts/mjv4prompts.txt').replace('<<SCENE>>', scene1)
+        desc = gpt3_story_scene(mjv4)
         # filename = ('mjv4').replace(' ','').replace('&','').replace(':','').replace('/','').replace('.','').replace('-','') + '%s.txt' % time()
         # utils.save_file(filename, desc)
         # Open a file with access mode 'a'
