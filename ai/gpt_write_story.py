@@ -7,7 +7,7 @@ from pprint import pprint
 from uuid import uuid4
 import utility.utils as utils
 import appsecrets
-import media.speech_synthesis as speech_synth
+import ai.speech_synthesis as speech_synth
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
