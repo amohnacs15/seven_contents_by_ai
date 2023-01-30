@@ -84,7 +84,7 @@ def transcript_to_summary(transcriptname, filename):
     count = 0
     for chunk in chunks:
         count = count + 1
-        prompt = utils.open_file('prompts/summary.txt').replace('<<SUMMARY>>', chunk)
+        prompt = utils.open_file('prompts_input/summary.txt').replace('<<SUMMARY>>', chunk)
         prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
         summary = gpt_3(prompt)
         print('\n\n\n', count, 'out of', len(chunks), 'Compressions', ' : ', summary)

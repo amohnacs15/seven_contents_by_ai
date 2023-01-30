@@ -1,7 +1,0 @@
-[Instructions]: Imagine and write a blog post from the following [research]. The H1 title should be a SEO friendly representation of the [research].  In the blog post introduction talk about the topic [introtopic] and why you should read this blog post in a visual and intriguing language. The H2 headlines should be a representation of the subtopics from the [research]. The paragraphs in each H2 should also have a visual and intriguing language that frames the [research] in an interesting way for readers.
-
-[research] = <<FEED>>
-
-[introtopic] = summary of the [research]
-
-Imagine and write the blog post following the [Instructions]:

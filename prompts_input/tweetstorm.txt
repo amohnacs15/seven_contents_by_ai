@@ -1,0 +1,5 @@
+Write a tweet storm of 5 super engaging Twitter tweets with a max 256 characters each with 3 super relevant hashtags from the following text.  Print each tweet on its own new line without a leading number or quotation marks:
+
+<<FEED>>
+
+WRITE TWEET STORM OF 5 SUPER ENGAGING TWITTER TWEETS WITH A MAX 256 CHARACTERS EACH WITH 3 SUPER RELEVANT HASHTAGS FROM THE TEXT ABOVE. PRINT EACH TWEET ON ITS OWN NEW LINE WITHOUT A LEADING NUMBER OR QUOTATION MARKS:
