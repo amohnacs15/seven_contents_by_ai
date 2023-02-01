@@ -1,6 +1,7 @@
 import os
 import azure.cognitiveservices.speech as speechsdk
 import appsecrets
+import storage.firebase_storage as firebase
 
 def text_to_speech( text ):
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
@@ -21,7 +22,8 @@ def text_to_speech( text ):
     speech_synthesis_result = synthesized_speech.speak_text_async(text).get()
     
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        print("Speech synthesized for text [{}]".format(text))
+        print("Speech synthesized!")
+        firebase.FirebaseStorage().upload_mp3("output_downloads/speech_to_text.mp3")
     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
         cancellation_details = speech_synthesis_result.cancellation_details
         print("Speech synthesis canceled: {}".format(cancellation_details.reason))

@@ -14,7 +14,7 @@ import textwrap
 import re
 import pathlib
 import pandas as pd
-import uploads.dropbox_upload as dropbox_ups
+import storage.dropbox_upload as dropbox_ups
 
 import appsecrets
 

@@ -65,6 +65,10 @@ debug_video = {
                     "type": "image",
                     "src": "https://assets.json2video.com/assets/images/london-01.jpg",
                     "duration": 10
+                }, 
+                {
+                    "type": "audio",
+                    "src": "https://assets.json2video.com/assets/audios/thunder-01.mp3"
                 }
             ]
         },

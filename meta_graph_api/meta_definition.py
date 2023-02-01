@@ -2,7 +2,6 @@
 import json
 import requests
 import appsecrets
-import meta_tokens
 
 def getFbCredentials():
 	""" Get creds required for use in the applications
