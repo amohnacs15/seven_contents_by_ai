@@ -1,20 +1,7 @@
 from __future__ import unicode_literals
-
 import argparse
-
 import appsecrets
-import meta_tokens as meta_tokens
-import meta_graph_api.meta_post_content as meta_post_content 
-import text_posts.shopify_blog_content as shopify_blog_content
-import media.image_creator as image_creator
-import ai.gpt as gpt
-import text_posts.twitter_post_content as twitter_post_content
-import storage.dropbox_upload as dropbox_upload
-from ai.gpt_write_story import create_story_and_scenes
-import ai.speech_synthesis as speech_synth
-import media.video_editor as video_editor
-import media.video_downloader as video_downloads
-import storage.firebase_storage as firebase
+import storage.firebase_storage as pyplay
 
 #placeholder
 def emptyWithParam( init, default ):
@@ -48,7 +35,7 @@ if __name__ == '__main__':
     # summary_ouput = 'outputs/summary_output.txt'
     # gpt.transcript_to_summary(transcriptname, filename)
 
-    firebase.FirebaseStorage().upload_mp3("output_downloads/speech_to_text.mp3")
+    pyplay.FirebaseStorage()
     # speech_synth.text_to_speech("I'm baby typewriter venmo dreamcatcher, cloud bread bodega boys tumblr pour-over salvia bespoke portland small batch man braid man bun semiotics. Franzen echo park crucifix street art plaid tonx craft beer chicharrones vice williamsburg palo santo raw denim master cleanse humblebrag. Mustache readymade normcore kombucha banh mi direct trade yes plz disrupt migas palo santo ascot jean shorts pop-up poke. Swag selfies disrupt squid occupy post-ironic. Pork belly truffaut shaman chicharrones.")
     # video_editor.getEditedMovie()
     
