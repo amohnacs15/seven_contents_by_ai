@@ -36,3 +36,7 @@ install everything with pip3
 Our Meta Graph tokens expire very quickly, after one day.  You will need to go back [here](https://developers.facebook.com/tools/explorer/) and get your access tokens:
 - access token for specific pages/IG
 - access token for user
+
+Risky Dependencies:
+https://github.com/nhorvath/Pyrebase4/blob/master/pyrebase/pyrebase.py
+
