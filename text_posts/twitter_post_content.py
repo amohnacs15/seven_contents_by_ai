@@ -15,7 +15,7 @@ def initialize_tweepy():
         print("Error during Tweepy authentication") 
     return api    
 
-def sendTweet(filePath, tweet):
+def send_tweet(filePath, tweet):
     # Using readlines()
     tweetFile = open(filePath, 'r')
     tweets = tweetFile.readlines()

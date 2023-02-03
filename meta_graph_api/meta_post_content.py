@@ -1,11 +1,11 @@
 import time
-from meta_graph_api.meta_definition import makeApiCall
+from meta_graph_api.meta_definition import make_api_call
 import appsecrets
 import meta_tokens as meta_tokens
 import requests
 
 
-def createIgMediaObject( params ) :
+def create_ig_media_object( params ) :
 	""" Create media object
 
 	Args:
@@ -32,9 +32,9 @@ def createIgMediaObject( params ) :
 		endpointParams['media_type'] = params['media_type']  # specify media type
 		endpointParams['video_url'] = params['media_url']  # url to the asset
 	
-	return makeApiCall( url, endpointParams, 'POST' ) # make the api call
+	return make_api_call( url, endpointParams, 'POST' ) # make the api call
 
-def getIgMediaObjectStatus( mediaObjectId, params ) :
+def get_ig_media_object_status( mediaObjectId, params ) :
 	""" Check the status of a media object
 
 	Args:
@@ -55,9 +55,9 @@ def getIgMediaObjectStatus( mediaObjectId, params ) :
 	endpointParams['fields'] = 'status_code' # fields to get back
 	endpointParams['access_token'] = params['access_token'] # access token
 
-	return makeApiCall( url, endpointParams, 'GET' ) # make the api call
+	return make_api_call( url, endpointParams, 'GET' ) # make the api call
 
-def publishIgMedia( mediaObjectId, params ) :
+def publish_ig_media( mediaObjectId, params ) :
 	""" Publish content
 
 	Args:
@@ -78,9 +78,9 @@ def publishIgMedia( mediaObjectId, params ) :
 	endpointParams['creation_id'] = mediaObjectId # fields to get back
 	endpointParams['access_token'] = params['access_token'] # access token
 
-	return makeApiCall( url, endpointParams, 'POST' ) # make the api call
+	return make_api_call( url, endpointParams, 'POST' ) # make the api call
 
-def getContentPublishingLimit( params ) :
+def get_content_publishing_limit( params ) :
 	""" Get the api limit for the user
 
 	Args:
@@ -100,16 +100,16 @@ def getContentPublishingLimit( params ) :
 	endpointParams['fields'] = 'config,quota_usage' # fields to get back
 	endpointParams['access_token'] = params['access_token'] # access token
 
-	return makeApiCall( url, endpointParams, 'GET' ) # make the api call
+	return make_api_call( url, endpointParams, 'GET' ) # make the api call
 
-def sendIgImagePost( media_url, caption ):
-    params = meta_tokens.getLongLivedAccessCreds() # get creds from defines
+def send_ig_image_post( media_url, caption ):
+    params = meta_tokens.get_long_lived_access_creds() # get creds from defines
     
     params['media_type'] = 'IMAGE' # type of asset
     params['media_url'] = media_url # url on public server for the post
     params['caption'] = caption
 
-    imageMediaObjectResponse = createIgMediaObject( params ) # create a media object through the api
+    imageMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
     print(imageMediaObjectResponse)
     imageMediaObjectId = imageMediaObjectResponse['json_data']['id'] # id of the media object that was created
     imageMediaStatusCode = 'IN_PROGRESS';
@@ -119,7 +119,7 @@ def sendIgImagePost( media_url, caption ):
     print( "\t" + imageMediaObjectId ) # id of the object
 
     while imageMediaStatusCode != 'FINISHED' : # keep checking until the object status is finished
-        imageMediaObjectStatusResponse = getIgMediaObjectStatus( imageMediaObjectId, params ) # check the status on the object
+        imageMediaObjectStatusResponse = get_ig_media_object_status( imageMediaObjectId, params ) # check the status on the object
         imageMediaStatusCode = imageMediaObjectStatusResponse['json_data']['status_code'] # update status code
 
         print( "\n---- IMAGE MEDIA OBJECT STATUS -----\n" ) # display status response
@@ -128,21 +128,21 @@ def sendIgImagePost( media_url, caption ):
 
         time.sleep( 5 ) # wait 5 seconds if the media object is still being processed
 
-    publishImageResponse = publishIgMedia( imageMediaObjectId, params ) # publish the post to instagram
+    publishImageResponse = publish_ig_media( imageMediaObjectId, params ) # publish the post to instagram
 
     print( "\n---- PUBLISHED IMAGE RESPONSE -----\n" ) # title
     print( "\tResponse:" ) # label
     print( publishImageResponse['json_data_pretty'] ) # json response from ig api
 
-def sendIgVideoPost( media_url, caption ):
+def send_ig_video_post( media_url, caption ):
 
-    params = meta_tokens.getLongLivedAccessCreds() # get creds from defines
+    params = meta_tokens.get_long_lived_access_creds() # get creds from defines
 
     params['media_type'] = 'VIDEO' # type of asset
     params['media_url'] = media_url # url on public server for the post
     params['caption'] = caption
 
-    videoMediaObjectResponse = createIgMediaObject( params ) # create a media object through the api
+    videoMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
     videoMediaObjectId = videoMediaObjectResponse['json_data']['id'] # id of the media object that was created
     videoMediaStatusCode = 'IN_PROGRESS';
 
@@ -151,7 +151,7 @@ def sendIgVideoPost( media_url, caption ):
     print( "\t" + videoMediaObjectId ) # id of the object
 
     while videoMediaStatusCode != 'FINISHED' : # keep checking until the object status is finished
-        videoMediaObjectStatusResponse = getIgMediaObjectStatus( videoMediaObjectId, params ) # check the status on the object
+        videoMediaObjectStatusResponse = get_ig_media_object_status( videoMediaObjectId, params ) # check the status on the object
         videoMediaStatusCode = videoMediaObjectStatusResponse['json_data']['status_code'] # update status code
 
         print( "\n---- VIDEO MEDIA OBJECT STATUS -----\n" ) # display status response
@@ -160,20 +160,20 @@ def sendIgVideoPost( media_url, caption ):
 
         time.sleep( 5 ) # wait 5 seconds if the media object is still being processed
 
-    publishVideoResponse = publishIgMedia( videoMediaObjectId, params ) # publish the post to instagram
+    publishVideoResponse = publish_ig_media( videoMediaObjectId, params ) # publish the post to instagram
 
     print( "\n---- PUBLISHED IMAGE RESPONSE -----\n" ) # title
     print( "\tResponse:" ) # label
     print( publishVideoResponse['json_data_pretty'] ) # json response from ig api
 
-    contentPublishingApiLimit = getContentPublishingLimit( params ) # get the users api limit
+    contentPublishingApiLimit = get_content_publishing_limit( params ) # get the users api limit
 
     print( "\n---- CONTENT PUBLISHING USER API LIMIT -----\n" ) # title
     print( "\tResponse:" ) # label
     print( contentPublishingApiLimit['json_data_pretty'] ) # json response from ig api
 
-def sendFbImagePost( filename, post, image_url ):
-	params = meta_tokens.getFbPageAccessToken()
+def send_fb_image_post( filename, post, image_url ):
+	params = meta_tokens.get_fb_page_access_token()
 
 	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
 	payload = {

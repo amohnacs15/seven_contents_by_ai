@@ -1,10 +1,10 @@
-from meta_graph_api.meta_definition import makeApiCall
+from meta_graph_api.meta_definition import make_api_call
 import appsecrets
 import utility.utils as utils
 import json
 import requests
 
-def getIgTempCredentials() :
+def get_ig_temp_credentials() :
 	""" Get creds required for use in the applications
 	
 	Returns:
@@ -29,9 +29,9 @@ def getIgTempCredentials() :
 	Returns:
 		object: data from the endpoint
 """
-def getLongLivedAccessCreds() :
+def get_long_lived_access_creds() :
 
-    params = getIgTempCredentials()
+    params = get_ig_temp_credentials()
     cachedToken = utils.open_file("ig_access_token.txt")
 
     if (cachedToken != ''):
@@ -47,7 +47,7 @@ def getLongLivedAccessCreds() :
 
         url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
 
-        response = makeApiCall( url, endpointParams, params['debug'] ) # make the api call
+        response = make_api_call( url, endpointParams, params['debug'] ) # make the api call
         access_token = response['json_data']['access_token']
 
         print("\n ---- ACCESS TOKEN INFO ----\n") # section header
@@ -58,14 +58,14 @@ def getLongLivedAccessCreds() :
 
         return params
 
-def getFbPageAccessToken ( ):
-    params = getLongLivedAccessCreds()
+def get_fb_page_access_token ( ):
+    params = get_long_lived_access_creds()
     post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID
     
     params['fields'] = 'access_token'
     params['access_token'] = params['access_token']
 
-    response = makeApiCall( post_url, params, 'GET' )
+    response = make_api_call( post_url, params, 'GET' )
     params['page_access_token'] = response['json_data']['access_token']
 
     return params

@@ -8,8 +8,52 @@ from uuid import uuid4
 import utility.utils as utils
 import appsecrets
 import ai.speech_synthesis as speech_synth
+import media.video_editor as video_editor
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
+
+def create_story_and_scenes( filename, story ):
+
+    speech_synth.text_to_speech( story )
+
+    # turn story into scenes
+    storyscene = utils.open_file('input_prompts/scenes.txt').replace('<<STORY>>', story)
+    gpt_story_scene = gpt3_story_scene(storyscene)
+    
+    # Save each scene in its own file
+    pathfolder = "output_story_scenes"
+    utils.save_file(pathfolder + '/storyscene.txt', gpt_story_scene)
+    split_story_into_scenes(pathfolder)
+
+    scenes = [utils.open_file(f'{pathfolder}/scene1.txt'),
+              utils.open_file(f'{pathfolder}/scene2.txt'),
+              utils.open_file(f'{pathfolder}/scene3.txt'),
+              utils.open_file(f'{pathfolder}/scene4.txt'),
+              utils.open_file(f'{pathfolder}/scene5.txt'),
+              utils.open_file(f'{pathfolder}/scene6.txt'),
+              utils.open_file(f'{pathfolder}/scene7.txt'),
+              utils.open_file(f'{pathfolder}/scene8.txt'),
+              utils.open_file(f'{pathfolder}/scene9.txt'),
+              utils.open_file(f'{pathfolder}/scene10.txt')]
+    
+    # Turn our scenes into AI prompts
+    count = 0
+    filename = "/mjv4_output.txt"
+    utils.save_file(pathfolder + filename, '')
+    for scene1 in scenes:
+        count += 1    
+        mjv4 = utils.open_file('input_prompts/mjv4prompts.txt').replace('<<SCENE>>', scene1)
+        desc = gpt3_story_scene(mjv4)
+
+        print(desc)
+
+        # and write to the same file
+        current_file = open(pathfolder + filename, 'a')
+        current_file.write('\n' + desc)
+        current_file.close()
+
+        if count > 10:
+            return pathfolder+filename
 
 def split_story_into_scenes(folder_path):
   # Open the story file
@@ -62,45 +106,3 @@ def gpt3_story_scene(
                 return "GPT3 error: %s" % oops
             print('Error communicating with OpenAI:', oops)
             sleep(1)
-            
-
-    
-def create_story_and_scenes( filename, story ):
-
-    speech_synth.text_to_speech( story )
-
-    # main_story = utils.open_file( "outputs/Story_Output.txt" )
-    storyscene = utils.open_file('input_prompts/scenes.txt').replace('<<STORY>>', story)
-    gpt_story_scene = gpt3_story_scene(storyscene)
-    # print('\n\n', completion)
-    #Fill in YOUR pathfolder ex "C:/Users/kris_/Python/the_story/"
-    pathfolder = "output_story_scenes"
-    utils.save_file(pathfolder + '/storyscene.txt', gpt_story_scene)
-    split_story_into_scenes(pathfolder)
-    scenes = [utils.open_file(f'{pathfolder}/scene1.txt'),
-              utils.open_file(f'{pathfolder}/scene2.txt'),
-              utils.open_file(f'{pathfolder}/scene3.txt'),
-              utils.open_file(f'{pathfolder}/scene4.txt'),
-              utils.open_file(f'{pathfolder}/scene5.txt'),
-              utils.open_file(f'{pathfolder}/scene6.txt'),
-              utils.open_file(f'{pathfolder}/scene7.txt'),
-              utils.open_file(f'{pathfolder}/scene8.txt'),
-              utils.open_file(f'{pathfolder}/scene9.txt'),
-              utils.open_file(f'{pathfolder}/scene10.txt')]
-    count = 0
-    filename = "/mjv4_output.txt"
-    utils.save_file(pathfolder + filename, '')
-    for scene1 in scenes:
-        count += 1    
-        mjv4 = utils.open_file('input_prompts/mjv4prompts.txt').replace('<<SCENE>>', scene1)
-        desc = gpt3_story_scene(mjv4)
-        # filename = ('mjv4').replace(' ','').replace('&','').replace(':','').replace('/','').replace('.','').replace('-','') + '%s.txt' % time()
-        # utils.save_file(filename, desc)
-        # Open a file with access mode 'a'
-        current_file = open(pathfolder + filename, 'a')
-        # Append 'hello' at the end of file
-        current_file.write('\n' + desc)
-        # Close the file
-        current_file.close()
-        if count > 10:
-            return pathfolder+filename
