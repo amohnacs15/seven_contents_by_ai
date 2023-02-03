@@ -3,15 +3,11 @@ import appsecrets
 
 class FirebaseStorage():
 
-    storage = None
-
-    def __init__(self):
-        
-        firebase = pyrebase.initialize_app(appsecrets.firebase_config)
-        storage = firebase.storage()
-
     @classmethod
     def upload_mp3(self, remote_storage_path, local_path):
-        self.storage.child(remote_storage_path).put("output_downloads/speech_to_text.mp3")
+        firebase = pyrebase.initialize_app(appsecrets.firebase_config)
+        firebase.storage().child(remote_storage_path).put("output_downloads/speech_to_text.mp3")
 
-
+    def get_url(self, child_path_to_file):
+        firebase = pyrebase.initialize_app(appsecrets.firebase_config)
+        print(firebase.storage().child(child_path_to_file).get_url(None))

@@ -35,7 +35,9 @@ if __name__ == '__main__':
     # summary_ouput = 'outputs/summary_output.txt'
     # gpt.transcript_to_summary(transcriptname, filename)
 
-    pyplay.FirebaseStorage()
+    store = pyplay.FirebaseStorage()
+    store.upload_mp3("good_folder/message_mp3.mp3", "output_downloads/speech_to_text.mp3")
+    store.get_url("good_folder/message_mp3.mp3")
     # speech_synth.text_to_speech("I'm baby typewriter venmo dreamcatcher, cloud bread bodega boys tumblr pour-over salvia bespoke portland small batch man braid man bun semiotics. Franzen echo park crucifix street art plaid tonx craft beer chicharrones vice williamsburg palo santo raw denim master cleanse humblebrag. Mustache readymade normcore kombucha banh mi direct trade yes plz disrupt migas palo santo ascot jean shorts pop-up poke. Swag selfies disrupt squid occupy post-ironic. Pork belly truffaut shaman chicharrones.")
     # video_editor.getEditedMovie()
     
