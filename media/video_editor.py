@@ -21,7 +21,6 @@ def get_edited_movie():
         headers = headers 
     )
 
-    print('Get Success?')
     display_get_call_data(response)
 
 def send_movie_for_editing():
@@ -31,9 +30,9 @@ def send_movie_for_editing():
     }
 
     scene_images = get_scene_images_array()
-    print(scene_images)
+    story_text = utils.open_file('outputs/Story_Output.txt')
+    speech_mp3_local_path = speech_synthesis.text_to_speech(story_text)
     video_json = create_video_json(scene_images, speech_synthesis.firebase_remote_path)
-    print(video_json)
 
     response = requests.post(
         url = post_url, 
@@ -50,9 +49,6 @@ def get_scene_images_array():
 
     promptfile = open('output_story_scenes/mjv4_output.txt', 'r')
     prompts = promptfile.readlines()
-
-    print('******************************************************image scene array')
-    print(prompts)
 
     for prompt in prompts:
         image = image_creator.get_ai_image(prompt)
@@ -130,10 +126,12 @@ def display_post_call_data( data ) :
     response = dict()
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
+    response['success'] = response['json_data']['success']
+    response['project_id'] = response['json_data']['project']
+    response['timestamp'] = response['json_data']['timestamp']
 
     print ("\nSuccess? ") # title
     print (response['success'])   
-    print(response['url'])
 
 debug_video = {
     "resolution": "full-hd",
