@@ -40,3 +40,5 @@ Our Meta Graph tokens expire very quickly, after one day.  You will need to go b
 Risky Dependencies:
 https://github.com/nhorvath/Pyrebase4/blob/master/pyrebase/pyrebase.py
 
+# Instructions for quickstart
+https://github.com/openai/openai-quickstart-python
