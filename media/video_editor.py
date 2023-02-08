@@ -3,7 +3,6 @@ import json
 import appsecrets
 import utility.utils as utils
 import media.image_creator as image_creator
-import ffmpeg
 import storage.firebase_storage as firebase
 import ai.speech_synthesis as speech_synthesis
 
@@ -21,7 +20,7 @@ def get_edited_movie():
         headers = headers 
     )
 
-    display_get_call_data(response)
+    get_response_movie_url(response)
 
 def send_movie_for_editing():
     post_url = 'https://api.json2video.com/v2/movies'
@@ -31,15 +30,19 @@ def send_movie_for_editing():
 
     scene_images = get_scene_images_array()
     story_text = utils.open_file('outputs/Story_Output.txt')
-    speech_mp3_local_path = speech_synthesis.text_to_speech(story_text)
-    video_json = create_video_json(scene_images, speech_synthesis.firebase_remote_path)
+    speech_bundle = speech_synthesis.text_to_speech(story_text)
+    video_json = create_video_json(
+        image_array = scene_images, 
+        mp3_duration = speech_bundle['speech_duration'],
+        mp3_remote_path = speech_bundle['speech_remote_path']
+    )
 
     response = requests.post(
         url = post_url, 
-        params = video_json, 
+        json = video_json, 
         headers = post_headers
     )
-    display_post_call_data(response)
+    get_response_project_id(response)
     return response['success']
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
@@ -56,18 +59,16 @@ def get_scene_images_array():
 
     return images    
 
-def create_video_json( image_array, mp3_remote_path ):
-    mp3_ref_url = firebase.get_url(mp3_remote_path)
-    mp3_duration = ffmpeg.probe('in.mp4')['format']['duration']
+def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     scene_duration = mp3_duration / len(image_array)
+    mp3_ref_url = firebase.get_url(mp3_remote_path)
 
     scene_comments = get_scene_comment_array()
-    print(scene_comments)
 
     video_params = {
         "resolution": "full-hd",
         "quality": "high",
-        "element": {
+        "elements": {
             "type": "audio",
             "src": mp3_ref_url,
             "volume": 0.8,
@@ -114,7 +115,7 @@ def get_scene_comment_array():
 
 
 #--------------- Display Status -----------------------------------------------------------
-def display_get_call_data( data ) :
+def get_response_movie_url( data ) :
     response = dict()
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
@@ -122,16 +123,23 @@ def display_get_call_data( data ) :
     print ("\nSuccess? ") # title
     print(response['movies'][0]['url'])
 
-def display_post_call_data( data ) :
+def get_response_project_id( data ) :
     response = dict()
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
+
     response['success'] = response['json_data']['success']
     response['project_id'] = response['json_data']['project']
     response['timestamp'] = response['json_data']['timestamp']
 
     print ("\nSuccess? ") # title
-    print (response['success'])   
+    print (response['success'])  
+    if (response['success'] == True):
+        return response['project_id']
+    else:
+        return -1    
+
+# ---------------Getting completed video -----------------------------
 
 debug_video = {
     "resolution": "full-hd",
@@ -185,5 +193,3 @@ debug_video = {
         }
     ]
 }    
-
-uploaded_project_id = ''

@@ -2,6 +2,7 @@ import os
 import azure.cognitiveservices.speech as speechsdk
 import appsecrets
 import storage.firebase_storage as firebase
+import audioread
 
 # # move these to the Firebase file for more encapsulation
 # firebase_remote_path = "ai_content_machine/speech_to_text.mp3" #this needs to be updated to be more dynamic and aligned with long-term success
@@ -32,8 +33,11 @@ def text_to_speech( text ):
     
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         print("Speech synthesized!")
-        # firebase
-
+        audio = audioread.audio_open(full_local_path)
+        return { 
+            "speech_duration": audio.duration,
+            "speech_remote_path": full_remote_path
+        }
     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
         cancellation_details = speech_synthesis_result.cancellation_details
         print("Speech synthesis canceled: {}".format(cancellation_details.reason))
@@ -41,5 +45,8 @@ def text_to_speech( text ):
             if cancellation_details.error_details:
                 print("Error details: {}".format(cancellation_details.error_details))
                 print("Did you set the speech resource key and region values?")
-
-    return full_remote_path            
+    
+    return {
+        "speech_duration": '',
+        "speech_remote_path": ''
+    }    

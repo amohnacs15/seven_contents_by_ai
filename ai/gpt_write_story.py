@@ -14,8 +14,6 @@ openai.api_key = appsecrets.OPEN_AI_API_KEY
 
 def create_story_and_scenes( filename, story ):
 
-    speech_synth.text_to_speech( story )
-
     # turn story into scenes
     storyscene = utils.open_file('input_prompts/scenes.txt').replace('<<STORY>>', story)
     gpt_story_scene = gpt3_story_scene(storyscene)
