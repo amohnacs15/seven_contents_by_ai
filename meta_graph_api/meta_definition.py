@@ -2,9 +2,8 @@
 import json
 import requests
 import appsecrets
-import meta_tokens
 
-def getFbCredentials():
+def get_fb_credentials():
 	""" Get creds required for use in the applications
 	
 	Returns:
@@ -21,7 +20,7 @@ def getFbCredentials():
 	return creds	
 
 #Reuse this facebook and instagram
-def makeApiCall( url, endpointParams, type ) :
+def make_api_call( url, endpointParams, type ) :
 	""" Request data from endpoint with params
 	
 	Args:
@@ -45,7 +44,7 @@ def makeApiCall( url, endpointParams, type ) :
 
 	return response # get and return content
 
-def displayApiCallData( response ) :
+def display_api_call_data( response ) :
 	""" Print out to cli response from api call """
 
 	print ("\nURL: ") # title
