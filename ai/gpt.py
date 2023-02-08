@@ -2,7 +2,6 @@
 #GPT-3 Function        
 import utility.utils as utils
 import openai
-import youtube_dl
 import whisper
 import warnings
 import ffmpeg
@@ -15,6 +14,7 @@ import textwrap
 import re
 import pathlib
 import pandas as pd
+import storage.dropbox_upload as dropbox_ups
 
 import appsecrets
 
@@ -32,40 +32,6 @@ def gpt_3 (prompt):
     )
     text = response['choices'][0]['text'].strip()
     return text
-
-#Download YouTube Video        
-def save_to_mp3(url):
-    """Save a YouTube video URL to mp3.
-
-    Args:
-       # url (str): A YouTube video URL.
-
-    Returns:
-        #str: The filename of the mp3 file.
-    """
-
-    options = {
-        'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'nocheckcertificate': True
-     }
-
-    with youtube_dl.YoutubeDL(options) as downloader:
-        downloader.download(["" + url + ""])
-                
-        return downloader.prepare_filename(downloader.extract_info(url, download=False)).replace(".m4a", ".mp3").replace(".webm", ".mp3")
-
-# Access mp3 on Desktop with Pathfolder
-    # desktop_path = "/Users/adrian.mohnacs/Python/YTcontent/"
-    # folder_name = "YTcontent"
-    # file_name = 'ytyt.mp3'
-    # file_path = os.path.join(desktop_path, filename)
-    # sound = file_path 
 
 def mp3_to_transcript(mp3_filename):
     sound = mp3_filename

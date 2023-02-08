@@ -4,7 +4,7 @@ import appsecrets
 import requests
 import json
 
-def getUnsplashImageUrl( search_query ):
+def get_unsplash_image_url( search_query ):
     url = 'https://api.unsplash.com/photos/random'
     params = {
         'query': search_query
@@ -22,7 +22,8 @@ def getUnsplashImageUrl( search_query ):
     return json_content['urls']['regular']
 
 
-def createAiImage(visual_prompt, width, height):
+def get_ai_image(visual_prompt, width = 1024, height = 768):
+    print('begin image processing')
     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
     model = api.models.get("tstramer/midjourney-diffusion")
     version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")
@@ -30,7 +31,7 @@ def createAiImage(visual_prompt, width, height):
 #     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
     inputs = {
 #         # Input prompt
-        'prompt': "mdjrny-v4 style  pharah from overwatch, character portrait, portrait, close up, concept art, intricate details, highly detailed, vintage sci - fi poster, retro future, in the style of chris foss, rodger dean, moebius, michael whelan, and gustave dore",
+        'prompt': visual_prompt,
 
 #         # Specify things to not see in the output # 'negative_prompt': ...,
 

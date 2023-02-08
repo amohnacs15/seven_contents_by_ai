@@ -13,7 +13,7 @@ def initialize_dropbox():
             print('Error Connecting to Dropbox')
         return dbx
 
-def dropbox_upload_file(dbx, local_path, local_file, dropbox_file_path):
+def dropbox_upload_file( dbx, local_path, local_file, dropbox_file_path ):
     """Upload a file from the local machine to a path in the Dropbox app directory.
 
     Args:
@@ -40,3 +40,8 @@ def dropbox_upload_file(dbx, local_path, local_file, dropbox_file_path):
             return meta
     except Exception as e:
         print('Error uploading file to Dropbox: ' + str(e))          
+
+def prepareFileForDropboxUpload( filename, input ):   
+    first_word = input.split()[0]
+    dropbox_location = '/' + filename.replace(".mp3", "") + '/' + first_word + '.txt'
+    # dbx.drop_upload_file( dbx, filename, dropbox_location)
