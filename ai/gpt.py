@@ -20,6 +20,14 @@ import appsecrets
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 
+'''GPT #
+
+    Args:
+        string: Prompt for GPT processing
+
+    Returns:
+        String of AI generated content
+'''
 def gpt_3 (prompt):
     response = openai.Completion.create(
         model="text-davinci-003",
@@ -57,20 +65,21 @@ def transcript_to_summary(transcriptname, filename):
         result.append(summary)
     utils.save_file('outputs/summary_output.txt', '\n\n'.join(result))
 
-def source_to_content(filename, feedin_source, prompt_source, type, upload_func):
-        """Convert a single file of language to another using chat GPT and upload to dropbox
+"""Convert a single file of language to another using chat GPT and upload to dropbox
         
-        Args:
+    Args:
         feedin_source (str): The path to the file.
         prompt_source (str): The path for the GPT prompt.
         type (str): simple categorization to help with naming
         dropbox_file_path (str): The path to the file in the Dropbox app directory.
 
-        Example:
-            dropbox_upload_file('.', 'test.csv', '/stuff/test.csv')
+    Example:
+        dropbox_upload_file('.', 'test.csv', '/stuff/test.csv')
 
-        Returns: nothing
-        """
+    Returns: 
+        Nothing
+"""
+def source_to_content(filename, feedin_source, prompt_source, type, upload_func):
         feedin = utils.open_file(feedin_source)
         appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feedin)
         finaltext = gpt_3(appliedprompt)

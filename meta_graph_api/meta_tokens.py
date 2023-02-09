@@ -4,7 +4,7 @@ import utility.utils as utils
 import json
 import requests
 
-def get_ig_temp_credentials() :
+def get_temp_credentials_via_ig():
 	""" Get creds required for use in the applications
 	
 	Returns:
@@ -31,12 +31,15 @@ def get_ig_temp_credentials() :
 """
 def get_long_lived_access_creds() :
 
-    params = get_ig_temp_credentials()
+    params = get_temp_credentials_via_ig()
     cachedToken = utils.open_file("ig_access_token.txt")
 
     if (cachedToken != ''):
-        print("found cached token!")
         params['access_token'] = cachedToken
+
+        print("found cached token!")
+        print(params['access_token'])
+        
         return params
     else:
         endpointParams = dict() # parameter to send to the endpoint
@@ -52,13 +55,17 @@ def get_long_lived_access_creds() :
 
         print("\n ---- ACCESS TOKEN INFO ----\n") # section header
         print("Access Token:")  # label
+        print(access_token)
+        pretty_dump = json.dumps( response['json_data'], indent = 4 ) 
+        print(pretty_dump)
+
         utils.save_file("ig_access_token.txt", access_token) 
 
         params['access_token'] = access_token
 
         return params
 
-def get_fb_page_access_token ( ):
+def get_fb_page_access_token():
     params = get_long_lived_access_creds()
     post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID
     

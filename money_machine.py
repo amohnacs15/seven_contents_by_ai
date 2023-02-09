@@ -36,17 +36,19 @@ dbx = dropbox_upload.initialize_dropbox()
 tweepy_api = twitter_post_content.initialize_tweepy()
 shopify = shopify_blog_content.initialize_shopify()
 
-filename = video_downloader.save_to_mp3(youtube_url)
-transcriptname = gpt.mp3_to_transcript(filename)
+# filename = video_downloader.save_to_mp3(youtube_url)
+# transcriptname = gpt.mp3_to_transcript(filename)
 
 #MAIN FUNCTION
 if __name__ == '__main__':
     summary_ouput = 'outputs/summary_output.txt'
-    gpt.transcript_to_summary(transcriptname, filename)
+    # gpt.transcript_to_summary(transcriptname, filename)
+
+    filename = 'Private Wojtek, the war bear - One Minute History-vkFLdy5Aico.mp3'
     
-    gpt.source_to_content(filename, transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
-    gpt.source_to_content(filename, summary_ouput, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
-    gpt.source_to_content(filename, summary_ouput, 'input_prompts/facebook.txt', "facebook", meta_post_content.send_fb_image_post)
+    # gpt.source_to_content(filename, transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/facebook.txt', "facebook", meta_post_content.send_fb_image_post)
     gpt.source_to_content(filename, summary_ouput, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
     gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', 'story', create_story_and_scenes)
 
@@ -55,6 +57,7 @@ if __name__ == '__main__':
     print('!!!!!!!!!!!!!!!!!!!! video finished processing !!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     print(video_remote_url)
     video_downloader.save_to_video(video_remote_url)
+
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/email.txt', "email", prepareFileForUpload)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/script.txt', "youtubescript", youtube.prepareFileForUpload)
     
