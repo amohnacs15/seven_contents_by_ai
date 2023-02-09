@@ -5,25 +5,46 @@ import utility.utils as utils
 import media.image_creator as image_creator
 import storage.firebase_storage as firebase
 import ai.speech_synthesis as speech_synthesis
+import time
 
-def get_edited_movie():
-    get_url = 'https://api.json2video.com/v2/movies?'
+movies_url = 'https://api.json2video.com/v2/movies'
+# status states: not started, done, in progress
+video_upload_status='not started'
+
+'''
+Polls to get our movie response. Repeatedly pining off the server until we get the response we want.
+
+@returns: remote movie url
+'''
+def get_edited_movie(uploaded_project_id):
 
     params = dict()
     params['project'] = uploaded_project_id
     headers = dict()
     headers['x-api-key'] = appsecrets.JSON_TO_VIDEO_API_KEY
 
-    response = requests.get( 
-        url = get_url, 
-        json = params, 
-        headers = headers 
-    )
+    while (video_upload_status != 'done'):
+        response = requests.get( 
+            url = movies_url, 
+            params = params, 
+            headers = headers 
+        )
+        video_upload_status = get_response_status_check(response)
+        time.sleep(10)
 
-    get_response_movie_url(response)
+    return get_response_movie_url(response)
 
-def send_movie_for_editing():
-    post_url = 'https://api.json2video.com/v2/movies'
+'''
+Send the request to get create our movie programmatically.
+
+WARNING: This influences our quota
+
+We pull the data from files.  To create our video scenes.
+Then we poll the get request until the video is ready, giving us the url.
+
+@returns: remote URL for our video
+'''
+def edit_movie_for_remote_url():
     post_headers = {
         'x-api-key': appsecrets.JSON_TO_VIDEO_API_KEY
     }
@@ -38,15 +59,21 @@ def send_movie_for_editing():
     )
 
     response = requests.post(
-        url = post_url, 
+        url = movies_url, 
         json = video_json, 
         headers = post_headers
     )
-    get_response_project_id(response)
+    post_response_project_id(response)
     return response['success']
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
+'''
+Generates our AI images for the video we are creating.
 
+WARNING: This procedure costs money.  Use a dummy list where possible.
+
+@returns: array of image urls
+'''
 def get_scene_images_array():
     images = []
 
@@ -59,6 +86,12 @@ def get_scene_images_array():
 
     return images    
 
+'''
+Dynamically generates our movie json for generation using supplied arguments.
+Transitions, inclusions of audio, and quality are hard-coded.
+
+@returns: json formatted string
+'''
 def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     scene_duration = mp3_duration / len(image_array)
     mp3_ref_url = firebase.get_url(mp3_remote_path)
@@ -98,6 +131,11 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
 
     return video_params
 
+'''
+Simply reads from our file system to get the description of scenes created by ChatGPT
+
+@returns: array of strings
+'''
 def get_scene_comment_array():
     pathfolder = "output_story_scenes"
     return [
@@ -115,15 +153,46 @@ def get_scene_comment_array():
 
 
 #--------------- Display Status -----------------------------------------------------------
+'''
+Extracts the response status assuming a success response
+
+@returns: status string
+'''
+def get_response_status_check( data ):
+    response = dict()
+    response['json_data'] = json.loads( data.content ) # response data from the api
+    response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
+
+    status = response['movie']['status']
+
+    print("Pinging Status...")
+    print(status)
+    
+    return status
+
+'''
+Extracts the response url assuming a success response
+
+@returns: remote url for our created video
+'''
 def get_response_movie_url( data ) :
     response = dict()
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 
-    print ("\nSuccess? ") # title
-    print(response['movies'][0]['url'])
+    movie_url = response['movie']['url']
 
-def get_response_project_id( data ) :
+    print("\nMovie url...\n")
+    print(movie_url)
+    
+    return movie_url
+
+'''
+Extracts the response status assuming a success response
+
+@returns: project id string
+'''
+def post_response_project_id( data ) :
     response = dict()
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
@@ -132,16 +201,35 @@ def get_response_project_id( data ) :
     response['project_id'] = response['json_data']['project']
     response['timestamp'] = response['json_data']['timestamp']
 
-    print ("\nSuccess? ") # title
+    print ("\nSuccess?\n") # title
     print (response['success'])  
     if (response['success'] == True):
         return response['project_id']
     else:
         return -1    
 
-# ---------------Getting completed video -----------------------------
+# --------------- Dummy Code -----------------------------
 
-debug_video = {
+example_of_running_movie_generation = {
+    "success": "true",
+    "movie": {
+        "success": 'false',
+        "status": "running",
+        "message": "downloading assets",
+        "project": "pQNF8AablTeqEMWb",
+        "url": 'null',
+        "created_at": "2023-02-08T10:52:57.636Z",
+        "ended_at": 'null',
+        "draft": 'false',
+        "rendering_time": 'null'
+    },
+    "remaining_quota": {
+        "movies": 14,
+        "drafts": 37
+    }
+}
+
+example_video = {
     "resolution": "full-hd",
     "quality": "high",
     "scenes": [
