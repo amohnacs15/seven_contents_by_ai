@@ -23,13 +23,16 @@ def save_to_mp3(url):
 
     with youtube_dl.YoutubeDL(options) as downloader:
         downloader.download(["" + url + ""])
-                
         return downloader.prepare_filename(downloader.extract_info(url, download=False)).replace(".m4a", ".mp3").replace(".webm", ".mp3")
 
 def save_to_video( url ):
-    options = { }
-    with youtube_dl.YoutubeDL(options) as ydl:
-        ydl.download([url])
+    options = options = {
+        'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
+        'nocheckcertificate': True
+     }
+    with youtube_dl.YoutubeDL(options) as downloader:
+        downloader.download([url]) 
+        return downloader.prepare_filename(downloader.extract_info(url, download=False)) 
 
 
 # Access mp3 on Desktop with Pathfolder

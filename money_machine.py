@@ -49,14 +49,16 @@ if __name__ == '__main__':
     # gpt.source_to_content(filename, transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/facebook.txt', "facebook", meta_post_content.send_fb_image_post)
-    gpt.source_to_content(filename, summary_ouput, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
-    gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', 'story', create_story_and_scenes)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
+    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', 'story', create_story_and_scenes)
 
     print('\nBegin movie process...\n')
-    video_remote_url = video_editor.edit_movie_for_remote_url()
+    # video_remote_url = video_editor.edit_movie_for_remote_url()
+    video_remote_url = 'https://assets.json2video.com/clients/x3hmo82z83/renders/2023-02-09-34066.mp4'
     print('!!!!!!!!!!!!!!!!!!!! video finished processing !!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     print(video_remote_url)
-    video_downloader.save_to_video(video_remote_url)
+    # generated_movie_download_local_path = video_downloader.save_to_video(video_remote_url)
+    generated_movie_download_local_path = 'output_downloads\2023-02-09-34066-2023-02-09-34066.mp4'
 
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/email.txt', "email", prepareFileForUpload)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/script.txt', "youtubescript", youtube.prepareFileForUpload)

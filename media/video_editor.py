@@ -8,15 +8,15 @@ import ai.speech_synthesis as speech_synthesis
 import time
 
 movies_url = 'https://api.json2video.com/v2/movies'
-# status states: not started, done, in progress
-video_upload_status='not started'
 
 '''
 Polls to get our movie response. Repeatedly pining off the server until we get the response we want.
 
 @returns: remote movie url
 '''
-def get_edited_movie(uploaded_project_id):
+def get_edited_movie_url(uploaded_project_id):
+    # status states: not started, done, in progress
+    video_upload_status='not started'
 
     params = dict()
     params['project'] = uploaded_project_id
@@ -30,9 +30,12 @@ def get_edited_movie(uploaded_project_id):
             headers = headers 
         )
         video_upload_status = get_response_status_check(response)
-        time.sleep(10)
+        if (video_upload_status == 'error'):
+            return "no movie url"
+        time.sleep(25)
 
-    return get_response_movie_url(response)
+    movie_url = get_response_movie_url(response)
+    return movie_url
 
 '''
 Send the request to get create our movie programmatically.
@@ -49,22 +52,30 @@ def edit_movie_for_remote_url():
         'x-api-key': appsecrets.JSON_TO_VIDEO_API_KEY
     }
 
-    scene_images = get_scene_images_array()
+    # preparing the pieces
+    # scene_images = get_scene_images_array()
     story_text = utils.open_file('outputs/Story_Output.txt')
-    speech_bundle = speech_synthesis.text_to_speech(story_text)
+    # speech_bundle = speech_synthesis.text_to_speech(story_text)
+    speech_bundle = {'speech_duration': 96.8125, 'speech_remote_path': 'ai_content_machine/speech_to_text.mp3'}
+    print(speech_bundle)
     video_json = create_video_json(
-        image_array = scene_images, 
+        image_array = debug_image_array, 
         mp3_duration = speech_bundle['speech_duration'],
         mp3_remote_path = speech_bundle['speech_remote_path']
     )
-
+    # making the actual request
     response = requests.post(
         url = movies_url, 
         json = video_json, 
         headers = post_headers
     )
-    post_response_project_id(response)
-    return response['success']
+    project_id = post_response_project_id(response)
+    print('\nproject id\n')
+    print(project_id)
+    movie_url = get_edited_movie_url(project_id)
+    print('\nfinal movie url\n')
+    print(movie_url)
+    return movie_url
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
 '''
@@ -101,13 +112,15 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     video_params = {
         "resolution": "full-hd",
         "quality": "high",
-        "elements": {
-            "type": "audio",
-            "src": mp3_ref_url,
-            "volume": 0.8,
-            "duration": -2,
-            "fade-out": 2
-        },
+        "elements": [
+            {
+                "type": "audio",
+                "src": mp3_ref_url,
+                "volume": 0.8,
+                "duration": -2,
+                "fade-out": 2
+            }
+        ],
         "scenes": []
     }
 
@@ -163,7 +176,9 @@ def get_response_status_check( data ):
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 
-    status = response['movie']['status']
+    print(response['json_data_pretty'])
+
+    status = response['json_data']['movie']['status']
 
     print("Pinging Status...")
     print(status)
@@ -180,7 +195,7 @@ def get_response_movie_url( data ) :
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 
-    movie_url = response['movie']['url']
+    movie_url = response['json_data']['movie']['url']
 
     print("\nMovie url...\n")
     print(movie_url)
@@ -197,12 +212,12 @@ def post_response_project_id( data ) :
     response['json_data'] = json.loads( data.content ) # response data from the api
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 
+    print(response['json_data_pretty'])
+
     response['success'] = response['json_data']['success']
     response['project_id'] = response['json_data']['project']
     response['timestamp'] = response['json_data']['timestamp']
 
-    print ("\nSuccess?\n") # title
-    print (response['success'])  
     if (response['success'] == True):
         return response['project_id']
     else:
@@ -281,3 +296,16 @@ example_video = {
         }
     ]
 }    
+
+debug_image_array = [
+    'https://replicate.delivery/pbxt/CAacYFtCHTYGBhexflfELSivW5AkDZkdlfzaorDeoL3SfHIHE/out-0.png',
+    'https://replicate.delivery/pbxt/CxPhtmKZdeXes0rPNZP8l4vKxXQXDcRjOGmPOLbYXUOXggcQA/out-0.png',
+    'https://replicate.delivery/pbxt/lcfdiBzud0UGZ6tYjchdwr8tlhCqbwwuUeWQiMAzqvV0ggcQA/out-0.png',
+    'https://replicate.delivery/pbxt/gvEuhgjhQRpQNh5vD3jjtQyD6z45PerHcUpy52unfHaRhgcQA/out-0.png',
+    'https://replicate.delivery/pbxt/NdUh5g8r9rL6L5ZxzkXM3fSf9WyH8MHKCb21qLMtnnfbDB5gA/out-0.png',
+    'https://replicate.delivery/pbxt/bTfgKIDN5Q3wLadorLxJyeMijr1xFP29F29CuhurEnFKigcQA/out-0.png',
+    'https://replicate.delivery/pbxt/KpnnkNtrBFYeekxloJ7kp3UK2VbTFIzCH9H0uG9Is0UsigcQA/out-0.png',
+    'https://replicate.delivery/pbxt/pprpxUggo7qqLNqhgfJMeMjSXRjXeXgjRJjsovhqIDURGB5gA/out-0.png',
+    'https://replicate.delivery/pbxt/5G2cHubkk05fDKZbesjqffhXjTecbTPgq0Y96A0NdCczcEkDC/out-0.png',
+    'https://replicate.delivery/pbxt/MJyUXTEyGIauERB6KBpnOgBrjpeqcLrsAJQTrnmZW2ZBSQOIA/out-0.png'
+]
