@@ -3,8 +3,6 @@ import os
 import openai
 import textwrap
 from time import time,sleep
-from pprint import pprint
-from uuid import uuid4
 import utility.utils as utils
 import appsecrets
 

@@ -4,10 +4,6 @@ import appsecrets
 import storage.firebase_storage as firebase
 import audioread
 
-# # move these to the Firebase file for more encapsulation
-# firebase_remote_path = "ai_content_machine/speech_to_text.mp3" #this needs to be updated to be more dynamic and aligned with long-term success
-# mp3_local_path = "output_downloads/speech_to_text.mp3"
-
 def text_to_speech( text ):
     subtext_title = text[0:16]
     child_remote_path = subtext_title + '.mp3'

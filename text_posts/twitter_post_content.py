@@ -16,6 +16,8 @@ def initialize_tweepy():
     return api    
 
 def send_tweet( filePath, tweet ):
+    tweepy_api = initialize_tweepy()
+    
     # Using readlines()
     tweetFile = open(filePath, 'r', encoding="utf8")
     tweets = tweetFile.readlines()
@@ -24,4 +26,4 @@ def send_tweet( filePath, tweet ):
     for tweet in tweets:
         if (tweet.strip()):
             print("Tweet sent......." + tweet)
-            #tweepy_api.update_status(status = tweet)   
+            tweepy_api.update_status(status = tweet)   

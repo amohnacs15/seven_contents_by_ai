@@ -84,11 +84,12 @@ Also, prints status of uploading the payload.
 @returns: nothing
 '''
 def send_ig_image_post( filename, caption ):
-    params = meta_tokens.get_long_lived_access_creds() # get creds from defines
+    params = meta_tokens.get_long_lived_access_creds() 
     
-    params['media_type'] = 'IMAGE' # type of asset
-	# this needs to be made more dynamic obviosuly
-    params['media_url'] = image_creator.get_unsplash_image_url('bear') # url on public server for the post
+    params['media_type'] = 'IMAGE' 
+	
+    search_query = get_subquery(caption)
+    params['media_url'] = image_creator.get_unsplash_image_url(search_query) 
     params['caption'] = caption
 
     imageMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
@@ -171,7 +172,8 @@ Also, prints status of uploading the payload.
 def send_fb_image_post( filename, caption ):
 	params = meta_tokens.get_fb_page_access_token()
 
-	image_url = image_creator.get_unsplash_image_url('bear')
+	search_query = get_subquery(caption)
+	image_url = image_creator.get_unsplash_image_url(search_query)
 
 	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
 	payload = {
@@ -204,3 +206,6 @@ def get_content_publishing_limit( params ) :
 	endpointParams['access_token'] = params['access_token'] # access token
 
 	return make_api_call( url, endpointParams, 'GET' ) # make the api call
+
+def get_subquery( text ):
+	return text[0:32]

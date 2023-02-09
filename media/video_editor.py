@@ -14,7 +14,7 @@ Polls to get our movie response. Repeatedly pining off the server until we get t
 
 @returns: remote movie url
 '''
-def get_edited_movie_url(uploaded_project_id):
+def get_edited_movie_url( uploaded_project_id ):
     # status states: not started, done, in progress
     video_upload_status='not started'
 
@@ -53,13 +53,13 @@ def edit_movie_for_remote_url():
     }
 
     # preparing the pieces
-    # scene_images = get_scene_images_array()
-    story_text = utils.open_file('outputs/Story_Output.txt')
-    # speech_bundle = speech_synthesis.text_to_speech(story_text)
-    speech_bundle = {'speech_duration': 96.8125, 'speech_remote_path': 'ai_content_machine/speech_to_text.mp3'}
+    scene_images = get_scene_images_array()
+    story_text = utils.open_file('outputs/story_output.txt')
+    speech_bundle = speech_synthesis.text_to_speech(story_text)
+    # speech_bundle = {'speech_duration': 96.8125, 'speech_remote_path': 'ai_content_machine/speech_to_text.mp3'}
     print(speech_bundle)
     video_json = create_video_json(
-        image_array = debug_image_array, 
+        image_array = scene_images, 
         mp3_duration = speech_bundle['speech_duration'],
         mp3_remote_path = speech_bundle['speech_remote_path']
     )
@@ -70,11 +70,11 @@ def edit_movie_for_remote_url():
         headers = post_headers
     )
     project_id = post_response_project_id(response)
-    print('\nproject id\n')
+
+    print('\n project id \n')
     print(project_id)
+
     movie_url = get_edited_movie_url(project_id)
-    print('\nfinal movie url\n')
-    print(movie_url)
     return movie_url
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
@@ -92,7 +92,7 @@ def get_scene_images_array():
     prompts = promptfile.readlines()
 
     for prompt in prompts:
-        image = image_creator.get_ai_image(prompt)
+        image = image_creator.get_unsplash_image_url(prompt)
         images.append(image)
 
     return images    

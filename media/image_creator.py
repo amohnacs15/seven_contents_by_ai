@@ -5,7 +5,7 @@ import requests
 import json
 
 def get_unsplash_image_url( search_query ):
-    url = 'https://api.unsplash.com/photos/random'
+    url = 'https://api.unsplash.com/search/photos'
     params = {
         'query': search_query
     }
@@ -19,7 +19,10 @@ def get_unsplash_image_url( search_query ):
         headers = headers
     )
     json_content = json.loads( response.content )
-    return json_content['urls']['regular']
+    if (json_content['total'] > 0):
+        return json_content['results'][0]['urls']['full']
+    else:
+        return ''    
 
 
 def get_ai_image(visual_prompt, width = 1024, height = 768):
