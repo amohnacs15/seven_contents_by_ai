@@ -1,15 +1,14 @@
 import youtube_dl
 
-#Download YouTube Video        
-def save_to_mp3(url):
-    """Save a YouTube video URL to mp3.
+"""Save a YouTube video URL to mp3.
 
     Args:
        # url (str): A YouTube video URL.
 
     Returns:
         #str: The filename of the mp3 file.
-    """
+"""        
+def save_to_mp3(url):
 
     options = {
         'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
@@ -26,6 +25,12 @@ def save_to_mp3(url):
         downloader.download(["" + url + ""])
                 
         return downloader.prepare_filename(downloader.extract_info(url, download=False)).replace(".m4a", ".mp3").replace(".webm", ".mp3")
+
+def save_to_video( url ):
+    options = { }
+    with youtube_dl.YoutubeDL(options) as ydl:
+        ydl.download([url])
+
 
 # Access mp3 on Desktop with Pathfolder
     # desktop_path = "/Users/adrian.mohnacs/Python/YTcontent/"

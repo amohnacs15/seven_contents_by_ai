@@ -12,7 +12,7 @@ import storage.dropbox_upload as dropbox_upload
 from ai.gpt_write_story import create_story_and_scenes
 import ai.speech_synthesis as speech_synth
 import media.video_editor as video_editor
-import media.video_downloader as video_downloads
+import media.video_downloader as video_downloader
 import storage.firebase_storage as firebase
 import storage.youtube_upload as youtube
 
@@ -36,7 +36,7 @@ dbx = dropbox_upload.initialize_dropbox()
 tweepy_api = twitter_post_content.initialize_tweepy()
 shopify = shopify_blog_content.initialize_shopify()
 
-filename = video_downloads.save_to_mp3(youtube_url)
+filename = video_downloader.save_to_mp3(youtube_url)
 transcriptname = gpt.mp3_to_transcript(filename)
 
 #MAIN FUNCTION
@@ -51,7 +51,10 @@ if __name__ == '__main__':
     gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', 'story', create_story_and_scenes)
 
     print('\nBegin movie process...\n')
-    video_editor.edit_movie_for_remote_url()
+    video_remote_url = video_editor.edit_movie_for_remote_url()
+    print('!!!!!!!!!!!!!!!!!!!! video finished processing !!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print(video_remote_url)
+    video_downloader.save_to_video(video_remote_url)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/email.txt', "email", prepareFileForUpload)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/script.txt', "youtubescript", youtube.prepareFileForUpload)
     
