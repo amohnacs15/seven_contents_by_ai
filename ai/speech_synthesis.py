@@ -4,10 +4,6 @@ import appsecrets
 import storage.firebase_storage as firebase
 import audioread
 
-# # move these to the Firebase file for more encapsulation
-# firebase_remote_path = "ai_content_machine/speech_to_text.mp3" #this needs to be updated to be more dynamic and aligned with long-term success
-# mp3_local_path = "output_downloads/speech_to_text.mp3"
-
 def text_to_speech( text ):
     subtext_title = text[0:16]
     child_remote_path = subtext_title + '.mp3'
@@ -24,15 +20,14 @@ def text_to_speech( text ):
     speech_config.speech_synthesis_voice_name='en-US-JennyNeural'
     audio_config = speechsdk.audio.AudioOutputConfig(filename = full_local_path)
     synthesized_speech = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
-
-    # Get text from the console and synthesize to the default speaker.
-    # print("Enter some text that you want to speak >")
-    # text = input()
-
     speech_synthesis_result = synthesized_speech.speak_text_async(text).get()
     
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         print("Speech synthesized!")
+        firebase.upload_mp3(
+            remote_storage_path = full_local_path,
+            local_path = full_local_path
+        )
         audio = audioread.audio_open(full_local_path)
         return { 
             "speech_duration": audio.duration,

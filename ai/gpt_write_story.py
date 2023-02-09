@@ -3,12 +3,8 @@ import os
 import openai
 import textwrap
 from time import time,sleep
-from pprint import pprint
-from uuid import uuid4
 import utility.utils as utils
 import appsecrets
-import ai.speech_synthesis as speech_synth
-import media.video_editor as video_editor
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
@@ -93,6 +89,7 @@ def gpt3_story_scene(
                 frequency_penalty=freq_pen,
                 presence_penalty=pres_pen,
                 stop=stop)
+                
             text = response['choices'][0]['text'].strip()
             #text = re.sub('\s+', ' ', text)
             filename = '%s_gpt3.txt' % time()

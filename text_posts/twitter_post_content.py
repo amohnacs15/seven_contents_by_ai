@@ -15,13 +15,15 @@ def initialize_tweepy():
         print("Error during Tweepy authentication") 
     return api    
 
-def send_tweet(filePath, tweet):
+def send_tweet( filePath, tweet ):
+    tweepy_api = initialize_tweepy()
+    
     # Using readlines()
-    tweetFile = open(filePath, 'r')
+    tweetFile = open(filePath, 'r', encoding="utf8")
     tweets = tweetFile.readlines()
 
     # Strips the newline character
     for tweet in tweets:
         if (tweet.strip()):
             print("Tweet sent......." + tweet)
-            #tweepy_api.update_status(status = tweet)   
+            tweepy_api.update_status(status = tweet)   

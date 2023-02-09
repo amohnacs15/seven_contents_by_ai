@@ -1,12 +1,11 @@
 import time
+import meta_graph_api.meta_tokens as meta_tokens
 from meta_graph_api.meta_definition import make_api_call
 import appsecrets
-import meta_tokens as meta_tokens
 import requests
+import media.image_creator as image_creator
 
-
-def create_ig_media_object( params ) :
-	""" Create media object
+""" Create media object
 
 	Args:
 		params: dictionary of params
@@ -18,8 +17,8 @@ def create_ig_media_object( params ) :
 	Returns:
 		object: data from the endpoint
 
-	"""
-
+"""
+def create_ig_media_object( params ) :
 	url = params['endpoint_base'] + params['instagram_account_id'] + '/media' # endpoint url
 
 	endpointParams = dict() # parameter to send to the endpoint
@@ -34,8 +33,7 @@ def create_ig_media_object( params ) :
 	
 	return make_api_call( url, endpointParams, 'POST' ) # make the api call
 
-def get_ig_media_object_status( mediaObjectId, params ) :
-	""" Check the status of a media object
+""" Check the status of a media object
 
 	Args:
 		mediaObjectId: id of the media object
@@ -47,8 +45,8 @@ def get_ig_media_object_status( mediaObjectId, params ) :
 	Returns:
 		object: data from the endpoint
 
-	"""
-
+"""
+def get_ig_media_object_status( mediaObjectId, params ) :
 	url = params['endpoint_base'] + '/' + mediaObjectId # endpoint url
 
 	endpointParams = dict() # parameter to send to the endpoint
@@ -57,8 +55,7 @@ def get_ig_media_object_status( mediaObjectId, params ) :
 
 	return make_api_call( url, endpointParams, 'GET' ) # make the api call
 
-def publish_ig_media( mediaObjectId, params ) :
-	""" Publish content
+""" Publish content
 
 	Args:
 		mediaObjectId: id of the media object
@@ -70,8 +67,8 @@ def publish_ig_media( mediaObjectId, params ) :
 	Returns:
 		object: data from the endpoint
 
-	"""
-
+"""
+def publish_ig_media( mediaObjectId, params ) :
 	url = params['endpoint_base'] + params['instagram_account_id'] + '/media_publish' # endpoint url
 
 	endpointParams = dict() # parameter to send to the endpoint
@@ -80,33 +77,19 @@ def publish_ig_media( mediaObjectId, params ) :
 
 	return make_api_call( url, endpointParams, 'POST' ) # make the api call
 
-def get_content_publishing_limit( params ) :
-	""" Get the api limit for the user
+'''
+Method called from main class that creates our endpoint request and makes the API call.
+Also, prints status of uploading the payload.
 
-	Args:
-		params: dictionary of params
-	
-	API Endpoint:
-		https://graph.facebook.com/v5.0/{ig-user-id}/content_publishing_limit?fields=config,quota_usage
-
-	Returns:
-		object: data from the endpoint
-
-	"""
-
-	url = params['endpoint_base'] + params['instagram_account_id'] + '/content_publishing_limit' # endpoint url
-
-	endpointParams = dict() # parameter to send to the endpoint
-	endpointParams['fields'] = 'config,quota_usage' # fields to get back
-	endpointParams['access_token'] = params['access_token'] # access token
-
-	return make_api_call( url, endpointParams, 'GET' ) # make the api call
-
-def send_ig_image_post( media_url, caption ):
-    params = meta_tokens.get_long_lived_access_creds() # get creds from defines
+@returns: nothing
+'''
+def send_ig_image_post( filename, caption ):
+    params = meta_tokens.get_long_lived_access_creds() 
     
-    params['media_type'] = 'IMAGE' # type of asset
-    params['media_url'] = media_url # url on public server for the post
+    params['media_type'] = 'IMAGE' 
+	
+    search_query = get_subquery(caption)
+    params['media_url'] = image_creator.get_unsplash_image_url(search_query) 
     params['caption'] = caption
 
     imageMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
@@ -134,9 +117,17 @@ def send_ig_image_post( media_url, caption ):
     print( "\tResponse:" ) # label
     print( publishImageResponse['json_data_pretty'] ) # json response from ig api
 
-def send_ig_video_post( media_url, caption ):
+'''
+Method called from main class that creates our endpoint request and makes the API call.
+Also, prints status of uploading the payload.
 
-    params = meta_tokens.get_long_lived_access_creds() # get creds from defines
+@returns: nothing
+'''
+def send_ig_video_post( filename, caption ):
+    params = meta_tokens.get_long_lived_access_creds() 
+
+	# this needs to be fixed...obviously
+    media_url = 'clever way to get our video'
 
     params['media_type'] = 'VIDEO' # type of asset
     params['media_url'] = media_url # url on public server for the post
@@ -172,15 +163,49 @@ def send_ig_video_post( media_url, caption ):
     print( "\tResponse:" ) # label
     print( contentPublishingApiLimit['json_data_pretty'] ) # json response from ig api
 
-def send_fb_image_post( filename, post, image_url ):
+'''
+Method called from main class that creates our endpoint request and makes the API call.
+Also, prints status of uploading the payload.
+
+@returns: nothing
+'''
+def send_fb_image_post( filename, caption ):
 	params = meta_tokens.get_fb_page_access_token()
+
+	search_query = get_subquery(caption)
+	image_url = image_creator.get_unsplash_image_url(search_query)
 
 	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
 	payload = {
 		'url': image_url,
-		'message': post, 
+		'message': caption, 
 		'access_token': params['page_access_token']
 	}
 	#Send the POST request
 	r = requests.post(post_url, data=payload)
 	print(r.text)	
+
+
+""" Get the api limit for the user
+
+	Args:
+		params: dictionary of params
+	
+	API Endpoint:
+		https://graph.facebook.com/v5.0/{ig-user-id}/content_publishing_limit?fields=config,quota_usage
+
+	Returns:
+		object: data from the endpoint
+
+"""
+def get_content_publishing_limit( params ) :
+	url = params['endpoint_base'] + params['instagram_account_id'] + '/content_publishing_limit' # endpoint url
+
+	endpointParams = dict() # parameter to send to the endpoint
+	endpointParams['fields'] = 'config,quota_usage' # fields to get back
+	endpointParams['access_token'] = params['access_token'] # access token
+
+	return make_api_call( url, endpointParams, 'GET' ) # make the api call
+
+def get_subquery( text ):
+	return text[0:32]

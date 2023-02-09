@@ -1,7 +1,7 @@
 # Shopify Blog Upload
 import shopify
 import appsecrets
-
+import media.image_creator as image_creator
 
 def initialize_shopify():
     # Configure store details
@@ -29,7 +29,10 @@ def upload_shopify_blog_article(filePath, blog):
         new_article.author = "Caregiver Modern"
         new_article.blog_id = new_blog.id
         new_article.body_html = blog
-        # new_article.image = createMidjourneyImage("default", 1024, 768)
+
+        search_query = title[0:16]
+        new_article.image = image_creator.get_unsplash_image_url(search_query)
+
         new_article.published = 'TRUE'
         new_article.save()
         print ("Shopify article upload successful")
