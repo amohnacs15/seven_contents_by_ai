@@ -42,3 +42,6 @@ https://github.com/nhorvath/Pyrebase4/blob/master/pyrebase/pyrebase.py
 
 # Instructions for quickstart
 https://github.com/openai/openai-quickstart-python
+
+Run this every time we work with our project:
+'. venv\scripts\activate  '
