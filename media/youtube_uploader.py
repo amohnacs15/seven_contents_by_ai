@@ -1,21 +1,13 @@
 import os
 import datetime
 import os
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
-import appsecrets
-import google.oauth2.credentials
-import google_auth_oauthlib.flow
-import flask
-import os
 import pickle
-
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
-
 from googleapiclient.http import MediaFileUpload
+import ai.gpt as gpt3
+import utility.utils as utils
 
 # Build the YouTube API client
 api_service_name = "youtube"
@@ -49,32 +41,37 @@ def upload_video_to_youtube ( upload_file_path ):
         CLIENT_SECRET_FILE, 
         SCOPES
     )
-    credentials = flow.run_local_server()
-    #this (points down) needs work so we can acutally access across sessions
-    with open('token.pickle', 'wb') as token:
-        pickle.dump(credentials, token)
+
+    # get cached values
+    with open("token.pickle", "rb") as input_file:
+        credentials = pickle.load(input_file)
+
+    if (credentials == ''):
+        credentials = flow.run_local_server()
+        
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(credentials, token)
+        
     print('\nAuthentication complete. Uploading Video...\n')
     youtube = googleapiclient.discovery.build(
         api_service_name, 
         api_version, 
         credentials=credentials
     )
+    summary = utils.open_file('outputs/summary_output.txt')
+    title = gpt3.prompt_to_string('input_prompts/youtube_title.txt', summary)
+    description = gpt3.prompt_to_string('input_prompts/youtube_description.txt', summary)
+
 
     request = youtube.videos().insert(
         part="snippet,status",
         body={
             "snippet": {
-                "title": "My Video Title",
-                "description": "This is a description of my video.",
-                "tags": [
-                    "tag1",
-                    "tag2",
-                    "tag3",
-                ],
-                "categoryId": 22,
+                "title": title,
+                "description": description
             },
             "status": {
-                "privacyStatus": "public",
+                "privacyStatus": "private",
                 "embeddable": True,
                 "license": "youtube",
                 "publicStatsViewable": True
@@ -86,7 +83,4 @@ def upload_video_to_youtube ( upload_file_path ):
 
     print(response)
     return response
-
-def convert_to_RFC_datetime(year=1900, month=1, day=1, hour=0, minute=0):
-    dt = datetime.datetime(year, month, day, hour, minute, 0).isoformat() + 'Z'
-    return dt    
+   

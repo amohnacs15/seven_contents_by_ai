@@ -79,9 +79,9 @@ def transcript_to_summary(transcriptname, filename):
     Returns: 
         Nothing
 """
-def source_to_content(filename, feedin_source, prompt_source, type, upload_func):
-        feedin = utils.open_file(feedin_source)
-        appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feedin)
+def prompt_to_file(filename, feedin_source_file, prompt_source, type, upload_func):
+        feed_source = utils.open_file(feedin_source_file)
+        appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
         finaltext = gpt_3(appliedprompt)
         
         print('\n\n\n', type + ' post:\n\n', finaltext)
@@ -93,4 +93,8 @@ def source_to_content(filename, feedin_source, prompt_source, type, upload_func)
         # dropbox_upload_file(saveFilePath, '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
         # remove_file(saveFilePath)
 
+def prompt_to_string(prompt_source, feed_source):
+    appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
+    finaltext = gpt_3(appliedprompt)
+    return finaltext
 
