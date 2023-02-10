@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/facebook.txt', "facebook", meta_post_content.send_fb_image_post)
     # gpt.source_to_content(filename, summary_ouput, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
-    # gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', 'story', create_story_and_scenes)
+    gpt.source_to_content(filename, summary_ouput, 'input_prompts/story.txt', 'story', create_story_and_scenes)
 
     print('\n Movie is in production, Mr. Director... \n')
     # video_remote_url = video_editor.edit_movie_for_remote_url()
