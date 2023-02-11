@@ -6,6 +6,7 @@ import media.image_creator as image_creator
 import storage.firebase_storage as firebase
 import ai.speech_synthesis as speech_synthesis
 import time
+import constants
 
 movies_url = 'https://api.json2video.com/v2/movies'
 
@@ -54,6 +55,7 @@ def edit_movie_for_remote_url():
 
     # preparing the pieces
     scene_images = get_scene_images_array()
+    # scene_images = debug_image_array
     story_text = utils.open_file('outputs/story_output.txt')
     speech_bundle = speech_synthesis.text_to_speech(story_text)
     # speech_bundle = {'speech_duration': 96.8125, 'speech_remote_path': 'ai_content_machine/speech_to_text.mp3'}
@@ -74,8 +76,12 @@ def edit_movie_for_remote_url():
     print('\n project id \n')
     print(project_id)
 
-    movie_url = get_edited_movie_url(project_id)
-    return movie_url
+    if (project_id != '-1'):
+        movie_url = get_edited_movie_url(project_id)
+        return movie_url
+    else:
+        print('error processing project id')
+        return ''    
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
 '''
@@ -92,7 +98,7 @@ def get_scene_images_array():
     prompts = promptfile.readlines()
 
     for prompt in prompts:
-        image = image_creator.get_unsplash_image_url(prompt)
+        image = image_creator.get_ai_image(prompt)
         images.append(image)
 
     return images    
@@ -107,7 +113,7 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     scene_duration = mp3_duration / len(image_array)
     mp3_ref_url = firebase.get_url(mp3_remote_path)
 
-    scene_comments = get_scene_comment_array()
+    # scene_comments = get_scene_comment_array()
 
     video_params = {
         "resolution": "full-hd",
@@ -123,11 +129,11 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
         ],
         "scenes": []
     }
-
+    print('process image array making movie')
     for index in range(len(image_array)):
         video_params['scenes'].append(
         {
-            'comment': scene_comments[index],
+            'comment': "placeholder comment",
             "transition": {
                 "style": "fade",
                 "duration": 1.5
@@ -136,7 +142,11 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
                 {
                     "type": "image",
                     "src": image_array[index],
-                    "duration": scene_duration
+                    "duration": scene_duration,
+                    "scale": {
+                        "width": constants.VIDEO_IMAGE_WIDTH,
+                        "height": constants.VIDEO_IMAGE_HEIGHT
+                    }
                 }
             ] 
         }
@@ -213,15 +223,16 @@ def post_response_project_id( data ) :
     response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 
     print(response['json_data_pretty'])
-
     response['success'] = response['json_data']['success']
-    response['project_id'] = response['json_data']['project']
-    response['timestamp'] = response['json_data']['timestamp']
 
     if (response['success'] == True):
+        response['project_id'] = response['json_data']['project']
+        response['timestamp'] = response['json_data']['timestamp']
         return response['project_id']
-    else:
-        return -1    
+    else:    
+        response['message'] = response['json_data']['message']
+        response['timestamp'] = response['json_data']['timestamp']
+        return -1
 
 # --------------- Dummy Code -----------------------------
 
@@ -298,14 +309,15 @@ example_video = {
 }    
 
 debug_image_array = [
-    'https://replicate.delivery/pbxt/CAacYFtCHTYGBhexflfELSivW5AkDZkdlfzaorDeoL3SfHIHE/out-0.png',
-    'https://replicate.delivery/pbxt/CxPhtmKZdeXes0rPNZP8l4vKxXQXDcRjOGmPOLbYXUOXggcQA/out-0.png',
-    'https://replicate.delivery/pbxt/lcfdiBzud0UGZ6tYjchdwr8tlhCqbwwuUeWQiMAzqvV0ggcQA/out-0.png',
-    'https://replicate.delivery/pbxt/gvEuhgjhQRpQNh5vD3jjtQyD6z45PerHcUpy52unfHaRhgcQA/out-0.png',
-    'https://replicate.delivery/pbxt/NdUh5g8r9rL6L5ZxzkXM3fSf9WyH8MHKCb21qLMtnnfbDB5gA/out-0.png',
-    'https://replicate.delivery/pbxt/bTfgKIDN5Q3wLadorLxJyeMijr1xFP29F29CuhurEnFKigcQA/out-0.png',
-    'https://replicate.delivery/pbxt/KpnnkNtrBFYeekxloJ7kp3UK2VbTFIzCH9H0uG9Is0UsigcQA/out-0.png',
-    'https://replicate.delivery/pbxt/pprpxUggo7qqLNqhgfJMeMjSXRjXeXgjRJjsovhqIDURGB5gA/out-0.png',
-    'https://replicate.delivery/pbxt/5G2cHubkk05fDKZbesjqffhXjTecbTPgq0Y96A0NdCczcEkDC/out-0.png',
-    'https://replicate.delivery/pbxt/MJyUXTEyGIauERB6KBpnOgBrjpeqcLrsAJQTrnmZW2ZBSQOIA/out-0.png'
+    'https://replicate.delivery/pbxt/WrtDmWw5PxbVJReeVFUm9tpH7e0krMO6gYsmfAaD394WK0zBB/out-0.png',
+'https://replicate.delivery/pbxt/HaZnj2LLsGJSIldnJM14zW0huQehlCRkHoA0CaNPlrfBD9cQA/out-0.png',
+'https://replicate.delivery/pbxt/mCmFeIWNs0waIKYDlUyxHXwcS5Xntnb2aS7LbQEnyTHvhecQA/out-0.png',
+'https://replicate.delivery/pbxt/v7y3iIxJyxodKli51JbirWB1EiFf4hgtKBDa4qcyuvu9hecQA/out-0.png',
+'https://replicate.delivery/pbxt/TyUDoj0MBhoCCZxHfZFAjn58kOz4LkQVioxeJFg2T5yZE9cQA/out-0.png',
+'https://replicate.delivery/pbxt/FXfpe8snGdv8806vUqzlv1dVFW3TXIvBPEkUbFM8cB11E9cQA/out-0.png',
+'https://replicate.delivery/pbxt/ub8mc64FKFboB9Jk8R0t2kLnFPp0soQRlFZuAVdO84sURPHE/out-0.png',
+'https://replicate.delivery/pbxt/019BYlT3CHbnPFlTGcbURpILOwUfBiOfcBOQlIPukGZvF9cQA/out-0.png',
+'https://replicate.delivery/pbxt/XWuuGzTPBm56A5ffTennSuyssbgMQmv32PFA3gfl3ugsY0zBB/out-0.png',
+'https://replicate.delivery/pbxt/PYkMeED09pwqJaA2PGlQIHRogbjglF9Ql8GL6Q1UFS4UjecQA/out-0.png',
+'https://replicate.delivery/pbxt/0kPXCfJICiSUaSdaCiXbja1IWaNQBSXYSnMdtKwpiYCjjecQA/out-0.png'
 ]

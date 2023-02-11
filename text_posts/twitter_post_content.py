@@ -25,5 +25,8 @@ def send_tweet( filePath, tweet ):
     # Strips the newline character
     for tweet in tweets:
         if (tweet.strip()):
-            print("Tweet sent......." + tweet)
-            tweepy_api.update_status(status = tweet)   
+            try:
+                tweepy_api.update_status(status = tweet)  
+                print("Tweet sent......." + tweet)
+            except:
+                print('Tweet too long or error. Skipping')     

@@ -5,7 +5,7 @@ import storage.firebase_storage as firebase
 import audioread
 
 def text_to_speech( text ):
-    subtext_title = text[0:16]
+    subtext_title = text[0:32]
     child_remote_path = subtext_title + '.mp3'
     full_remote_path = 'ai_content_machine/' + child_remote_path
 
@@ -25,7 +25,7 @@ def text_to_speech( text ):
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         print("Speech synthesized!")
         firebase.upload_mp3(
-            remote_storage_path = full_local_path,
+            remote_storage_path = full_remote_path,
             local_path = full_local_path
         )
         audio = audioread.audio_open(full_local_path)
