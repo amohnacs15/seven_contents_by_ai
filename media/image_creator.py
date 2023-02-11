@@ -3,6 +3,7 @@ import replicate
 import appsecrets
 import requests
 import json
+import constants
 
 def get_unsplash_image_url( search_query ):
     url = 'https://api.unsplash.com/search/photos'
@@ -25,7 +26,7 @@ def get_unsplash_image_url( search_query ):
         return ''    
 
 
-def get_ai_image(visual_prompt, width = 1024, height = 768):
+def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = constants.VIDEO_IMAGE_HEIGHT):
     print('begin image processing')
     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
     model = api.models.get("tstramer/midjourney-diffusion")
@@ -64,7 +65,9 @@ def get_ai_image(visual_prompt, width = 1024, height = 768):
     }
 
 #     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#output-schema
-    output = version.predict(**inputs)
-    print("midjourney output")
-    print(output[0])
-    output[0]
+    try:
+        output = version.predict(**inputs)
+        print(output[0])
+        return output[0]
+    except:
+        return 'https://replicate.delivery/pbxt/YkWafGlPx70qIylnrCQvnNCPfseNNMHru9UWmVrQzc6Lw55gA/out-0.png'    

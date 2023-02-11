@@ -34,9 +34,9 @@ def create_story_and_scenes( filename, story ):
     count = 0
     filename = "/mjv4_output.txt"
     utils.save_file(pathfolder + filename, '')
-    for scene1 in scenes:
+    for scene in scenes:
         count += 1    
-        mjv4 = utils.open_file('input_prompts/mjv4prompts.txt').replace('<<SCENE>>', scene1)
+        mjv4 = utils.open_file('input_prompts/mjv4prompts.txt').replace('<<SCENE>>', scene)
         desc = gpt3_story_scene(mjv4)
 
         print(desc)
@@ -61,13 +61,14 @@ def split_story_into_scenes(folder_path):
   # Iterate over the list of scenes
   for i, scene in enumerate(scenes):
     # Write each scene to a separate file
-    with open(f"{folder_path}/scene{i}.txt", "w", encoding='UTF-8') as scene_file:
-      scene_file.write(scene)
+    if (i > 0):
+        with open(f"{folder_path}/scene{i}.txt", "w", encoding='UTF-8') as scene_file:
+            scene_file.write(scene)
         
 def gpt3_story_scene(
     prompt, 
     engine='text-davinci-003', 
-    temp=0, 
+    temp=0.7, 
     top_p=1.0, 
     tokens=2000, 
     freq_pen=0.0, 

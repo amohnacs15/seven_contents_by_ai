@@ -1,22 +1,17 @@
 # Original 7 content functions
 #GPT-3 Function        
 import utility.utils as utils
-import openai
 import whisper
 import warnings
-import ffmpeg
-import os
-import numpy
 warnings.filterwarnings("ignore")
 import openai
 from time import time,sleep
 import textwrap
-import re
-import pathlib
 import pandas as pd
-import storage.dropbox_upload as dropbox_ups
-
+import utility.utils as utils
 import appsecrets
+import money_machine
+import storage.dropbox_uploader as dropbox_uploader
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 
@@ -79,21 +74,43 @@ def transcript_to_summary(transcriptname, filename):
     Returns: 
         Nothing
 """
-def prompt_to_file(filename, feedin_source_file, prompt_source, type, upload_func):
-        feed_source = utils.open_file(feedin_source_file)
-        appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
-        finaltext = gpt_3(appliedprompt)
+def prompt_to_file( feedin_source_file, prompt_source, type, upload_func ):
+    feed_source = utils.open_file(feedin_source_file)
+    appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
+    finaltext = gpt_3(appliedprompt)
         
-        print('\n\n\n', type + ' post:\n\n', finaltext)
+    print('\n\n\n', type + ' post:\n\n', finaltext)
 
-        saveFilePath = 'outputs/'+type+'_output.txt'
+    saveFilePath = 'outputs/'+type+'_output.txt'
 
-        utils.save_file(saveFilePath, finaltext)
-        upload_func(saveFilePath, finaltext)
-        # dropbox_upload_file(saveFilePath, '/' + filename.replace(".mp3", "") + '/' + type + '_output.txt')
-        # remove_file(saveFilePath)
+    utils.save_file(saveFilePath, finaltext)
+    upload_func(saveFilePath, finaltext)
 
-def prompt_to_string(prompt_source, feed_source):
+def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
+    dbx = money_machine.dbx
+
+    feed_source = utils.open_file(feedin_source_file)
+    appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
+    finaltext = gpt_3(appliedprompt)
+        
+    print('\n\n\n', type + ' post:\n\n', finaltext)
+
+    file_local_path = 'outputs/' + type + '_output.txt'
+
+    print('calling into dropbox')
+    print('file_local_path: ' + file_local_path)
+    print('dropbox destination path: ' + '/' + filename.replace(".mp3", "").replace("/output_downloads", "") + '/' + type + '_output.txt')
+
+    utils.save_file(file_local_path, finaltext)
+    dropbox_uploader.dropbox_upload_file(
+        dropbox_instance = dbx,
+        local_file_path = file_local_path,
+        dropbox_file_path = '/' + filename.replace(".mp3", "").replace("/output_downloads", "") + '/' + type + '_output.txt'
+    )
+    utils.remove_file(file_local_path)        
+
+def prompt_to_string( prompt_source, feedin_source_file ):
+    feed_source = utils.open_file(feedin_source_file)
     appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
     finaltext = gpt_3(appliedprompt)
     return finaltext
