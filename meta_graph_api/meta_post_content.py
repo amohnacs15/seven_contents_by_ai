@@ -4,6 +4,7 @@ from meta_graph_api.meta_definition import make_api_call
 import appsecrets
 import requests
 import media.image_creator as image_creator
+import utility.schedule_utils as scheduler
 
 """ Create media object
 
@@ -24,6 +25,7 @@ def create_ig_media_object( params ) :
 	endpointParams = dict() # parameter to send to the endpoint
 	endpointParams['caption'] = params['caption']  # caption for the post
 	endpointParams['access_token'] = params['access_token'] # access token
+	endpointParams['published'] = False
 
 	if 'IMAGE' == params['media_type'] : # posting image
 		endpointParams['image_url'] = params['media_url']  # url to the asset
@@ -95,7 +97,7 @@ def send_ig_image_post( filename, caption ):
     imageMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
     print(imageMediaObjectResponse)
     imageMediaObjectId = imageMediaObjectResponse['json_data']['id'] # id of the media object that was created
-    imageMediaStatusCode = 'IN_PROGRESS';
+    imageMediaStatusCode = 'IN_PROGRESS'
 
     print( "\n---- IMAGE MEDIA OBJECT -----\n" ) # title
     print( "\tID:" ) # label
@@ -174,12 +176,17 @@ def send_fb_image_post( filename, caption ):
 
 	search_query = get_subquery(caption)
 	image_url = image_creator.get_unsplash_image_url(search_query)
+	future_publish_date = scheduler.get_facebook_posting_datetime_in_epoch(
+		scheduler.PlatformDateStore.FACEBOOK
+	)
 
 	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
 	payload = {
 		'url': image_url,
 		'message': caption, 
-		'access_token': params['page_access_token']
+		'access_token': params['page_access_token'],
+		'scheduled_publish_time': future_publish_date,
+		'published' : False
 	}
 	#Send the POST request
 	r = requests.post(post_url, data=payload)
