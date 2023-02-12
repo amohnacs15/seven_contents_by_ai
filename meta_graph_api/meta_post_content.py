@@ -26,9 +26,6 @@ def create_ig_media_object( params ) :
 	endpointParams['caption'] = params['caption']  # caption for the post
 	endpointParams['access_token'] = params['access_token'] # access token
 	endpointParams['published'] = False
-	endpointParams['scheduled_publish_time'] = scheduler.get_next_posting_date_in_iso_format(
-		scheduler.PlatformDateStore.INSTAGRAM
-	)
 
 	if 'IMAGE' == params['media_type'] : # posting image
 		endpointParams['image_url'] = params['media_url']  # url to the asset
@@ -100,7 +97,7 @@ def send_ig_image_post( filename, caption ):
     imageMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
     print(imageMediaObjectResponse)
     imageMediaObjectId = imageMediaObjectResponse['json_data']['id'] # id of the media object that was created
-    imageMediaStatusCode = 'IN_PROGRESS';
+    imageMediaStatusCode = 'IN_PROGRESS'
 
     print( "\n---- IMAGE MEDIA OBJECT -----\n" ) # title
     print( "\tID:" ) # label
@@ -179,7 +176,7 @@ def send_fb_image_post( filename, caption ):
 
 	search_query = get_subquery(caption)
 	image_url = image_creator.get_unsplash_image_url(search_query)
-	future_publish_date = scheduler.get_next_posting_date_in_iso_format(
+	future_publish_date = scheduler.get_facebook_posting_datetime_in_epoch(
 		scheduler.PlatformDateStore.FACEBOOK
 	)
 

@@ -19,6 +19,15 @@ import utility.schedule_utils as scheduler
 dbx = dropbox_upload.initialize_dropbox()       
 shopify = shopify_blog_content.initialize_shopify()
 
+def create_story_video():
+    gpt.prompt_to_file(summary_ouput_file, 'input_prompts/story.txt', 'story', create_story_and_scenes)
+    video_remote_url = video_editor.edit_movie_for_remote_url()
+    return video_remote_url
+
+def upload_youtube_video( url_path ):    
+    generated_movie_download_local_path = video_downloader.save_to_video(url_path)
+    youtube_uploader.upload_video_to_youtube(generated_movie_download_local_path)
+
 #MAIN FUNCTION
 if __name__ == '__main__':
     # Begin the running of our application
@@ -31,13 +40,9 @@ if __name__ == '__main__':
     print("Let's make some money...")
     print("\n")
 
-    vaue = scheduler.get_next_posting_date_in_iso_format(scheduler.PlatformDateStore.FACEBOOK)
-    print('final answer')
-    print(vaue)
-
     # filename = video_downloader.save_to_mp3(youtube_url)
     # transcriptname = gpt.mp3_to_transcript(filename)
-    # summary_ouput_file = 'outputs/summary_output.txt'
+    summary_ouput_file = 'outputs/summary_output.txt'
 
     # gpt.transcript_to_summary(transcriptname, filename)
     
@@ -46,13 +51,8 @@ if __name__ == '__main__':
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", meta_post_content.send_fb_image_post)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
     
-    # #story must be generated before movie
-    # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/story.txt', 'story', create_story_and_scenes)
-    # video_remote_url = video_editor.edit_movie_for_remote_url()
-    # generated_movie_download_local_path = video_downloader.save_to_video(video_remote_url)
-    # youtube_uploader.upload_video_to_youtube(generated_movie_download_local_path)
+    # video_remote_url = create_story_video()
+    # upload_youtube_video(video_remote_url)
     
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/email.txt', "email")
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/linkedin.txt', "linkedin")
-
-    

@@ -28,16 +28,10 @@ def save_to_mp3(url):
 def save_to_video( url ):
     options = options = {
         'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
+        'format': 'bestvideo/best',
         'nocheckcertificate': True
      }
     with youtube_dl.YoutubeDL(options) as downloader:
-        downloader.download([url]) 
-        return downloader.prepare_filename(downloader.extract_info(url, download=False)) 
-
-
-# Access mp3 on Desktop with Pathfolder
-    # desktop_path = "/Users/adrian.mohnacs/Python/YTcontent/"
-    # folder_name = "YTcontent"
-    # file_name = 'ytyt.mp3'
-    # file_path = os.path.join(desktop_path, filename)
-    # sound = file_path 
+        downloader.download(["" + url + ""]) 
+        file_path = downloader.prepare_filename(downloader.extract_info(url, download=False)) 
+        return file_path
