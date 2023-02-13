@@ -37,8 +37,10 @@ def make_api_call( url, endpointParams, type ) :
 
 	response = dict() # hold response info
 	response['url'] = url # url we are hitting
+	
 	response['endpoint_params'] = endpointParams #parameters for the endpoint
 	response['endpoint_params_pretty'] = json.dumps( endpointParams, indent = 4 ) # pretty print for cli
+
 	response['json_data'] = json.loads( data.content ) # response data from the api
 	response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 

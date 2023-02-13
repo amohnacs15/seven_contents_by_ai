@@ -4,7 +4,8 @@ from meta_graph_api.meta_definition import make_api_call
 import appsecrets
 import requests
 import media.image_creator as image_creator
-import utility.schedule_utils as scheduler
+import utility.scheduler as scheduler
+import storage.firebase_storage as firebase_storage
 
 """ Create media object
 
@@ -171,27 +172,38 @@ Also, prints status of uploading the payload.
 
 @returns: nothing
 '''
-def send_fb_image_post( filename, caption ):
+def post_fb_image_post( json_post_payload ):
 	params = meta_tokens.get_fb_page_access_token()
+	url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
+	return make_api_call( url, json_post_payload, 'POST' )
+	# #Send the POST request
+	# r = requests.post(
+	# 	post_url, 
+	# 	data=json_post_payload
+	# )
+	# print(r.text)	
 
+def schedule_facebook_post( caption ):
 	search_query = get_subquery(caption)
 	image_url = image_creator.get_unsplash_image_url(search_query)
 	future_publish_date = scheduler.get_facebook_posting_datetime_in_epoch(
 		scheduler.PlatformDateStore.FACEBOOK
 	)
 
-	post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
 	payload = {
 		'url': image_url,
 		'message': caption, 
 		'access_token': params['page_access_token'],
-		'scheduled_publish_time': future_publish_date,
+		# 'scheduled_publish_time': future_publish_date,
 		'published' : False
 	}
-	#Send the POST request
-	r = requests.post(post_url, data=payload)
-	print(r.text)	
 
+	result = firebase_storage.upload_scheduled_post(
+		firebase_storage.PostingPlatform.FACEBOOK,
+		future_publish_date, 
+		payload
+	)
+	return result
 
 """ Get the api limit for the user
 

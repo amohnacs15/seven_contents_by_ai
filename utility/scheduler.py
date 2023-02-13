@@ -2,6 +2,7 @@ import datetime
 from enum import Enum
 import utility.utils as utils
 from typing import Type
+import storage.firebase_storage as firebase_storage
 
 # _underscore means private
 _facebook_store_path = 'storage_files/facebook_scheduler_store.txt'
@@ -34,9 +35,14 @@ youtube_times_array = [
     '0001-01-01T19:00:00' #7pm
 ]
 
-def best_posting_datetime( last_posted_time, file_path, times_array ):
-    for posting_time in times_array:
-        potential_posting_time = datetime.datetime.fromisoformat(posting_time)
+def schedule_posting( 
+    posting_platform,
+    last_posted_time, 
+    file_path, 
+    times_array 
+):
+    for str_posting_time in times_array:
+        potential_posting_time = datetime.datetime.fromisoformat(str_posting_time)
         potential_posting_time = potential_posting_time.replace(
             year=last_posted_time.year, 
             month=last_posted_time.month, 
@@ -44,22 +50,24 @@ def best_posting_datetime( last_posted_time, file_path, times_array ):
         )
         # we have found the time after what was last posted
         if (last_posted_time < potential_posting_time):
-            posting_time = potential_posting_time.strftime("%Y-%m-%dT%H:%M:%S")
-            utils.save_file(file_path, posting_time)
+            str_posting_time = potential_posting_time.strftime("%Y-%m-%dT%H:%M:%S")
+            # utils.save_file(file_path, posting_time)
+            firebase_storage.update_last_stored_datetime(posting_platform, str_posting_time)
             return potential_posting_time
 
     # This means we need to go to the next day. Get the first posting time tomorrow   
     potential_tomorrow_posting_time = last_posted_time + datetime.timedelta(days=1)    
     tomorrow_posting_time = datetime.datetime.fromisoformat(facebook_times_array[0])
-    posting_time = tomorrow_posting_time.replace(
+    str_posting_time = tomorrow_posting_time.replace(
         year = potential_tomorrow_posting_time.year,
         month=potential_tomorrow_posting_time.month,
         day=potential_tomorrow_posting_time.day
     )
-    print('tomorrow postint time: ' + str(posting_time))
-    str_posting_time = posting_time.strftime("%Y-%m-%dT%H:%M:%S")
-    utils.save_file(file_path, str_posting_time)
-    return posting_time      
+    print('tomorrow postint time: ' + str(str_posting_time))
+    str_posting_time = str_posting_time.strftime("%Y-%m-%dT%H:%M:%S")
+    # utils.save_file(file_path, str_posting_time)
+    firebase_storage.update_last_stored_datetime(posting_platform, str_posting_time)
+    return str_posting_time      
 
 '''
     Reads the last posted time from a file and gets the next one.  Then we write to file and return ISO value
@@ -78,10 +86,11 @@ def get_facebook_posting_datetime_in_epoch():
         line = file.read()
         last_posted_time = datetime.datetime.fromisoformat(line.strip())
         print('last posted time: ' + str(last_posted_time))
-        posting_time = best_posting_datetime(
-            last_posted_time, 
-            PlatformDateStore.FACEBOOK.value, 
-            facebook_times_array
+        posting_time = schedule_posting(
+            posting_platform = firebase_storage.PostingPlatform.FACEBOOK,
+            last_posted_time=last_posted_time, 
+            file_path= PlatformDateStore.FACEBOOK.value, 
+            times_array=facebook_times_array
         )
         epoch_posting_time = int(posting_time.timestamp())
         return epoch_posting_time           
@@ -98,9 +107,10 @@ def get_youtube_posting_datetime():
         line = file.read()
         last_posted_time = datetime.datetime.fromisoformat(line.strip())
         print('last posted time: ' + str(last_posted_time))
-        posting_time = best_posting_datetime(
-            last_posted_time, 
-            PlatformDateStore.YOUTUBE.value,
-            youtube_times_array
+        posting_time = schedule_posting(
+            posting_platform=firebase_storage.PostingPlatform.YOUTUBE,
+            last_posted_time=last_posted_time, 
+            file_path=PlatformDateStore.YOUTUBE.value,
+            times_array=youtube_times_array
         )
         return posting_time     

@@ -4,21 +4,27 @@ import argparse
 
 import appsecrets
 import meta_graph_api.meta_post_content as meta_post_content 
-import text_posts.shopify_blog_content as shopify_blog_content
+import text_posts.shopify_blogger as shopify_blogger
 import media.image_creator as image_creator
 import ai.gpt as gpt
-import text_posts.twitter_post_content as twitter_post_content
+import text_posts.tweeter as tweeter
 import storage.dropbox_uploader as dropbox_upload
 from ai.gpt_write_story import create_story_and_scenes
 import media.video_editor as video_editor
 import media.video_downloader as video_downloader
 import storage.youtube_uploader as youtube_uploader
 import ai.gpt as gpt3
-import utility.schedule_utils as scheduler
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
+# Initializations
 dbx = dropbox_upload.initialize_dropbox()       
-shopify = shopify_blog_content.initialize_shopify()
+shopify = shopify_blogger.initialize_shopify()
+firestore_app = firebase_admin.initialize_app()
+db = firestore.client()
 
+# Functionality
 def create_story_video():
     gpt.prompt_to_file(summary_ouput_file, 'input_prompts/story.txt', 'story', create_story_and_scenes)
     video_remote_url = video_editor.edit_movie_for_remote_url()

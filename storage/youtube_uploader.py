@@ -8,7 +8,7 @@ import googleapiclient.errors
 from googleapiclient.http import MediaFileUpload
 import ai.gpt as gpt3
 import utility.utils as utils
-import utility.schedule_utils as scheduler
+import utility.scheduler as scheduler
 
 # Build the YouTube API client
 api_service_name = "youtube"
@@ -63,7 +63,7 @@ def upload_video_to_youtube ( upload_file_path ):
     title = gpt3.prompt_to_string('input_prompts/youtube_title.txt', summary)
     description = gpt3.prompt_to_string('input_prompts/youtube_description.txt', summary)
     raw_publish_time = scheduler.get_youtube_posting_datetime()
-    str_posting_time = raw_publish_time.strftime("%Y-%m-%dT%H:%M:%S")
+    # str_posting_time = raw_publish_time.strftime("%Y-%m-%dT%H:%M:%S")
 
     request = youtube.videos().insert(
         part="snippet,status",
@@ -77,7 +77,7 @@ def upload_video_to_youtube ( upload_file_path ):
                 "embeddable": True,
                 "license": "youtube",
                 "publicStatsViewable": True,
-                "publishAt": str_posting_time
+                # "publishAt": str_posting_time
             }
         },
         media_body=MediaFileUpload(upload_file_path)
