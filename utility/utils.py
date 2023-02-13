@@ -24,3 +24,6 @@ def remove_file(filepath):
         os.remove(filepath)
     else:
         print("Deletion Failed: The file does not exist")  
+
+def get_title_subquery( text ):
+	return text[0:32]        

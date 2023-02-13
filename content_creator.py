@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import argparse
 
 import appsecrets
-import meta_graph_api.meta_post_content as meta_post_content 
+import meta_graph_api.ig_content_repo as ig_content_repo 
 import text_posts.shopify_blogger as shopify_blogger
 import media.image_creator as image_creator
 import ai.gpt as gpt
@@ -14,15 +14,11 @@ import media.video_editor as video_editor
 import media.video_downloader as video_downloader
 import storage.youtube_uploader as youtube_uploader
 import ai.gpt as gpt3
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+import meta_graph_api.fb_content_repo as fb_content_repo
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox()       
 shopify = shopify_blogger.initialize_shopify()
-firestore_app = firebase_admin.initialize_app()
-db = firestore.client()
 
 # Functionality
 def create_story_video():
@@ -51,10 +47,12 @@ if __name__ == '__main__':
     summary_ouput_file = 'outputs/summary_output.txt'
 
     # gpt.transcript_to_summary(transcriptname, filename)
+
+    # creating our post objects and scheduling them with our remote application
     
     # gpt.prompt_to_file(transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
-    # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", meta_post_content.send_fb_image_post)
+    gpt.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
     
     # video_remote_url = create_story_video()
