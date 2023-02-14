@@ -2,7 +2,7 @@ import pyrebase
 import appsecrets
 from enum import Enum
 import json
-from firebase_admin import firebase
+import firebase_admin
 import utility.scheduler as scheduler
 
 class PostingPlatform(Enum):
@@ -18,26 +18,27 @@ class FirebaseStorage():
 
     # Initializations    
     firebase = pyrebase.initialize_app(appsecrets.firebase_config)
-    db = firebase.database()
+    firestore = firebase.database()
+    storage = firebase.storage()
 
     @classmethod
-    def upload_mp3( remote_storage_path, local_path ):
-        firebase.storage().child(remote_storage_path).put(local_path)
+    def upload_mp3( self, remote_storage_path, local_path ):
+        self.storage.child(remote_storage_path).put(local_path)
         print('successful firebase upload')
 
     @classmethod
-    def get_url( child_path_to_file ):
-        url = firebase.storage().child(child_path_to_file).get_url(None)
+    def get_url( self, child_path_to_file ):
+        url = self.storage.child(child_path_to_file).get_url(None)
         return url
 
     @classmethod
     def update_last_stored_datetime( self, platform, datetime_string ):
-
         # Create a document within a collection
-        self.db.child("last_posted_times").set({
-            "platform": platform,
+        result = self.firestore.child("last_posted_dates").set({
+            "platform": platform.value,
             "last_posted_datetime": datetime_string
         })
+        return result
 
     @classmethod
     def get_last_posted_datetime( self, platform ):
@@ -46,7 +47,11 @@ class FirebaseStorage():
         # print(users)
 
         # Retrieve the data from a document
-        last_posted_datetime = self.db.child("last_posted_times").child(platform).get().val()
+        print(platform.value)
+        document = self.firestore.child("last_posted_dates").child(platform.value)
+        print(f'Document data: {document}')
+        last_posted_datetime = document.get().val()
+        print(f'Document data: {last_posted_datetime}')
         return last_posted_datetime
 
     '''
@@ -61,7 +66,7 @@ class FirebaseStorage():
     '''
     def get_specific_post( self, platform, posting_time ):
         specific_collection = platform + "_" + self.POSTS_COLLECTION
-        result = self.db.child(specific_collection).order_by_child("scheduled_post_datetime").equal_to(posting_time).get()
+        result = self.firestore.child(specific_collection).order_by_child("scheduled_post_datetime").equal_to(posting_time).get()
 
         if result.each() is None:
             print("No document found with the specified property value.")
@@ -73,12 +78,21 @@ class FirebaseStorage():
 
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_last_posted_datetime(platform)
+        print('last posted time')
+        print(last_posted_time)
         future_publish_date = scheduler.get_best_posting_time(platform,last_posted_time)
-        self.update_last_stored_datetime( platform, future_publish_date )
+        ('future publishing time')
+        (future_publish_date)
+        success = self.update_last_stored_datetime( platform, future_publish_date )
+        print(success)
 
-        specific_collection = platform + "_" + self.POSTS_COLLECTION
-        result = self.db.child(specific_collection).set({
+        specific_collection = platform.value + "_" + self.POSTS_COLLECTION
+        print('specific collection')
+        print(specific_collection)
+        result = self.firestore.child(specific_collection).set({
             "scheduled_datetime": future_publish_date,
             "body": payload
         })
+        print('firebase upload result')
+        print(result)
         return result

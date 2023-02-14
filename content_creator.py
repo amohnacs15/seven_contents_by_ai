@@ -2,10 +2,8 @@ from __future__ import unicode_literals
 
 import argparse
 
-import appsecrets
 import meta_graph_api.ig_content_repo as ig_content_repo 
 import text_posts.shopify_blogger as shopify_blogger
-import media.image_creator as image_creator
 import ai.gpt as gpt
 import text_posts.tweeter as tweeter
 import storage.dropbox_uploader as dropbox_upload
@@ -15,6 +13,7 @@ import media.video_downloader as video_downloader
 import storage.youtube_uploader as youtube_uploader
 import ai.gpt as gpt3
 import meta_graph_api.fb_content_repo as fb_content_repo
+import utility.utils as utils
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox()       
@@ -52,7 +51,10 @@ if __name__ == '__main__':
     
     # gpt.prompt_to_file(transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
-    gpt.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)
+    
+    # gpt3.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)
+    fb_content_repo.schedule_facebook_post(utils.open_file('outputs/facebook_output.txt'))
+    
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
     
     # video_remote_url = create_story_video()

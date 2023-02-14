@@ -6,10 +6,10 @@ import media.image_creator as image_creator
 from storage.firebase_storage import PostingPlatform
 import appsecrets
 import utility.time_utils as time_utils
-import storage.firebase_storage as FirebaseStorage
+from storage.firebase_storage import FirebaseStorage
 from storage.firebase_storage import PostingPlatform
 
-firebase_storage = FirebaseStorage()
+firebase_storage_instance = FirebaseStorage()
 
 '''
 Method called from main class that creates our endpoint request and makes the API call.
@@ -19,10 +19,10 @@ Also, prints status of uploading the payload.
 '''
 def post_fb_image_post( json_post_payload ):
 
-    last_posted_time_iso = firebase_storage.get_last_posted_datetime(PostingPlatform.FACEBOOK)
+    last_posted_time_iso = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.FACEBOOK)
     ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_time_iso)
     if (ready_to_post):
-        post_json = firebase_storage.get_specific_post(PostingPlatform.FACEBOOK, last_posted_time_iso)
+        post_json = firebase_storage_instance.get_specific_post(PostingPlatform.FACEBOOK, last_posted_time_iso)
         # this needs to be a universal call and dependent on the model that is returned. 
         # It will be either image or video type
         params = meta_tokens.get_fb_page_access_token()
@@ -37,7 +37,7 @@ def post_fb_image_post( json_post_payload ):
         # )
         # print(r.text)	
 
-def schedule_facebook_post( self, caption ):
+def schedule_facebook_post( caption ):
     search_query = utils.get_title_subquery(caption)
     image_url = image_creator.get_unsplash_image_url(search_query)
 
@@ -47,8 +47,14 @@ def schedule_facebook_post( self, caption ):
         'published' : True
     }
 
-    result = firebase_storage.upload_scheduled_post(
+    print('posting payload')
+    print(payload)
+
+    result = firebase_storage_instance.upload_scheduled_post(
         PostingPlatform.FACEBOOK, 
         payload
     )
+
+    print('upload scheduled post ressult')
+    print(str(result))
     return result

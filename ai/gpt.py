@@ -84,7 +84,7 @@ def prompt_to_file( feedin_source_file, prompt_source, type, upload_func ):
     saveFilePath = 'outputs/'+type+'_output.txt'
 
     utils.save_file(saveFilePath, finaltext)
-    upload_func(finaltext)
+    upload_func(caption = finaltext)
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     dbx = content_creator.dbx
