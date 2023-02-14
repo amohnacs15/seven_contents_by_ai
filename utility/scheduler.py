@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 import utility.utils as utils
 from typing import Type
-from storage.firebase_storage import PostingPlatform
+import storage.firebase_storage as firebase_storage
 
 facebook_times_array = [
     '0001-01-01T08:00:00', #8am
@@ -42,9 +42,9 @@ def get_best_posting_time(
 ):
     print('last_posting_time')
     print(last_posted_time)
-    if (posting_platform == PostingPlatform.FACEBOOK):
+    if (posting_platform == firebase_storage.PostingPlatform.FACEBOOK):
         times_array = facebook_times_array
-    elif (posting_platform == PostingPlatform.YOUTUBE):
+    elif (posting_platform == firebase_storage.PostingPlatform.YOUTUBE):
         times_array = youtube_times_array
     else:
         #this will need to be updated
@@ -52,20 +52,19 @@ def get_best_posting_time(
 
     for str_posting_time in times_array:
         potential_posting_time = datetime.datetime.fromisoformat(str_posting_time)
-        last_posted_datetime = datetime.datetime.fromisoformat(last_posted_time)
         potential_posting_time = potential_posting_time.replace(
-            year=last_posted_datetime.year, 
-            month=last_posted_datetime.month, 
-            day=last_posted_datetime.day
+            year=last_posted_time.year, 
+            month=last_posted_time.month, 
+            day=last_posted_time.day
         )
         # we have found the time after what was last posted
-        if (last_posted_datetime < potential_posting_time):
+        if (last_posted_time < potential_posting_time):
             str_posting_time = potential_posting_time.strftime("%Y-%m-%dT%H:%M:%S")
             return str_posting_time
 
     # This means we need to go to the next day. Get the first posting time tomorrow   
-    potential_tomorrow_posting_time = last_posted_datetime + datetime.timedelta(days=1)    
-    tomorrow_posting_time = datetime.datetime.fromisoformat(facebook_times_array[0])
+    potential_tomorrow_posting_time = last_posted_time + datetime.timedelta(days=1)    
+    tomorrow_posting_time = datetime.datetime.fromisoformat(times_array[0])
     str_posting_time = tomorrow_posting_time.replace(
         year = potential_tomorrow_posting_time.year,
         month=potential_tomorrow_posting_time.month,

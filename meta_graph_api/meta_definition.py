@@ -20,7 +20,7 @@ def get_fb_credentials():
 	return creds	
 
 #Reuse this facebook and instagram
-def make_api_call( url, endpointParams, type ) :
+def make_api_call( url, endpointParams = '', endpointJson = '', type = '' ):
 	""" Request data from endpoint with params
 	
 	Args:
@@ -31,7 +31,11 @@ def make_api_call( url, endpointParams, type ) :
 	"""
 
 	if type == 'POST' : # post request
-		data = requests.post( url, endpointParams )
+		data = requests.post( 
+			url = url, 
+			data = endpointParams ,
+			json = endpointJson
+		)
 	else : # get request
 		data = requests.get( url, endpointParams )
 

@@ -4,7 +4,7 @@ from meta_graph_api.meta_definition import make_api_call
 import utility.utils as utils
 import media.image_creator as image_creator
 import utility.scheduler as scheduler
-import storage.firebase_storage as firebase_storage
+import storage.firebase_storage as local_storage
 
 
 '''
@@ -82,7 +82,7 @@ def create_ig_media_object( params ) :
 		endpointParams['media_type'] = params['media_type']  # specify media type
 		endpointParams['video_url'] = params['media_url']  # url to the asset
 	
-	return make_api_call( url, endpointParams, 'POST' ) # make the api call
+	return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
 
 """ Check the status of a media object
 
@@ -104,7 +104,7 @@ def get_ig_media_object_status( mediaObjectId, params ) :
 	endpointParams['fields'] = 'status_code' # fields to get back
 	endpointParams['access_token'] = params['access_token'] # access token
 
-	return make_api_call( url, endpointParams, 'GET' ) # make the api call
+	return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
 
 """ Publish content
 
@@ -126,7 +126,7 @@ def publish_ig_media( mediaObjectId, params ) :
 	endpointParams['creation_id'] = mediaObjectId # fields to get back
 	endpointParams['access_token'] = params['access_token'] # access token
 
-	return make_api_call( url, endpointParams, 'POST' ) # make the api call
+	return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
 
 '''
 Method called from main class that creates our endpoint request and makes the API call.
@@ -187,5 +187,5 @@ def get_content_publishing_limit( params ) :
 	endpointParams['fields'] = 'config,quota_usage' # fields to get back
 	endpointParams['access_token'] = params['access_token'] # access token
 
-	return make_api_call( url, endpointParams, 'GET' ) # make the api call
+	return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
 

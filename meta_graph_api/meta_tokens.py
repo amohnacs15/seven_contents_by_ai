@@ -2,7 +2,7 @@ from meta_graph_api.meta_definition import make_api_call
 import appsecrets
 import utility.utils as utils
 import json
-import requests
+import json
 
 def get_temp_credentials_via_ig():
 	""" Get creds required for use in the applications
@@ -50,7 +50,7 @@ def get_long_lived_access_creds() :
 
         url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
 
-        response = make_api_call( url, endpointParams, params['debug'] ) # make the api call
+        response = make_api_call( url=url, endpointParams=endpointParams, type=params['debug'] ) # make the api call
         access_token = response['json_data']['access_token']
 
         print("\n ---- ACCESS TOKEN INFO ----\n") # section header
@@ -72,7 +72,7 @@ def get_fb_page_access_token():
     params['fields'] = 'access_token'
     params['access_token'] = params['access_token']
 
-    response = make_api_call( post_url, params, 'GET' )
+    response = make_api_call( url=post_url, endpointParams=params, type='GET' )
     params['page_access_token'] = response['json_data']['access_token']
 
     return params

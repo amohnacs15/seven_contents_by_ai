@@ -16,8 +16,7 @@ import meta_graph_api.fb_content_repo as fb_content_repo
 import utility.utils as utils
 
 # Initializations
-dbx = dropbox_upload.initialize_dropbox()       
-shopify = shopify_blogger.initialize_shopify()
+dbx = dropbox_upload.initialize_dropbox()      
 
 # Functionality
 def create_story_video():
