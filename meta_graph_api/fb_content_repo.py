@@ -27,30 +27,21 @@ def post_fb_image_post():
         last_posted_datetime
     )
     last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-    print(last_posted_time_iso)
+    print(f'last posted time iso {last_posted_time_iso}')
     # if (ready_to_post):
     if (True):
         post_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.FACEBOOK, 
             last_posted_time_iso
         )
-        print(post_json)
-        # this needs to be a universal call and dependent on the model that is returned. 
-        # It will be either image or video type
-        params = meta_tokens.get_fb_page_access_token()
         post_json_object = json.loads(post_json)
-        url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
-        post_json_object['access_token'] = params['access_token']
-
+        
+        params = meta_tokens.get_fb_page_access_token()
+        post_json_object['access_token'] = params['page_access_token']
         print(post_json_object)
 
+        url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
         return make_api_call( url=url, endpointJson=post_json_object, type='POST' )
-        # #Send the POST request
-        # r = requests.post(
-        # 	post_url, 
-        # 	data=json_post_payload
-        # )
-        # print(r.text)	
 
 def schedule_facebook_post( caption ):
     search_query = utils.get_title_subquery(caption)

@@ -66,7 +66,7 @@ def get_long_lived_access_creds() :
         return params
 
 def get_fb_page_access_token():
-    params = get_long_lived_access_creds()
+    params = get_fb_credentials()
     post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID
     
     params['fields'] = 'access_token'
@@ -76,3 +76,19 @@ def get_fb_page_access_token():
     params['page_access_token'] = response['json_data']['access_token']
 
     return params
+
+def get_fb_credentials():
+	""" Get creds required for use in the applications
+	
+	Returns:
+		dictonary: credentials needed globally
+	"""
+
+	creds = dict() # dictionary to hold everything
+	creds['access_token'] = appsecrets.FB_PAGE_SHORT_LIVED_USER_ID_TOKEN # access token for use with all api calls
+	creds['graph_domain'] = 'https://graph.facebook.com/' # base domain for api calls
+	creds['graph_version'] = 'v15.0' # version of the api we are hitting
+	creds['endpoint_base'] = creds['graph_domain'] + creds['graph_version'] + '/' # base endpoint with domain and version
+	creds['debug'] = 'no'
+
+	return creds	

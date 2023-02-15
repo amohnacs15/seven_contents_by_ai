@@ -3,22 +3,6 @@ import json
 import requests
 import appsecrets
 
-def get_fb_credentials():
-	""" Get creds required for use in the applications
-	
-	Returns:
-		dictonary: credentials needed globally
-	"""
-
-	creds = dict() # dictionary to hold everything
-	creds['access_token'] = appsecrets.META_SHORT_LIVED_USER_ID_TOKEN # access token for use with all api calls
-	creds['graph_domain'] = 'https://graph.facebook.com/' # base domain for api calls
-	creds['graph_version'] = 'v15.0' # version of the api we are hitting
-	creds['endpoint_base'] = creds['graph_domain'] + creds['graph_version'] + '/' # base endpoint with domain and version
-	creds['debug'] = 'no'
-
-	return creds	
-
 #Reuse this facebook and instagram
 def make_api_call( url, endpointParams = '', endpointJson = '', type = '' ):
 	""" Request data from endpoint with params
