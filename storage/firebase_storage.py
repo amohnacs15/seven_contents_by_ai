@@ -41,16 +41,11 @@ class FirebaseStorage():
 
     @classmethod
     def get_last_posted_datetime( self, platform ):
-        # Retrieve the data from a collection
-        # users = db.child("users").get().val()
-        # print(users)
 
         # Retrieve the data from a document
-        print(platform.value)
         document = self.firestore.child("last_posted_dates").child(platform.value)
-        print(f'Document data: {document}')
         last_posted_datetime_str = document.get().val()
-        print(f'Document data: {last_posted_datetime_str}')
+        print(f'Document data: {platform} : {last_posted_datetime_str}')
         last_posted_datetime = datetime.datetime.fromisoformat(last_posted_datetime_str)
         return last_posted_datetime
 
@@ -79,6 +74,8 @@ class FirebaseStorage():
 
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_last_posted_datetime(platform)
+        assert last_posted_time != ''
+
         future_publish_date = scheduler.get_best_posting_time(platform, last_posted_time)
         update_success = self.update_last_stored_datetime( platform, future_publish_date )
         print(f'update_success {update_success}')

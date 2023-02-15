@@ -50,13 +50,18 @@ if __name__ == '__main__':
     
     # gpt.prompt_to_file(transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
-    ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'))
-    ig_content_repo.schedule_ig_video_post(utils.open_file('outputs/instagram_output.txt'))
+    
+    ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'), 'elderly')
+    # ig_content_repo.schedule_ig_video_post(utils.open_file('outputs/instagram_output.txt'))
+
+    #gpt3.prompt_to_file(fb_content_repo.schedule_fb_post('output file'), 'elderly')
+
     # gpt3.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)    
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
     
     # video_remote_url = create_story_video()
     # upload_youtube_video(video_remote_url)
+
     
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/email.txt', "email")
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/linkedin.txt', "linkedin")

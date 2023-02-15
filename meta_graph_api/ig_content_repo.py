@@ -4,8 +4,9 @@ from meta_graph_api.meta_definition import make_api_call
 import utility.utils as utils
 import media.image_creator as image_creator
 import utility.scheduler as scheduler
-import storage.firebase_storage as local_storage
+from storage.firebase_storage import FirebaseStorage, PostingPlatform
 
+firebase_storage_instance = FirebaseStorage()
 
 '''
 Method called from main class that creates our endpoint request and makes the API call.
@@ -54,7 +55,6 @@ def schedule_ig_video_post( caption ):
     print( contentPublishingApiLimit['json_data_pretty'] ) # json response from ig api
 
 
-
 """ Create media object
 
 	Args:
@@ -69,12 +69,11 @@ def schedule_ig_video_post( caption ):
 
 """
 def create_ig_media_object( params ) :
-	url = params['endpoint_base'] + params['instagram_account_id'] + '/media' # endpoint url
 
 	endpointParams = dict() # parameter to send to the endpoint
 	endpointParams['caption'] = params['caption']  # caption for the post
 	endpointParams['access_token'] = params['access_token'] # access token
-	endpointParams['published'] = False
+	endpointParams['published'] = True
 
 	if 'IMAGE' == params['media_type'] : # posting image
 		endpointParams['image_url'] = params['media_url']  # url to the asset
@@ -82,7 +81,7 @@ def create_ig_media_object( params ) :
 		endpointParams['media_type'] = params['media_type']  # specify media type
 		endpointParams['video_url'] = params['media_url']  # url to the asset
 	
-	return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
+	return endpointParams
 
 """ Check the status of a media object
 
@@ -128,23 +127,39 @@ def publish_ig_media( mediaObjectId, params ) :
 
 	return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
 
+def post_ig_image_post():
+
+	# get from firebase the object
+	endpointParams = 'fetched value from firebase'
+
+	params = meta_tokens.get_ig_access_creds() 
+	url = params['endpoint_base'] + params['instagram_account_id'] + '/media' # endpoint url
+
+	remote_media_obj = make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
+	pretty_publish_ig_media(remote_media_obj, publish_ig_media) # publish the post to instagram
+	
+
 '''
 Method called from main class that creates our endpoint request and makes the API call.
 Also, prints status of uploading the payload.
 
 @returns: nothing
 '''
-def schedule_ig_image_post( caption ):
+def schedule_ig_image_post( caption, image_query ):
     params = meta_tokens.get_ig_access_creds() 
-    
     params['media_type'] = 'IMAGE' 
 	
-    search_query = utils.get_title_subquery(caption)
-    params['media_url'] = image_creator.get_unsplash_image_url(search_query) 
+    params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
     params['caption'] = caption
 
-    imageMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
-    print(imageMediaObjectResponse)
+	# create a media object through the api
+    remote_media_obj = create_ig_media_object( params ) 
+        
+	# send this to firebase
+    firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
+
+
+def pretty_publish_ig_media( imageMediaObjectResponse, publish_func ):	
     imageMediaObjectId = imageMediaObjectResponse['json_data']['id'] # id of the media object that was created
     imageMediaStatusCode = 'IN_PROGRESS'
 
@@ -162,7 +177,7 @@ def schedule_ig_image_post( caption ):
 
         time.sleep( 5 ) # wait 5 seconds if the media object is still being processed
 
-    publishImageResponse = publish_ig_media( imageMediaObjectId, params ) # publish the post to instagram
+    publishImageResponse = publish_func( imageMediaObjectId, params ) # publish the post to instagram
 
     print( "\n---- PUBLISHED IMAGE RESPONSE -----\n" ) # title
     print( "\tResponse:" ) # label

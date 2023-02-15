@@ -190,8 +190,7 @@ def get_response_status_check( data ):
 
     status = response['json_data']['movie']['status']
 
-    print("Pinging Status...")
-    print(status)
+    print(f"Pinging Status...{status}")
     
     return status
 
@@ -207,8 +206,7 @@ def get_response_movie_url( data ) :
 
     movie_url = response['json_data']['movie']['url']
 
-    print("\nMovie url...\n")
-    print(movie_url)
+    print(f"\nMovie url: {movie_url}")
     
     return movie_url
 

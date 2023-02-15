@@ -43,9 +43,8 @@ def post_fb_image_post():
         url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
         return make_api_call( url=url, endpointJson=post_json_object, type='POST' )
 
-def schedule_facebook_post( caption ):
-    search_query = utils.get_title_subquery(caption)
-    image_url = image_creator.get_unsplash_image_url(search_query)
+def schedule_facebook_post( caption, image_query ):
+    image_url = image_creator.get_unsplash_image_url(image_query)
 
     payload = {
         'url': image_url,

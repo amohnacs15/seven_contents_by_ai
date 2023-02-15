@@ -4,7 +4,7 @@ import utility.utils as utils
 import json
 import json
 
-def get_temp_credentials_via_ig():
+def create_ig_access_token_creds():
 	""" Get creds required for use in the applications
 	
 	Returns:
@@ -31,14 +31,13 @@ def get_temp_credentials_via_ig():
 """
 def get_ig_access_creds() :
 
-    params = get_temp_credentials_via_ig()
+    params = create_ig_access_token_creds()
     cachedToken = utils.open_file("ig_access_token.txt")
 
     if (cachedToken != ''):
         params['access_token'] = cachedToken
 
-        print("found cached token!")
-        print(params['access_token'])
+        print(f"found cached token! {params['access_token']}")
         
         return params
     else:
@@ -51,6 +50,7 @@ def get_ig_access_creds() :
         url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
 
         response = make_api_call( url=url, endpointParams=endpointParams, type=params['debug'] ) # make the api call
+        print(response['json_data'])
         access_token = response['json_data']['access_token']
 
         print("\n ---- ACCESS TOKEN INFO ----\n") # section header
