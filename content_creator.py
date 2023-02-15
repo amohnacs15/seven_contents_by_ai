@@ -12,7 +12,7 @@ import media.video_editor as video_editor
 import media.video_downloader as video_downloader
 import storage.youtube_uploader as youtube_uploader
 import ai.gpt as gpt3
-import meta_graph_api.fb_content_repo as fb_content_repo
+import meta_graph_api.ig_content_repo as ig_content_repo
 import utility.utils as utils
 
 # Initializations
@@ -50,10 +50,9 @@ if __name__ == '__main__':
     
     # gpt.prompt_to_file(transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
-    
-    # gpt3.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)
-    fb_content_repo.schedule_facebook_post(utils.open_file('outputs/facebook_output.txt'))
-    
+    ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'))
+    ig_content_repo.schedule_ig_video_post(utils.open_file('outputs/instagram_output.txt'))
+    # gpt3.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)    
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
     
     # video_remote_url = create_story_video()

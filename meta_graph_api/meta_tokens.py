@@ -11,7 +11,7 @@ def get_temp_credentials_via_ig():
 		dictonary: credentials needed globally
 	"""
 	creds = dict() # dictionary to hold everything
-	creds['access_token'] = appsecrets.META_SHORT_LIVED_USER_ID_TOKEN # access token for use with all api calls
+	creds['access_token'] = appsecrets.IG_SHORT_LIVED_USER_ID_TOKEN # access token for use with all api calls
 	creds['client_id'] = appsecrets.META_APP_ID
 	creds['client_secret'] = appsecrets.META_APP_SECRET
 	creds['graph_domain'] = 'https://graph.facebook.com/' # base domain for api calls
@@ -29,7 +29,7 @@ def get_temp_credentials_via_ig():
 	Returns:
 		object: data from the endpoint
 """
-def get_long_lived_access_creds() :
+def get_ig_access_creds() :
 
     params = get_temp_credentials_via_ig()
     cachedToken = utils.open_file("ig_access_token.txt")

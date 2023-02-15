@@ -13,8 +13,8 @@ Also, prints status of uploading the payload.
 
 @returns: nothing
 '''
-def send_ig_video_post( filename, caption ):
-    params = meta_tokens.get_long_lived_access_creds() 
+def schedule_ig_video_post( caption ):
+    params = meta_tokens.get_ig_access_creds() 
 
 	# this needs to be fixed...obviously
     media_url = 'clever way to get our video'
@@ -134,8 +134,8 @@ Also, prints status of uploading the payload.
 
 @returns: nothing
 '''
-def send_ig_image_post( filename, caption ):
-    params = meta_tokens.get_long_lived_access_creds() 
+def schedule_ig_image_post( caption ):
+    params = meta_tokens.get_ig_access_creds() 
     
     params['media_type'] = 'IMAGE' 
 	
