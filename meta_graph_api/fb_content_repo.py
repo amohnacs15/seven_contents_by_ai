@@ -28,8 +28,7 @@ def post_fb_image_post():
     )
     last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
     print(f'last posted time iso {last_posted_time_iso}')
-    # if (ready_to_post):
-    if (True):
+    if (ready_to_post):
         post_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.FACEBOOK, 
             last_posted_time_iso

@@ -34,7 +34,7 @@ class FirebaseStorage():
     @classmethod
     def update_last_stored_datetime( self, platform, datetime_string ):
         # Create a document within a collection
-        result = self.firestore.child("last_posted_dates").set({
+        result = self.firestore.child("last_posted_dates").update({
             platform.value: datetime_string
         })
         return result
@@ -68,6 +68,7 @@ class FirebaseStorage():
             return ''
         else:
             for document in result.each():
+                print(f'current doc: {document.key()} == {posting_time}')
                 if (document.key() == posting_time):
                     document_json = json.dumps(document.val())
                     return document_json

@@ -33,6 +33,7 @@ if __name__ == '__main__':
     # Begin the running of our application
     parser = argparse.ArgumentParser()
     parser.add_argument("-url", "--parse_url", help="Youtube video to parse")
+    # parser.add_argument("-content-desc", "--parse_url", help="query term to be used when generating images and video")
     args = parser.parse_args()
     youtube_url = args.parse_url
 
