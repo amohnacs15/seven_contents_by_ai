@@ -66,14 +66,30 @@ def get_long_lived_access_creds() :
         return params
 
 def get_fb_page_access_token():
-    params = get_fb_credentials()
-    post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID
-    
-    params['fields'] = 'access_token'
-    params['access_token'] = params['access_token']
 
-    response = make_api_call( url=post_url, endpointParams=params, type='GET' )
-    params['page_access_token'] = response['json_data']['access_token']
+    cachedToken = utils.open_file("fb_access_token.txt")
+
+    if (cachedToken != ''):
+        params = dict()
+        params['graph_domain'] = 'https://graph.facebook.com/' # base domain for api calls
+        params['graph_version'] = 'v15.0' # version of the api we are hitting
+        params['endpoint_base'] = params['graph_domain'] + params['graph_version'] + '/'
+        params['page_access_token'] = cachedToken
+
+        print("found cached page access token!")
+        print(params['page_access_token'])
+        
+        return params
+    else:
+        params = get_fb_credentials()
+        post_url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID
+        
+        params['fields'] = 'access_token'
+        params['access_token'] = params['access_token']
+
+        response = make_api_call( url=post_url, endpointParams=params, type='GET' )
+        params['page_access_token'] = response['json_data']['access_token']
+        utils.save_file("fb_access_token.txt", params['page_access_token'])
 
     return params
 
