@@ -27,6 +27,6 @@ def send_tweet( filePath, tweet ):
         if (tweet.strip()):
             try:
                 tweepy_api.update_status(status = tweet)  
-                print("Tweet sent......." + tweet)
+                print("Tweet sent:" + tweet)
             except:
                 print('Tweet too long or error. Skipping')     

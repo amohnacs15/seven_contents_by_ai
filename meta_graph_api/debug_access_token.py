@@ -16,7 +16,7 @@ def debug_access_token( params ) :
 
 	url = params['graph_domain'] + '/debug_token' # endpoint url
 
-	return make_api_call( url, endpointParams, params['debug'] ) # make the api call
+	return make_api_call( url=url, endpointParams=endpointParams, type=params['debug'] ) # make the api call
 
 params = getCreds() # get creds
 params['debug'] = 'yes' # set debug

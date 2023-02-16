@@ -10,7 +10,7 @@ import textwrap
 import pandas as pd
 import utility.utils as utils
 import appsecrets
-import money_machine
+import content_creator
 import storage.dropbox_uploader as dropbox_uploader
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
@@ -84,10 +84,10 @@ def prompt_to_file( feedin_source_file, prompt_source, type, upload_func ):
     saveFilePath = 'outputs/'+type+'_output.txt'
 
     utils.save_file(saveFilePath, finaltext)
-    upload_func(saveFilePath, finaltext)
+    upload_func(caption = finaltext)
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
-    dbx = money_machine.dbx
+    dbx = content_creator.dbx
 
     feed_source = utils.open_file(feedin_source_file)
     appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
