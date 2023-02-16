@@ -6,7 +6,7 @@ warnings.filterwarnings("ignore")
 import openai
 import textwrap
 import src.utility.utils as utils
-import appsecrets
+import src.appsecrets as appsecrets
 import content_creator
 import src.storage.dropbox_uploader as dropbox_uploader
 

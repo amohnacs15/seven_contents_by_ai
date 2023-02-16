@@ -1,5 +1,5 @@
 from src.meta_graph_api.meta_definition import make_api_call
-import appsecrets
+import src.appsecrets as appsecrets
 import src.utility.utils as utils
 import json
 

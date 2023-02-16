@@ -1,6 +1,6 @@
 #Image Creation and Downloads
 import replicate
-import appsecrets
+import src.appsecrets as appsecrets
 import requests
 import json
 from src import constants

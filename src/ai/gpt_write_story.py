@@ -1,7 +1,7 @@
 import openai
 from time import time,sleep
 import src.utility.utils as utils
-import appsecrets
+import src.appsecrets as appsecrets
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 

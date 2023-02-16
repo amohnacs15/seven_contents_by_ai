@@ -1,5 +1,5 @@
 import azure.cognitiveservices.speech as speechsdk
-import appsecrets
+import src.appsecrets as appsecrets
 import src.storage.firebase_storage as firebase
 import audioread
 

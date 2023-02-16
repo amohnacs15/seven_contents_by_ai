@@ -1,5 +1,5 @@
 import pyrebase
-import appsecrets
+import src.appsecrets as appsecrets
 from enum import Enum
 import json
 import src.utility.scheduler as scheduler

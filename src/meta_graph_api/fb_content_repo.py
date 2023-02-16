@@ -2,7 +2,7 @@ from datetime import datetime
 import src.meta_graph_api.meta_tokens as meta_tokens
 from src.meta_graph_api.meta_definition import make_api_call
 import src.media.image_creator as image_creator
-import appsecrets
+import src.appsecrets as appsecrets
 import src.utility.time_utils as time_utils
 from src.storage.firebase_storage import FirebaseStorage
 from src.storage.firebase_storage import PostingPlatform

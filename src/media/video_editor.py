@@ -1,6 +1,6 @@
 import requests
 import json
-import appsecrets
+import src.appsecrets as appsecrets
 import src.utility.utils as utils
 import src.media.image_creator as image_creator
 import src.storage.firebase_storage as firebase
