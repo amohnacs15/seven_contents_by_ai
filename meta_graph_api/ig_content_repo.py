@@ -3,6 +3,7 @@ import meta_graph_api.meta_tokens as meta_tokens
 from meta_graph_api.meta_definition import make_api_call
 import media.image_creator as image_creator
 from storage.firebase_storage import FirebaseStorage, PostingPlatform
+import json
 
 firebase_storage_instance = FirebaseStorage()
 
@@ -130,16 +131,27 @@ def post_ig_image_post():
     last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.INSTAGRAM)
     last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
     print(f'IG last posted time iso {last_posted_time_iso}')
-    postParams = firebase_storage_instance.get_specific_post(PostingPlatform.INSTAGRAM, last_posted_time_iso)
+    post_params_json = firebase_storage_instance.get_specific_post(PostingPlatform.INSTAGRAM, last_posted_time_iso)
+    post_params_json = json.loads(post_params_json)
+    print(f'JSON FORMAT STRING {post_params_json}')
 
-    print('posting params')
-    print(postParams)
+    post_parms = dict()
+    post_parms['access_token'] = post_params_json['access_token']
+    post_parms['caption'] = post_params_json['caption']
+    post_parms['image_url'] = post_params_json['image_url']
+    post_parms['published'] = post_params_json['published']
+
+    print(f'PARAM FORMAT {post_parms}')
 
     params = meta_tokens.get_ig_access_creds() 
     url = params['endpoint_base'] + params['instagram_account_id'] + '/media' # endpoint url
 
-    remote_media_obj = make_api_call( url=url, endpointParams=postParams, type='POST' ) # make the api call
-    pretty_publish_ig_media(remote_media_obj, publish_ig_media) # publish the post to instagram
+    print('\nposting params\n')
+    print(post_params_json)
+    print('\n')
+
+    remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST' ) # make the api call
+    pretty_publish_ig_media(remote_media_obj, params, publish_ig_media) # publish the post to instagram
     
 '''
 Method called from main class that creates our endpoint request and makes the API call.
@@ -161,8 +173,10 @@ def schedule_ig_image_post( caption, image_query ):
     firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
 
-def pretty_publish_ig_media( imageMediaObjectResponse, publish_func ):	
+def pretty_publish_ig_media( imageMediaObjectResponse, params, publish_func ):	
+    print(f'\nimageMediaObjectResponse\n')
     print(imageMediaObjectResponse)
+    
     imageMediaObjectId = imageMediaObjectResponse['json_data']['id'] # id of the media object that was created
     imageMediaStatusCode = 'IN_PROGRESS'
 

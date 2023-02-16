@@ -36,34 +36,32 @@ def get_ig_access_creds() :
 
     if (cachedToken != ''):
         params['access_token'] = cachedToken
-
-        print(f"found cached token! {params['access_token']}")
+        print(f"found cached token!")
         
         return params
     else:
-        endpointParams = dict() # parameter to send to the endpoint
-        endpointParams['grant_type'] = 'fb_exchange_token' # tell facebook we want to exchange token
-        endpointParams['client_id'] = params['client_id'] # client id from facebook app
-        endpointParams['client_secret'] = params['client_secret'] # client secret from facebook app
-        endpointParams['fb_exchange_token'] = params['access_token'] # access token to get exchange for a long lived token
+        get_token_params = dict() # parameter to send to the endpoint
+        get_token_params['grant_type'] = 'fb_exchange_token' # tell facebook we want to exchange token
+        get_token_params['client_id'] = params['client_id'] # client id from facebook app
+        get_token_params['client_secret'] = params['client_secret'] # client secret from facebook app
+        get_token_params['fb_exchange_token'] = params['access_token'] # access token to get exchange for a long lived token
 
-        url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
+        token_url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
 
-        response = make_api_call( url=url, endpointParams=endpointParams, type=params['debug'] ) # make the api call
-        print(response['json_data'])
-        access_token = response['json_data']['access_token']
+        token_response = make_api_call( url=token_url, endpointParams=get_token_params, type=params['debug'] ) # make the api call
+        print(token_response['json_data'])
+        access_token = token_response['json_data']['access_token']
+        utils.save_file("ig_access_token.txt", access_token)
 
         print("\n ---- ACCESS TOKEN INFO ----\n") # section header
         print("Access Token:")  # label
         print(access_token)
-        pretty_dump = json.dumps( response['json_data'], indent = 4 ) 
+        pretty_dump = json.dumps( token_response['json_data'], indent = 4 ) 
         print(pretty_dump)
-
-        utils.save_file("ig_access_token.txt", access_token) 
 
         params['access_token'] = access_token
 
-        return params
+    return params
 
 def get_fb_page_access_token():
 
