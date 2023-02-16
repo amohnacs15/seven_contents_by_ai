@@ -45,3 +45,10 @@ https://github.com/openai/openai-quickstart-python
 
 Run this every time we work with our project:
 '. venv\scripts\activate  '
+
+Use this to start flask and set the environment variable
+```
+set FLASK_APP=hello.py
+$env:FLASK_APP = "hello.py"
+flask run
+```
