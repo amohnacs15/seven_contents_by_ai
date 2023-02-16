@@ -1,7 +1,6 @@
-from meta_graph_api.meta_definition import make_api_call
+from src.meta_graph_api.meta_definition import make_api_call
 import appsecrets
-import utility.utils as utils
-import json
+import src.utility.utils as utils
 import json
 
 def create_ig_access_token_creds():

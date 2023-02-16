@@ -1,9 +1,7 @@
 #DROPBOX 
 import dropbox
 from dropbox.exceptions import AuthError
-import pathlib
 import appsecrets
-import utility.utils as utils
 
 """Create a connection to Dropbox."""
 def initialize_dropbox():

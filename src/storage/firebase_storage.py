@@ -2,7 +2,7 @@ import pyrebase
 import appsecrets
 from enum import Enum
 import json
-import utility.scheduler as scheduler
+import src.utility.scheduler as scheduler
 import datetime
 
 class PostingPlatform(Enum):

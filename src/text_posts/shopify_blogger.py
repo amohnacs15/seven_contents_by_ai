@@ -1,7 +1,7 @@
 # Shopify Blog Upload
 import shopify
 import appsecrets
-import media.image_creator as image_creator
+import src.media.image_creator as image_creator
 
 def initialize_shopify():
     # Configure store details

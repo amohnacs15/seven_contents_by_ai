@@ -1,7 +1,6 @@
-import os
 import azure.cognitiveservices.speech as speechsdk
 import appsecrets
-import storage.firebase_storage as firebase
+import src.storage.firebase_storage as firebase
 import audioread
 
 def text_to_speech( text ):

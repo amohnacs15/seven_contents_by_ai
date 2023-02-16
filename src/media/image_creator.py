@@ -3,7 +3,8 @@ import replicate
 import appsecrets
 import requests
 import json
-import constants
+from src import constants
+
 
 def get_unsplash_image_url( search_query ):
     url = 'https://api.unsplash.com/search/photos'

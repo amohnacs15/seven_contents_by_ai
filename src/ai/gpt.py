@@ -1,17 +1,14 @@
 # Original 7 content functions
 #GPT-3 Function        
-import utility.utils as utils
 import whisper
 import warnings
 warnings.filterwarnings("ignore")
 import openai
-from time import time,sleep
 import textwrap
-import pandas as pd
-import utility.utils as utils
+import src.utility.utils as utils
 import appsecrets
 import content_creator
-import storage.dropbox_uploader as dropbox_uploader
+import src.storage.dropbox_uploader as dropbox_uploader
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 

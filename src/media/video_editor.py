@@ -1,12 +1,12 @@
 import requests
 import json
 import appsecrets
-import utility.utils as utils
-import media.image_creator as image_creator
-import storage.firebase_storage as firebase
-import ai.speech_synthesis as speech_synthesis
+import src.utility.utils as utils
+import src.media.image_creator as image_creator
+import src.storage.firebase_storage as firebase
+import src.ai.speech_synthesis as speech_synthesis
 import time
-import constants
+from src import constants
 
 movies_url = 'https://api.json2video.com/v2/movies'
 

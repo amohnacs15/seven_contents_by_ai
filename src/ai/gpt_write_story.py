@@ -1,9 +1,6 @@
-import re
-import os
 import openai
-import textwrap
 from time import time,sleep
-import utility.utils as utils
+import src.utility.utils as utils
 import appsecrets
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY

@@ -2,19 +2,14 @@ from __future__ import unicode_literals
 
 import argparse
 
-import meta_graph_api.ig_content_repo as ig_content_repo 
-import text_posts.shopify_blogger as shopify_blogger
-import ai.gpt as gpt
-import text_posts.tweeter as tweeter
-import storage.dropbox_uploader as dropbox_upload
-from ai.gpt_write_story import create_story_and_scenes
-import media.video_editor as video_editor
-import media.video_downloader as video_downloader
-import storage.youtube_content_repo as youtube_content_repo
-import ai.gpt as gpt3
-import meta_graph_api.ig_content_repo as ig_content_repo
-import utility.utils as utils
-import storage.youtube_content_repo as yt_content_repo
+import src.ai.gpt as gpt
+import src.storage.dropbox_uploader as dropbox_upload
+from src.ai.gpt_write_story import create_story_and_scenes
+import src.media.video_editor as video_editor
+import src.media.video_downloader as video_downloader
+import src.storage.youtube_content_repo as youtube_content_repo
+import src.meta_graph_api.ig_content_repo as ig_content_repo
+import src.utility.utils as utils
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox()      
@@ -44,7 +39,7 @@ if __name__ == '__main__':
 
     # filename = video_downloader.save_to_mp3(youtube_url)
     # transcriptname = gpt.mp3_to_transcript(filename)
-    summary_ouput_file = 'outputs/summary_output.txt'
+    summary_ouput_file = 'src/outputs/summary_output.txt'
 
     # gpt.transcript_to_summary(transcriptname, filename)
 
@@ -54,7 +49,7 @@ if __name__ == '__main__':
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
     
     # ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'), 'elderly')
-    ig_content_repo.schedule_ig_video_post(utils.open_file('outputs/instagram_output.txt'))
+    ig_content_repo.schedule_ig_video_post(utils.open_file('src/outputs/instagram_output.txt'))
 
     #gpt3.prompt_to_file(fb_content_repo.schedule_fb_post('output file'), 'elderly')
 

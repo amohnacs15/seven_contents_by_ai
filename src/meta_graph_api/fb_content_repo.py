@@ -1,12 +1,11 @@
 from datetime import datetime
-import meta_graph_api.meta_tokens as meta_tokens
-from meta_graph_api.meta_definition import make_api_call
-import utility.utils as utils
-import media.image_creator as image_creator
+import src.meta_graph_api.meta_tokens as meta_tokens
+from src.meta_graph_api.meta_definition import make_api_call
+import src.media.image_creator as image_creator
 import appsecrets
-import utility.time_utils as time_utils
-from storage.firebase_storage import FirebaseStorage
-from storage.firebase_storage import PostingPlatform
+import src.utility.time_utils as time_utils
+from src.storage.firebase_storage import FirebaseStorage
+from src.storage.firebase_storage import PostingPlatform
 import json
 
 firebase_storage_instance = FirebaseStorage()

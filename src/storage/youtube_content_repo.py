@@ -1,14 +1,11 @@
 import os
-import datetime
-import os
 import pickle
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
 from googleapiclient.http import MediaFileUpload
-import ai.gpt as gpt3
-import utility.utils as utils
-import utility.scheduler as scheduler
+import src.ai.gpt as gpt3
+import src.utility.scheduler as scheduler
 
 # Build the YouTube API client
 api_service_name = "youtube"
