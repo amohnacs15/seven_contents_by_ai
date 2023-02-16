@@ -9,11 +9,11 @@ shopify = shopify_blogger.initialize_shopify()
 
 def post_facebook():
     successful_post=fb_content_repo.post_fb_image_post()
-    print(f'post success?\n\n{successful_post}')
+    print(f'\nfacebook post successful?\n{successful_post}\n')
     
 def post_instagram():
     successful_post = ig_content_repo.post_ig_image_post()
-    print(f'post successful?\n\n {successful_post}')
+    print(f'instagram post successful?\n{successful_post}\n')
 
 def post_youtube( ):
     ''
@@ -25,9 +25,9 @@ def post_shopify( ):
     ''
 
 if __name__ == '__main__':
-    # post_facebook()
-    post_youtube()
+    post_facebook()
     post_instagram()
+    post_youtube()
     post_shopify()
     post_twitter()
 
