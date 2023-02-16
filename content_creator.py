@@ -10,10 +10,11 @@ import storage.dropbox_uploader as dropbox_upload
 from ai.gpt_write_story import create_story_and_scenes
 import media.video_editor as video_editor
 import media.video_downloader as video_downloader
-import storage.youtube_uploader as youtube_uploader
+import storage.youtube_content_repo as youtube_content_repo
 import ai.gpt as gpt3
 import meta_graph_api.ig_content_repo as ig_content_repo
 import utility.utils as utils
+import storage.youtube_content_repo as yt_content_repo
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox()      
@@ -26,7 +27,7 @@ def create_story_video():
 
 def upload_youtube_video( url_path ):    
     generated_movie_download_local_path = video_downloader.save_to_video(url_path)
-    youtube_uploader.upload_video_to_youtube(generated_movie_download_local_path)
+    youtube_content_repo.upload_video_to_youtube(generated_movie_download_local_path)
 
 #MAIN FUNCTION
 if __name__ == '__main__':
@@ -52,8 +53,8 @@ if __name__ == '__main__':
     # gpt.prompt_to_file(transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
     
-    ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'), 'elderly')
-    # ig_content_repo.schedule_ig_video_post(utils.open_file('outputs/instagram_output.txt'))
+    # ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'), 'elderly')
+    ig_content_repo.schedule_ig_video_post(utils.open_file('outputs/instagram_output.txt'))
 
     #gpt3.prompt_to_file(fb_content_repo.schedule_fb_post('output file'), 'elderly')
 

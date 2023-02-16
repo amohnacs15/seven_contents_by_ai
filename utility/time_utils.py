@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 '''
     Allow for a threshold of a minute in each direction of the scheduled time to allow and honest
@@ -12,6 +12,9 @@ from datetime import timedelta
         boolean: are we running this close enough to the scheduled date
 '''
 def is_current_posting_time_within_window( current_time, scheduled_time ):
+    current_time = datetime.now()
+    print(f'IG current time :{current_time}')
+    
     lower_bound = scheduled_time - timedelta(minutes=5)
     upper_bound = scheduled_time + timedelta(minutes=5)
 
@@ -19,3 +22,4 @@ def is_current_posting_time_within_window( current_time, scheduled_time ):
         return True
     else:
         return False
+

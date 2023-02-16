@@ -4,55 +4,9 @@ from meta_graph_api.meta_definition import make_api_call
 import media.image_creator as image_creator
 from storage.firebase_storage import FirebaseStorage, PostingPlatform
 import json
+import utility.time_utils as time_utils
 
 firebase_storage_instance = FirebaseStorage()
-
-'''
-Method called from main class that creates our endpoint request and makes the API call.
-Also, prints status of uploading the payload.
-
-@returns: nothing
-'''
-def schedule_ig_video_post( caption ):
-    params = meta_tokens.get_ig_access_creds() 
-
-    # this needs to be fixed...obviously
-    media_url = 'clever way to get our video'
-
-    params['media_type'] = 'VIDEO' # type of asset
-    params['media_url'] = media_url # url on public server for the post
-    params['caption'] = caption
-
-    videoMediaObjectResponse = create_ig_media_object( params ) # create a media object through the api
-    videoMediaObjectId = videoMediaObjectResponse['json_data']['id'] # id of the media object that was created
-    videoMediaStatusCode = 'IN_PROGRESS';
-
-    print( "\n---- VIDEO MEDIA OBJECT -----\n" ) # title
-    print( "\tID:" ) # label
-    print( "\t" + videoMediaObjectId ) # id of the object
-
-    while videoMediaStatusCode != 'FINISHED' : # keep checking until the object status is finished
-        videoMediaObjectStatusResponse = get_ig_media_object_status( videoMediaObjectId, params ) # check the status on the object
-        videoMediaStatusCode = videoMediaObjectStatusResponse['json_data']['status_code'] # update status code
-
-        print( "\n---- VIDEO MEDIA OBJECT STATUS -----\n" ) # display status response
-        print( "\tStatus Code:" ) # label
-        print( "\t" + videoMediaStatusCode ) # status code of the object
-
-        time.sleep( 5 ) # wait 5 seconds if the media object is still being processed
-
-    publishVideoResponse = publish_ig_media( videoMediaObjectId, params ) # publish the post to instagram
-
-    print( "\n---- PUBLISHED IMAGE RESPONSE -----\n" ) # title
-    print( "\tResponse:" ) # label
-    print( publishVideoResponse['json_data_pretty'] ) # json response from ig api
-
-    contentPublishingApiLimit = get_content_publishing_limit( params ) # get the users api limit
-
-    print( "\n---- CONTENT PUBLISHING USER API LIMIT -----\n" ) # title
-    print( "\tResponse:" ) # label
-    print( contentPublishingApiLimit['json_data_pretty'] ) # json response from ig api
-
 
 """ Create media object
 
@@ -82,6 +36,23 @@ def create_ig_media_object( params ) :
     
     return endpointParams
 
+'''
+Method called from main class that creates our endpoint request and makes the API call.
+Also, prints status of uploading the payload.
+
+@returns: nothing
+'''
+def schedule_ig_video_post( caption, media_url ):
+    params = meta_tokens.get_ig_access_creds() 
+
+    params['media_type'] = 'VIDEO' 
+    params['media_url'] = media_url 
+    params['caption'] = caption
+
+    remote_media_obj = create_ig_media_object( params )
+    firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
+
+    
 """ Check the status of a media object
 
     Args:
@@ -126,28 +97,48 @@ def publish_ig_media( mediaObjectId, params ) :
 
     return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
 
-def post_ig_image_post():
-    # get from firebase the object
+""" Pulls last posted time form FB and posts ot IG an image
+
+    Args:
+        mediaObjectId: id of the media object
+        params: dictionary of params
+    
+    API Endpoint:
+        https://graph.facebook.com/v5.0/{ig-user-id}/media_publish?creation_id={creation-id}&access_token={access-token}
+
+    Returns:
+        object: data from the endpoint
+
+"""
+def post_ig_media_post():
     last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.INSTAGRAM)
-    last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-    print(f'IG last posted time iso {last_posted_time_iso}')
+    print(f' FB last posted time: {last_posted_datetime}')
     
-    post_params_json = firebase_storage_instance.get_specific_post(PostingPlatform.INSTAGRAM, last_posted_time_iso)
-    
-    post_params_json = json.loads(post_params_json)
-    post_parms = dict()
-    post_parms['access_token'] = post_params_json['access_token']
-    post_parms['caption'] = post_params_json['caption']
-    post_parms['image_url'] = post_params_json['image_url']
-    post_parms['published'] = post_params_json['published']
-
-    params = meta_tokens.get_ig_access_creds() 
-    url = params['endpoint_base'] + params['instagram_account_id'] + '/media'
-
-    remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST' )
-    return pretty_publish_ig_media(remote_media_obj, params, publish_ig_media) 
+    ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
 
     
+    if (ready_to_post):
+        last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        print(f'IG last posted time iso {last_posted_time_iso}')
+
+        post_params_json = firebase_storage_instance.get_specific_post(
+            PostingPlatform.INSTAGRAM, 
+            last_posted_time_iso
+        )
+        
+        post_params_json = json.loads(post_params_json)
+        post_parms = dict()
+        post_parms['access_token'] = post_params_json['access_token']
+        post_parms['caption'] = post_params_json['caption']
+        post_parms['image_url'] = post_params_json['image_url']
+        post_parms['published'] = post_params_json['published']
+
+        params = meta_tokens.get_ig_access_creds() 
+        url = params['endpoint_base'] + params['instagram_account_id'] + '/media'
+
+        remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST')
+        return pretty_publish_ig_media(remote_media_obj, params, publish_ig_media) 
+
 '''
 Method called from main class that creates our endpoint request and makes the API call.
 Also, prints status of uploading the payload.
