@@ -1,6 +1,9 @@
-import src.text_posts.shopify_blogger as shopify_blogger
-import src.meta_graph_api.fb_content_repo as fb_content_repo
-import src.meta_graph_api.ig_content_repo as ig_content_repo
+import sys
+sys.path.append("../src")
+
+import text_posts.shopify_blogger as shopify_blogger
+import meta_graph_api.fb_content_repo as fb_content_repo
+import meta_graph_api.ig_content_repo as ig_content_repo
 
 # Initializations
 shopify = shopify_blogger.initialize_shopify()

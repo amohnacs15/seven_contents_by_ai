@@ -1,10 +1,13 @@
+import sys
+sys.path.append("../src")
+
 import time
-import src.meta_graph_api.meta_tokens as meta_tokens
-from src.meta_graph_api.meta_definition import make_api_call
-import src.media.image_creator as image_creator
-from src.storage.firebase_storage import FirebaseStorage, PostingPlatform
+import meta_graph_api.meta_tokens as meta_tokens
+from meta_graph_api.meta_definition import make_api_call
+import media.image_creator as image_creator
+from storage.firebase_storage import FirebaseStorage, PostingPlatform
 import json
-import src.utility.time_utils as time_utils
+import utility.time_utils as time_utils
 
 firebase_storage_instance = FirebaseStorage()
 
@@ -116,7 +119,6 @@ def post_ig_media_post():
     
     ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
 
-    
     if (ready_to_post):
         last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         print(f'IG last posted time iso {last_posted_time_iso}')
@@ -151,11 +153,8 @@ def schedule_ig_image_post( caption, image_query ):
     
     params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
     params['caption'] = caption
-
-    # create a media object through the api
+    
     remote_media_obj = create_ig_media_object( params ) 
-        
-    # send this to firebase
     firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
 

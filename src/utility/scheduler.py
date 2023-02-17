@@ -1,5 +1,8 @@
+import sys
+sys.path.append("../src")
+
 import datetime
-import src.storage.firebase_storage as firebase_storage
+import storage.firebase_storage as firebase_storage
 
 facebook_times_array = [
     '0001-01-01T08:00:00', #8am

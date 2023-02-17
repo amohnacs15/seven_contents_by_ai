@@ -11,7 +11,7 @@ import youtube_dl
 def save_to_mp3(url):
 
     options = {
-        'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
+        'outtmpl': 'src/output_downloads/%(title)s-%(id)s.%(ext)s',
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -27,7 +27,7 @@ def save_to_mp3(url):
 
 def save_to_video( url ):
     options = options = {
-        'outtmpl': 'output_downloads/%(title)s-%(id)s.%(ext)s',
+        'outtmpl': 'src/output_downloads/%(title)s-%(id)s.%(ext)s',
         'format': 'bestvideo/best',
         'nocheckcertificate': True
      }

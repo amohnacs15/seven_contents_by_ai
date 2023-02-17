@@ -1,9 +1,11 @@
-#Image Creation and Downloads
+import sys
+sys.path.append("../src")
+
 import replicate
-import src.appsecrets as appsecrets
+import appsecrets as appsecrets
 import requests
 import json
-from src import constants
+import constants
 
 
 def get_unsplash_image_url( search_query ):

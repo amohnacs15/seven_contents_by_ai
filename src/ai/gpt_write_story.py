@@ -1,14 +1,19 @@
+import sys
+import os
+sys.path.append("../src")
+
 import openai
 from time import time,sleep
-import src.utility.utils as utils
-import src.appsecrets as appsecrets
+import utility.utils as utils
+import appsecrets as appsecrets
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
 def create_story_and_scenes( filename, story ):
 
     # turn story into scenes
-    storyscene = utils.open_file('input_prompts/scenes.txt').replace('<<STORY>>', story)
+    file_path = os.path.join("src", "input_prompts", "scenes.txt")
+    storyscene = utils.open_file(file_path).replace('<<STORY>>', story)
     gpt_story_scene = gpt3_story_scene(storyscene)
     
     # Save each scene in its own file
@@ -33,7 +38,8 @@ def create_story_and_scenes( filename, story ):
     utils.save_file(pathfolder + filename, '')
     for scene in scenes:
         count += 1    
-        mjv4 = utils.open_file('input_prompts/mjv4prompts.txt').replace('<<SCENE>>', scene)
+        file_path = os.path.join("src", "input_prompts", "mjv4prompts.txt")
+        mjv4 = utils.open_file(file_path).replace('<<SCENE>>', scene)
         desc = gpt3_story_scene(mjv4)
 
         print(desc)

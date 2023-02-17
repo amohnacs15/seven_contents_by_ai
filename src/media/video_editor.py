@@ -1,12 +1,16 @@
+import sys
+import os
+sys.path.append("../src")
+
 import requests
 import json
-import src.appsecrets as appsecrets
-import src.utility.utils as utils
-import src.media.image_creator as image_creator
-import src.storage.firebase_storage as firebase
-import src.ai.speech_synthesis as speech_synthesis
+import appsecrets as appsecrets
+import utility.utils as utils
+import media.image_creator as image_creator
+import storage.firebase_storage as firebase
+import ai.speech_synthesis as speech_synthesis
 import time
-from src import constants
+import constants
 
 movies_url = 'https://api.json2video.com/v2/movies'
 
@@ -56,7 +60,8 @@ def edit_movie_for_remote_url():
     # preparing the pieces
     scene_images = get_scene_images_array()
     # scene_images = debug_image_array
-    story_text = utils.open_file('outputs/story_output.txt')
+    file_path = os.path.join("src", "outputs", "story_output.txt")
+    story_text = utils.open_file(file_path)
     speech_bundle = speech_synthesis.text_to_speech(story_text)
     # speech_bundle = {'speech_duration': 96.8125, 'speech_remote_path': 'ai_content_machine/speech_to_text.mp3'}
     print(speech_bundle)
@@ -94,7 +99,8 @@ WARNING: This procedure costs money.  Use a dummy list where possible.
 def get_scene_images_array():
     images = []
 
-    promptfile = open('output_story_scenes/mjv4_output.txt', 'r')
+    file_path = os.path.join("src", "output_story_scenes", "mjv4_output.txt")
+    promptfile = open(file_path, 'r')
     prompts = promptfile.readlines()
 
     for prompt in prompts:

@@ -1,8 +1,11 @@
+import sys
+sys.path.append("../src")
+
 import pyrebase
-import src.appsecrets as appsecrets
+import appsecrets as appsecrets
 from enum import Enum
 import json
-import src.utility.scheduler as scheduler
+import utility.scheduler as scheduler
 import datetime
 
 class PostingPlatform(Enum):

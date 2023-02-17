@@ -1,7 +1,9 @@
-#DROPBOX 
+import sys
+sys.path.append("../src")
+
 import dropbox
 from dropbox.exceptions import AuthError
-import src.appsecrets as appsecrets
+import appsecrets 
 
 """Create a connection to Dropbox."""
 def initialize_dropbox():

@@ -1,7 +1,9 @@
-# Instagram
+import sys
+sys.path.append("../src")
+
 import json
 import requests
-import src.appsecrets as appsecrets
+import appsecrets
 
 #Reuse this facebook and instagram
 def make_api_call( url, endpointParams = '', endpointJson = '', type = '' ):

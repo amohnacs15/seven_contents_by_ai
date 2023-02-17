@@ -1,14 +1,16 @@
-# Original 7 content functions
-#GPT-3 Function        
+import sys
+import os
+sys.path.append("../src")
+
 import whisper
 import warnings
 warnings.filterwarnings("ignore")
 import openai
 import textwrap
-import src.utility.utils as utils
-import src.appsecrets as appsecrets
+import utility.utils as utils
+import appsecrets as appsecrets
 import content_creator
-import src.storage.dropbox_uploader as dropbox_uploader
+import storage.dropbox_uploader as dropbox_uploader
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY  
 
@@ -50,12 +52,14 @@ def transcript_to_summary(transcriptname, filename):
     count = 0
     for chunk in chunks:
         count = count + 1
-        prompt = utils.open_file('input_prompts/summary.txt').replace('<<SUMMARY>>', chunk)
+        file_path_input = os.path.join("src", "input_prompts", "summary.txt")
+        prompt = utils.open_file(file_path_input).replace('<<SUMMARY>>', chunk)
         prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
         summary = gpt_3(prompt)
         print('\n\n\n', count, 'out of', len(chunks), 'Compressions', ' : ', summary)
         result.append(summary)
-    utils.save_file('outputs/summary_output.txt', '\n\n'.join(result))
+    file_path_output = os.path.join("src", "outputs", "summary_output.txt")    
+    utils.save_file(file_path_output, '\n\n'.join(result))
 
 """Convert a single file of language to another using chat GPT and upload to dropbox
         
@@ -71,7 +75,7 @@ def transcript_to_summary(transcriptname, filename):
     Returns: 
         Nothing
 """
-def prompt_to_file( feedin_source_file, prompt_source, type, upload_func ):
+def prompt_to_file( feedin_source_file, prompt_source, type, image_query_term, upload_func ):
     feed_source = utils.open_file(feedin_source_file)
     appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
     finaltext = gpt_3(appliedprompt)
@@ -81,7 +85,10 @@ def prompt_to_file( feedin_source_file, prompt_source, type, upload_func ):
     saveFilePath = 'outputs/'+type+'_output.txt'
 
     utils.save_file(saveFilePath, finaltext)
-    upload_func(caption = finaltext)
+    upload_func(
+        caption = finaltext,
+        image_query = image_query_term
+    )
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     dbx = content_creator.dbx

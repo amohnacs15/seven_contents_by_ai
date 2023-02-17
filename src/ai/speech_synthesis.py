@@ -1,6 +1,9 @@
+import sys
+sys.path.append("../src")
+
 import azure.cognitiveservices.speech as speechsdk
-import src.appsecrets as appsecrets
-import src.storage.firebase_storage as firebase
+import appsecrets as appsecrets
+import storage.firebase_storage as firebase
 import audioread
 
 def text_to_speech( text ):
@@ -8,7 +11,7 @@ def text_to_speech( text ):
     child_remote_path = subtext_title + '.mp3'
     full_remote_path = 'ai_content_machine/' + child_remote_path
 
-    full_local_path = 'output_downloads/'+child_remote_path
+    full_local_path = 'src/output_downloads/'+child_remote_path
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
     speech_config = speechsdk.SpeechConfig(
         subscription = appsecrets.AZURE_SUBSCRIPTION_KEY, 

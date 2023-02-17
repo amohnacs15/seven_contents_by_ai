@@ -1,6 +1,8 @@
-# TWITTER
+import sys
+sys.path.append("../src")
+
 import tweepy
-import src.appsecrets as appsecrets
+import appsecrets
 
 def initialize_tweepy():
     # Authenticate to Twitter

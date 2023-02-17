@@ -1,22 +1,27 @@
 from __future__ import unicode_literals
 
+import sys
+import os
+sys.path.append("../src")
+
 import argparse
 
-import src.ai.gpt as gpt
-import src.storage.dropbox_uploader as dropbox_upload
-from src.ai.gpt_write_story import create_story_and_scenes
-import src.media.video_editor as video_editor
-import src.media.video_downloader as video_downloader
-import src.storage.youtube_content_repo as youtube_content_repo
-import src.meta_graph_api.ig_content_repo as ig_content_repo
-import src.utility.utils as utils
+import ai.gpt as gpt
+import storage.dropbox_uploader as dropbox_upload
+from ai.gpt_write_story import create_story_and_scenes
+import media.video_editor as video_editor
+import media.video_downloader as video_downloader
+import storage.youtube_content_repo as youtube_content_repo
+import meta_graph_api.ig_content_repo as ig_content_repo
+import utility.utils as utils
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox()      
 
 # Functionality
 def create_story_video():
-    gpt.prompt_to_file(summary_ouput_file, 'input_prompts/story.txt', 'story', create_story_and_scenes)
+    file_path = os.path.join("src", "input_prompts", "story.txt")
+    gpt.prompt_to_file(summary_ouput_file, file_path, 'story', create_story_and_scenes)
     video_remote_url = video_editor.edit_movie_for_remote_url()
     return video_remote_url
 
@@ -29,9 +34,10 @@ if __name__ == '__main__':
     # Begin the running of our application
     parser = argparse.ArgumentParser()
     parser.add_argument("-url", "--parse_url", help="Youtube video to parse")
-    # parser.add_argument("-content-desc", "--parse_url", help="query term to be used when generating images and video")
+    parser.add_argument("-content-desc", "--content_desc", help="query term to be used when generating images and video")
     args = parser.parse_args()
     youtube_url = args.parse_url
+    content_description = args.content_desc
 
     print("\n")
     print("Let's make some money...")
@@ -39,7 +45,7 @@ if __name__ == '__main__':
 
     # filename = video_downloader.save_to_mp3(youtube_url)
     # transcriptname = gpt.mp3_to_transcript(filename)
-    summary_ouput_file = 'src/outputs/summary_output.txt'
+    summary_ouput_file = os.path.join("src", "outputs", "summary_output.txt")
 
     # gpt.transcript_to_summary(transcriptname, filename)
 
@@ -48,17 +54,19 @@ if __name__ == '__main__':
     # gpt.prompt_to_file(transcriptname, 'input_prompts/blog.txt', "blog", shopify_blog_content.upload_shopify_blog_article)
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
     
-    # ig_content_repo.schedule_ig_image_post(utils.open_file('outputs/instagram_output.txt'), 'elderly')
-    ig_content_repo.schedule_ig_video_post(utils.open_file('src/outputs/instagram_output.txt'))
-
-    #gpt3.prompt_to_file(fb_content_repo.schedule_fb_post('output file'), 'elderly')
-
     # gpt3.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)    
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
-    
+ 
+ # preliminary done   
     # video_remote_url = create_story_video()
     # upload_youtube_video(video_remote_url)
+    # file_path = os.path.join("src", "outputs", "instagram_output.txt")
+    # gpt.prompt_to_file(summary_output_file, 'instagram_video', video_remote_url, ig_content_repo.schedule_ig_video_post)
 
-    
+# Stalled for remote upload to Dropbox
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/email.txt', "email")
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/linkedin.txt', "linkedin")
+
+# completely done and ready to be scheduled
+    #gpt.prompt_to_file(summary_output_file, 'facebook', content_description, fb_content_repo.schedule_fb_post)
+    #gpt.prompt_to_file(summary_output_file, 'instagram_image', content_description,ig_content_repo.schedule_ig_image_post)
