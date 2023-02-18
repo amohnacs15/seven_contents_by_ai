@@ -75,20 +75,21 @@ def transcript_to_summary(transcriptname, filename):
     Returns: 
         Nothing
 """
-def prompt_to_file( feedin_source_file, prompt_source, type, image_query_term, upload_func ):
+def prompt_to_file( prompt_source, type, image_query_term, upload_func ):
+    print(f'gpt status: processing {type}')
+
+    feedin_source_file = os.path.join("src", "outputs", "summary_output.txt")
     feed_source = utils.open_file(feedin_source_file)
     appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
     finaltext = gpt_3(appliedprompt)
         
     print('\n\n\n', type + ' post:\n\n', finaltext)
 
-    saveFilePath = 'outputs/'+type+'_output.txt'
+    saveFilePath = os.path.join('src', 'outputs', f'{type}_output.txt')
 
     utils.save_file(saveFilePath, finaltext)
-    upload_func(
-        caption = finaltext,
-        image_query = image_query_term
-    )
+    print(f'gpt status: saved file for {type}. Moving to scheduling')
+    upload_func(finaltext, image_query_term)
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     dbx = content_creator.dbx

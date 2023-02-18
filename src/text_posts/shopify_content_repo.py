@@ -19,6 +19,28 @@ def initialize_shopify():
     shopify.ShopifyResource.activate_session(session)
     print('Shopify initialized successfully')
 
+def get_image_asset_url(image_query):
+    return image_creator.get_unsplash_image_url(image_query)
+
+    themes = shopify.Theme.find()
+    for theme in themes:
+        print(f'theme {theme.name} has ID: {theme.id}')
+        # how do we make recognizing the most recent theme dynamic?
+        if (theme.name == 'Caregiver Modern v3'):
+            print(f'got the right theme {theme.name} has ID: {theme.id}')
+            current_theme_id = theme.id
+
+            asset = shopify.Asset({"theme_id": current_theme_id})
+            asset.key = 'grid_1'
+            asset.value = {
+                'image': {
+                    'src': unsplash_url
+                }
+            }
+            result_asset = asset.save()
+            print(result_asset)
+            return result_asset.public_url   
+
 def post_shopify_blog_article(): 
     last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.SHOPIFY)
     print(f'SH last posted time: {last_posted_datetime}')
@@ -53,7 +75,7 @@ def post_shopify_blog_article():
             print(f'Shopify blog upload successful {result}')
             return result
         else:
-            print (blog.errors.full_messages())
+            print (new_blog.errors.full_messages())
             return result
     
 
@@ -62,17 +84,20 @@ def schedule_shopify_blog_article(blog, image_query):
     title = text_utils.simplify_H1_header(bloglines[0])
     blog = text_utils.groom_titles(blog)
 
+    print('begin asset processing')
+    get_image_asset_url(image_query)
+
     payload = dict()
     payload['title'] = title
     payload['author'] = 'Caregiver Modern'
     payload['body_html'] = blog
     payload['image'] = dict()
-    payload['image']['src'] = image_creator.get_unsplash_image_url(image_query)
+    payload['image']['src'] = ''
     payload['published'] = 'TRUE'
     
     result = firebase_storage_instance.upload_scheduled_post(
         PostingPlatform.SHOPIFY, 
         payload
     )
-    print(result)
+    print('')
         

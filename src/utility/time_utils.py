@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
     Returns:
         boolean: are we running this close enough to the scheduled date
 '''
-def is_current_posting_time_within_window( current_time, scheduled_time ):
+def is_current_posting_time_within_window( scheduled_time ):
     current_time = datetime.now()
     print(f'IG current time :{current_time}')
     

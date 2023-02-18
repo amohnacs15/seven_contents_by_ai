@@ -91,3 +91,5 @@ class FirebaseStorage():
         print('firebase upload result')
         print(result)
         return result
+
+firebase_storage_instance = FirebaseStorage()

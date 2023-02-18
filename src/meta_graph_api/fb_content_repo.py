@@ -7,11 +7,8 @@ from meta_graph_api.meta_definition import make_api_call
 import media.image_creator as image_creator
 import appsecrets as appsecrets
 import utility.time_utils as time_utils
-from storage.firebase_storage import FirebaseStorage
-from storage.firebase_storage import PostingPlatform
+from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
-
-firebase_storage_instance = FirebaseStorage()
 
 '''
 Method called from main class that creates our endpoint request and makes the API call.
@@ -20,16 +17,11 @@ Also, prints status of uploading the payload.
 @returns: nothing
 '''
 def post_fb_image_post():
-    current_time = datetime.now()
-    print(f'FB current time :{current_time}')
     
     last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.FACEBOOK)
     print(f' FB last posted time: {last_posted_datetime}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(
-        current_time,
-        last_posted_datetime
-    )
+    ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
     
     last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
     print(f'last posted time iso {last_posted_time_iso}')
