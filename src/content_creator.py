@@ -16,12 +16,18 @@ import meta_graph_api.ig_content_repo as ig_content_repo
 import meta_graph_api.fb_content_repo as fb_content_repo
 import utility.utils as utils
 import text_posts.shopify_content_repo as shopify_content_repo
+import text_posts.twitter_content_repo as tweet_repo
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox() 
 shopify_content_repo.initialize_shopify()     
 
 # Functionality
+def process_video_download(youtube_url):
+    filename = video_downloader.save_to_mp3(youtube_url)
+    transcriptname = gpt.mp3_to_transcript(filename)
+    gpt.transcript_to_summary(transcriptname, filename) 
+
 def create_story_video():
     file_path = os.path.join("src", "input_prompts", "story.txt")
     gpt.prompt_to_file(file_path, 'story', create_story_and_scenes)
@@ -47,29 +53,17 @@ if __name__ == '__main__':
     print("I will be wealthy...")
     print("\n")
 
-    # filename = video_downloader.save_to_mp3(youtube_url)
-    # transcriptname = gpt.mp3_to_transcript(filename)
-    # gpt.transcript_to_summary(transcriptname, filename)
-
-    # gpt.prompt_to_file(
-    #     prompt_source = os.path.join('src', 'input_prompts', 'blog.txt'),
-    #     type = "shopify_blog", 
-    #     image_query_term = content_description,
-    #     upload_func = shopify_content_repo.schedule_shopify_blog_article
-    # )
-    source = os.path.join('src', 'outputs', 'shopify_blog_output.txt')
-    file_source = utils.open_file(source)
-    shopify_content_repo.schedule_shopify_blog_article(
-        source, 
-        content_description
+    # process_video_download(youtube_url)
+    gpt.prompt_to_file(
+        type='tweestorm',
+        prompt_source=os.path.join('src', 'inputs', f'{type}_outputs.txt'),
+        image_query_term=content_description,
+        upload_func=tweet_repo.schedule_tweets
     )
 
-    # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/instagram.txt', "instagram", meta_post_content.send_ig_image_post)
-    
-    # gpt3.prompt_to_file(summary_ouput_file, 'input_prompts/facebook.txt', "facebook", fb_content_repo.schedule_facebook_post)    
     # gpt.prompt_to_file(summary_ouput_file, 'input_prompts/tweetstorm.txt', "tweetstorm", twitter_post_content.send_tweet)
  
- # preliminary done   
+ # preliminary input completed   
     # video_remote_url = create_story_video()
     # upload_youtube_video(video_remote_url)
     # file_path = os.path.join("src", "outputs", "instagram_output.txt")
@@ -80,5 +74,21 @@ if __name__ == '__main__':
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/linkedin.txt', "linkedin")
 
 # completely done and ready to be scheduled
-    # gpt.prompt_to_file('facebook', content_description, fb_content_repo.schedule_fb_post)
-    #gpt.prompt_to_file('instagram_image', content_description,ig_content_repo.schedule_ig_image_post)
+    # gpt.prompt_to_file(
+    #     type = 'facebook', 
+    #     prompt_source = os.path.join('src', 'outputs', 'facebook_output.txt')
+    #     image_query_term = content_description, 
+    #     upload_func = fb_content_repo.schedule_fb_post
+    # )
+    # gpt.prompt_to_file(
+    #     type='instagram', 
+    #     prompt_source=os.path.join('src', 'outputs', 'instagram_output.txt')
+    #     image_query_term=content_description,
+    #     upload_func=ig_content_repo.schedule_ig_image_post
+    # )
+    # gpt.prompt_to_file(
+    #     type="shopify_blog", 
+    #     prompt_source=os.path.join('src', 'outputs', 'shopify_blog_output.txt'),
+    #     image_query_term=content_description,
+    #     upload_func=shopify_content_repo.schedule_shopify_blog_article
+    # )

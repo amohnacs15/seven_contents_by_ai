@@ -99,5 +99,5 @@ def schedule_shopify_blog_article(blog, image_query):
         PostingPlatform.SHOPIFY, 
         payload
     )
-    print('')
+    print(result)
         
