@@ -25,28 +25,33 @@ def post_tweets():
     tweepy_api = initialize_tweepy()
 
     # get from firebase
-    last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.TWITTER)
-    print(f'TW last posted time: {last_posted_datetime}')
+    earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
+    print(f'TW last posted time: {earliest_scheduled_datetime}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
 
-    if (ready_to_post):
-    # if (True):
-        last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-        print(f'TW last posted time iso {last_posted_time_iso}')
+    # if (ready_to_post):
+    if (True):
+        earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        print(f'TW last posted time iso {earliest_scheduled_iso}')
 
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.TWITTER, 
-            last_posted_time_iso
+            earliest_scheduled_iso
         )
         post_params = json.loads(post_params_json)
+        print(f'post params return {post_params}')
         tweet = post_params['tweet']
 
         try:
-            tweepy_api.update_status(status = tweet)  
-            print("Tweet sent:" + tweet)
-        except:
-            print('Tweet too long or error. Skipping')  
+            value = tweepy_api.update_status(status = tweet)  
+            firebase_storage_instance.delete_post(
+                PostingPlatform.TWITTER, 
+                earliest_scheduled_iso
+            )
+            return value
+        except Exception as e:
+            return e
 
 def schedule_tweets( tweet, image_query ):
     file_path = os.path.join('src', 'outputs', 'tweetstorm_output.txt')
@@ -62,5 +67,4 @@ def schedule_tweets( tweet, image_query ):
             PostingPlatform.TWITTER, 
             payload
         )
-        print(result)
-      
+    return tweets  

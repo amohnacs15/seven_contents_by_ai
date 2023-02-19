@@ -18,7 +18,7 @@ Also, prints status of uploading the payload.
 '''
 def post_fb_image_post():
     
-    last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.FACEBOOK)
+    last_posted_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.FACEBOOK)
     print(f' FB last posted time: {last_posted_datetime}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)

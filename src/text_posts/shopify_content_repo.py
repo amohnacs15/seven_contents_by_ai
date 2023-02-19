@@ -42,7 +42,7 @@ def get_image_asset_url(image_query):
             return result_asset.public_url   
 
 def post_shopify_blog_article(): 
-    last_posted_datetime = firebase_storage_instance.get_last_posted_datetime(PostingPlatform.SHOPIFY)
+    last_posted_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
     print(f'SH last posted time: {last_posted_datetime}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)

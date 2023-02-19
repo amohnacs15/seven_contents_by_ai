@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 '''
 def is_current_posting_time_within_window( scheduled_time ):
     current_time = datetime.now()
-    print(f'IG current time :{current_time}')
+    print(f'current time :{current_time}')
     
     lower_bound = scheduled_time - timedelta(minutes=5)
     upper_bound = scheduled_time + timedelta(minutes=5)

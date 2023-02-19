@@ -7,6 +7,7 @@ from enum import Enum
 import json
 import utility.scheduler as scheduler
 import datetime
+import constants
 
 class PostingPlatform(Enum):
         FACEBOOK = 'facebook'
@@ -18,6 +19,7 @@ class PostingPlatform(Enum):
 class FirebaseStorage():
     # Constants
     POSTS_COLLECTION = "posts"
+    POSTS_COLLECTION_APPEND_PATH = "_posts"
 
     # Initializations    
     firebase = pyrebase.initialize_app(appsecrets.firebase_config)
@@ -35,22 +37,31 @@ class FirebaseStorage():
         return url
 
     @classmethod
-    def update_last_stored_datetime( self, platform, datetime_string ):
-        # Create a document within a collection
-        result = self.firestore.child("last_posted_dates").update({
-            platform.value: datetime_string
-        })
-        return result
+    def get_earliest_scheduled_datetime( self, platform ):
+        scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
+
+        collection = self.firestore.child(scheduled_posts_path).get().each()
+        if (len(collection) > 0):
+            earliest_scheduled_datetime_str = collection[0].key()
+            print(f'earliest_scheduled_datetime_str: {earliest_scheduled_datetime_str}')
+
+            earliest_scheduled_datetime = datetime.datetime.fromisoformat(earliest_scheduled_datetime_str)
+            return earliest_scheduled_datetime
 
     @classmethod
-    def get_last_posted_datetime( self, platform ):
+    def get_latest_scheduled_datetime( self, platform ):
+        scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
 
-        # Retrieve the data from a document
-        document = self.firestore.child("last_posted_dates").child(platform.value)
-        last_posted_datetime_str = document.get().val()
-        print(f'Document data: {platform} : {last_posted_datetime_str}')
-        last_posted_datetime = datetime.datetime.fromisoformat(last_posted_datetime_str)
-        return last_posted_datetime
+        collection = self.firestore.child(scheduled_posts_path).get().each()
+        if (len(collection) > 0):
+            latest_scheduled_datetime_str = collection[len(collection) - 1].key()
+            print(f'latest_scheduled_datetime_str: {latest_scheduled_datetime_str}')
+
+            latest_scheduled_datetime = datetime.datetime.fromisoformat(latest_scheduled_datetime_str)
+            return latest_scheduled_datetime
+        else:
+            print('something went wrong with get_latest_scheduled_datetime( self, platform )')  
+            return ''  
 
     '''
         Get the actual post that we stored earlier in firebase document/JSON format
@@ -77,19 +88,27 @@ class FirebaseStorage():
                     return document_json
 
     def upload_scheduled_post( self, platform, payload ):
-        last_posted_time = self.get_last_posted_datetime(platform)
+        last_posted_time = self.get_latest_scheduled_datetime(platform)
         assert last_posted_time != ''
 
         future_publish_date = scheduler.get_best_posting_time(platform, last_posted_time)
-        update_success = self.update_last_stored_datetime( platform, future_publish_date )
-        print(f'update_success {update_success}')
 
         specific_collection = platform.value + "_" + self.POSTS_COLLECTION
-        result = self.firestore.child(specific_collection).set({
+        result = self.firestore.child(specific_collection).update({
             future_publish_date: payload
         })
-        print('firebase upload result')
-        print(result)
+        print(f'firebase upload result\n{result}')
         return result
 
+    def delete_post( self, platform, datetime_key ):
+        scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
+        result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
+        print('\n')
+        print(self.firestore.child(scheduled_posts_path).child(datetime_key).get())
+        print(self.firestore.child(scheduled_posts_path).child(datetime_key).get().key())
+        print(self.firestore.child(scheduled_posts_path).child(datetime_key).get())
+        print('\n')
+        return result
+
+#static instances
 firebase_storage_instance = FirebaseStorage()

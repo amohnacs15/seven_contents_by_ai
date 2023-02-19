@@ -90,8 +90,6 @@ def get_best_posting_time(
     posting_platform,
     last_posted_time
 ):
-    print('last_posting_time')
-    print(last_posted_time)
     if (posting_platform == firebase_storage.PostingPlatform.FACEBOOK):
         times_array = facebook_times_array
     elif (posting_platform == firebase_storage.PostingPlatform.YOUTUBE):
