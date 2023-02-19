@@ -112,18 +112,18 @@ def publish_ig_media( mediaObjectId, params ) :
 
 """
 def post_ig_media_post():
-    last_posted_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
-    print(f' FB last posted time: {last_posted_datetime}')
+    earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
+    print(f' FB last posted time: {earliest_scheduled_datetime}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
 
     if (ready_to_post):
-        last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-        print(f'IG last posted time iso {last_posted_time_iso}')
+        earliest_posted_time_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        print(f'IG last posted time iso {earliest_posted_time_iso}')
 
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.INSTAGRAM, 
-            last_posted_time_iso
+            earliest_posted_time_iso
         )
         
         post_params_json = json.loads(post_params_json)

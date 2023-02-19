@@ -16,20 +16,19 @@ Also, prints status of uploading the payload.
 
 @returns: nothing
 '''
-def post_fb_image_post():
-    
-    last_posted_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.FACEBOOK)
-    print(f' FB last posted time: {last_posted_datetime}')
+def post_fb_image():
+    earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.FACEBOOK)
+    print(f' FB last posted time: {earliest_scheduled_datetime}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
     
-    last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-    print(f'last posted time iso {last_posted_time_iso}')
+    earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+    print(f'last posted time iso {earliest_scheduled_iso}')
     
     if (ready_to_post):
         post_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.FACEBOOK, 
-            last_posted_time_iso
+            earliest_scheduled_iso
         )
         post_json_object = json.loads(post_json)
         

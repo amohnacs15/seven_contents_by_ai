@@ -42,19 +42,19 @@ def get_image_asset_url(image_query):
             return result_asset.public_url   
 
 def post_shopify_blog_article(): 
-    last_posted_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
-    print(f'SH last posted time: {last_posted_datetime}')
+    earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
+    print(f'SH last posted time: {earliest_scheduled_datetime}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
 
     if (ready_to_post):
     # if (True):
-        last_posted_time_iso = last_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-        print(f'SH last posted time iso {last_posted_time_iso}')
+        earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        print(f'SH last posted time iso {earliest_scheduled_iso}')
 
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.SHOPIFY, 
-            last_posted_time_iso
+            earliest_scheduled_iso
         )
         post_params = json.loads(post_params_json)
 

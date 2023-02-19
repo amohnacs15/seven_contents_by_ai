@@ -54,13 +54,7 @@ if __name__ == '__main__':
     print("\n")
 
     # process_video_download(youtube_url)
-    # gpt.prompt_to_file(
-    #     type='tweestorm',
-    #     prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
-    #     image_query_term=content_description,
-    #     upload_func=tweet_repo.schedule_tweets
-    # )
-    tweet_repo.schedule_tweets('sample tweet', 'content description')
+    
  
  # preliminary input completed   
     # video_remote_url = create_story_video()
@@ -90,4 +84,10 @@ if __name__ == '__main__':
     #     prompt_source=os.path.join('src', 'outputs', 'shopify_blog_output.txt'),
     #     image_query_term=content_description,
     #     upload_func=shopify_content_repo.schedule_shopify_blog_article
+    # )
+    # gpt.prompt_to_file(
+    #     type='tweestorm',
+    #     prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
+    #     image_query_term=content_description,
+    #     upload_func=tweet_repo.schedule_tweets
     # )

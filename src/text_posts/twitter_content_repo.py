@@ -21,17 +21,16 @@ def initialize_tweepy():
         print("Error during Tweepy authentication") 
     return api    
 
-def post_tweets():
+def post_tweet():
     tweepy_api = initialize_tweepy()
 
-    # get from firebase
     earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
     print(f'TW last posted time: {earliest_scheduled_datetime}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
 
-    # if (ready_to_post):
-    if (True):
+    if (ready_to_post):
+    # if (True):
         earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         print(f'TW last posted time iso {earliest_scheduled_iso}')
 
@@ -56,7 +55,6 @@ def post_tweets():
 def schedule_tweets( tweet, image_query ):
     file_path = os.path.join('src', 'outputs', 'tweetstorm_output.txt')
     
-    # Using readlines()
     tweetFile = open(file_path, 'r', encoding="utf8")
     tweets = tweetFile.readlines()
 

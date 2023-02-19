@@ -19,11 +19,10 @@ if __name__ == '__main__':
     # post('Shopify', shopify_content_repo.post_shopify_blog_article())
     # post('Facebook', fb_content_repo.post_fb_image_post())
     # post('Instagram', ig_content_repo.post_ig_media_post())
-    post('Twitter', twitter_content_repo.post_tweets())
+    # post('Twitter', twitter_content_repo.post_tweet())
 
     # post_youtube()
 
-    # post_twitter()
     # post_medium()
 
 
