@@ -23,24 +23,19 @@ dbx = dropbox_upload.initialize_dropbox()
 shopify_content_repo.initialize_shopify()     
 
 # Functionality
-def process_video_download(youtube_url):
+def process_initial_video_download(youtube_url):
     filename = video_downloader.save_to_mp3(youtube_url)
     transcriptname = gpt.mp3_to_transcript(filename)
     gpt.transcript_to_summary(transcriptname, filename) 
 
-def create_story_video():
+def create_story_video_url():
     file_path = os.path.join("src", "input_prompts", "story.txt")
     gpt.prompt_to_file(file_path, 'story', create_story_and_scenes)
     video_remote_url = video_editor.edit_movie_for_remote_url()
     return video_remote_url
 
-def upload_youtube_video( url_path ):    
-    generated_movie_download_local_path = video_downloader.save_to_video(url_path)
-    youtube_content_repo.upload_video_to_youtube(generated_movie_download_local_path)
-
-# Script
+# Begin the running of our application
 if __name__ == '__main__':
-    # Begin the running of our application
     parser = argparse.ArgumentParser()
     parser.add_argument("-url", "--parse_url", help="Youtube video to parse")
     parser.add_argument("-content-desc", "--content_desc", help="query term to be used when generating images and video")
@@ -53,18 +48,20 @@ if __name__ == '__main__':
     print("I will be wealthy...")
     print("\n")
 
-    # process_video_download(youtube_url)
+    process_initial_video_download(youtube_url)
     
- 
  # preliminary input completed   
-    # video_remote_url = create_story_video()
-    # upload_youtube_video(video_remote_url)
-    # file_path = os.path.join("src", "outputs", "instagram_output.txt")
-    # gpt.prompt_to_file(summary_output_file, 'instagram_video', video_remote_url, ig_content_repo.schedule_ig_video_post)
+    video_remote_url = create_story_video_url()
+    youtube_content_repo.schedule_youtube_video(video_remote_url)
 
-# Stalled for remote upload to Dropbox
+# Stalled 
+    # upload these to dropbox
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/email.txt', "email")
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/linkedin.txt', "linkedin")
+    
+    # instagram video just needs a time and a place
+    # file_path = os.path.join("src", "outputs", "instagram_output.txt")
+    # gpt.prompt_to_file(summary_output_file, 'instagram_video', video_remote_url, ig_content_repo.schedule_ig_video_post)
 
 # completely done and ready to be scheduled
     # gpt.prompt_to_file(

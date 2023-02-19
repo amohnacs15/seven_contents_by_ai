@@ -9,7 +9,7 @@ import appsecrets as appsecrets
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
-def create_story_and_scenes( filename, story ):
+def create_story_and_scenes( story, media_url ):
 
     # turn story into scenes
     file_path = os.path.join("src", "input_prompts", "scenes.txt")

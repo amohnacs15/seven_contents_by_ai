@@ -2,7 +2,7 @@ import sys
 sys.path.append("../src")
 
 import datetime
-import storage.firebase_storage as firebase_storage
+from storage.firebase_storage import firebase_storage, PostingPlatform
 
 facebook_times_array = [
     '0001-01-01T08:00:00', #8am
@@ -123,40 +123,3 @@ def get_best_posting_time(
     print('tomorrow posting time: ' + str(str_posting_time))
     str_posting_time = str_posting_time.strftime("%Y-%m-%dT%H:%M:%S")
     return str_posting_time      
-
-
-# def get_facebook_posting_datetime_in_epoch():
-#     assert PlatformDateStore.FACEBOOK.value != ''
-
-#     with open(PlatformDateStore.FACEBOOK.value, 'r') as file:
-#         line = file.read()
-#         last_posted_time = datetime.datetime.fromisoformat(line.strip())
-#         print('last posted time: ' + str(last_posted_time))
-#         posting_time = get_best_posting_time(
-#             posting_platform = firebase_storage.PostingPlatform.FACEBOOK,
-#             last_posted_time=last_posted_time, 
-#             file_path= PlatformDateStore.FACEBOOK.value, 
-#             times_array=facebook_times_array
-#         )
-#         epoch_posting_time = int(posting_time.timestamp())
-#         return epoch_posting_time           
-
-def datetime_to_epoch(dt):
-    epoch = datetime.datetime.utcfromtimestamp(0)
-    epoch_int = int((dt - epoch).total_seconds() * 1000)
-    return epoch_int
-
-def get_youtube_posting_datetime():
-    assert PostingPlatform.YOUTUBE.value != ''
-
-    with open(PostingPlatform.YOUTUBE.value, 'r') as file:
-        line = file.read()
-        last_posted_time = datetime.datetime.fromisoformat(line.strip())
-        print('last posted time: ' + str(last_posted_time))
-        posting_time = get_best_posting_time(
-            posting_platform=PostingPlatform.YOUTUBE,
-            last_posted_time=last_posted_time, 
-            file_path=PostingPlatform.YOUTUBE.value,
-            times_array=youtube_times_array
-        )
-        return posting_time     

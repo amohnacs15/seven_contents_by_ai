@@ -25,7 +25,7 @@ def save_to_mp3(url):
         downloader.download(["" + url + ""])
         return downloader.prepare_filename(downloader.extract_info(url, download=False)).replace(".m4a", ".mp3").replace(".webm", ".mp3")
 
-def save_to_video( url ):
+def download_video( url ):
     options = options = {
         'outtmpl': 'src/output_downloads/%(title)s-%(id)s.%(ext)s',
         'format': 'bestvideo/best',
