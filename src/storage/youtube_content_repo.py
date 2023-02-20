@@ -21,9 +21,15 @@ CLIENT_SECRET_FILE = "client_secret_272470980608-16hgrujprvp3738vhakhc03f0naep0t
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 def schedule_youtube_video ( remote_video_url ):  
-    summary = 'outputs/summary_output.txt'
-    title = gpt3.prompt_to_string('input_prompts/youtube_title.txt', summary)
-    description = gpt3.prompt_to_string('input_prompts/youtube_description.txt', summary)
+    summary = os.path.join('src', 'outputs', 'summary_output.txt')
+    title = gpt3.prompt_to_string(
+        os.path.join('src', 'input_prompts', 'youtube_title.txt'),
+        feedin_source_file=summary
+    )
+    description = gpt3.prompt_to_string(
+        prompt_source=os.path.join('src', 'input_prompts', 'youtube_description.txt'),
+        feedin_source_file=summary
+    )
 
     payload = dict()
     payload['title'] = title
@@ -34,6 +40,7 @@ def schedule_youtube_video ( remote_video_url ):
         PostingPlatform.YOUTUBE,
         payload
     )
+    return result
 
 def get_youtube_credentials():
     # Disable OAuthlib's HTTPS verification when running locally.
@@ -59,7 +66,9 @@ def get_youtube_credentials():
     print('\nYoutube authentication complete\n')
     return credentials
 
-'''
+
+def post_upload_video_to_youtube():
+    '''
     # Sample Python code for youtube.videos.insert
     # NOTES:
     # 1. This sample code uploads a file and can't be executed via this interface.
@@ -71,8 +80,7 @@ def get_youtube_credentials():
     #    transmission failure. To learn more about resumable uploads, see:
     #    https://developers.google.com/api-client-library/python/guide/media_upload
 
-'''
-def post_upload_video_to_youtube():
+    '''
     earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.YOUTUBE)
     print(f'YT last posted time: {earliest_scheduled_datetime}')
     
@@ -116,4 +124,3 @@ def post_upload_video_to_youtube():
         )
         response = request.execute()
         return response
-   

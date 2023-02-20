@@ -23,16 +23,22 @@ dbx = dropbox_upload.initialize_dropbox()
 shopify_content_repo.initialize_shopify()     
 
 # Functionality
-def process_initial_video_download(youtube_url):
+def process_initial_video_download_transcript(youtube_url):
     filename = video_downloader.save_to_mp3(youtube_url)
     transcriptname = gpt.mp3_to_transcript(filename)
     gpt.transcript_to_summary(transcriptname, filename) 
 
-def create_story_video_url():
+def schedule_video_story():
     file_path = os.path.join("src", "input_prompts", "story.txt")
-    gpt.prompt_to_file(file_path, 'story', create_story_and_scenes)
+    gpt.prompt_to_file(
+        prompt_source=file_path, 
+        type='story', 
+        image_query_term='old',
+        upload_func=create_story_and_scenes
+    )
     video_remote_url = video_editor.edit_movie_for_remote_url()
-    return video_remote_url
+    result = youtube_content_repo.schedule_youtube_video(video_remote_url)
+    print(f'youtube schedule result\n\n{result}')
 
 # Begin the running of our application
 if __name__ == '__main__':
@@ -48,18 +54,18 @@ if __name__ == '__main__':
     print("I will be wealthy...")
     print("\n")
 
-    process_initial_video_download(youtube_url)
+    # put our post calls here
     
- # preliminary input completed   
-    video_remote_url = create_story_video_url()
-    youtube_content_repo.schedule_youtube_video(video_remote_url)
+    # begin our block for long running creation
+    # process_initial_video_download_transcript(youtube_url)
+    schedule_video_story()
 
 # Stalled 
     # upload these to dropbox
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/email.txt', "email")
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/linkedin.txt', "linkedin")
     
-    # instagram video just needs a time and a place
+    # v2 instagram video just needs a time and a place
     # file_path = os.path.join("src", "outputs", "instagram_output.txt")
     # gpt.prompt_to_file(summary_output_file, 'instagram_video', video_remote_url, ig_content_repo.schedule_ig_video_post)
 

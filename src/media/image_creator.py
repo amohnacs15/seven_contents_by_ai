@@ -30,7 +30,6 @@ def get_unsplash_image_url( search_query ):
 
 
 def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = constants.VIDEO_IMAGE_HEIGHT):
-    print('begin image processing')
     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
     model = api.models.get("tstramer/midjourney-diffusion")
     version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")
@@ -72,5 +71,6 @@ def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = co
         output = version.predict(**inputs)
         print(output[0])
         return output[0]
-    except:
+    except Exception as e:
+        print(f'image processing failed: {e}')
         return 'https://replicate.delivery/pbxt/YkWafGlPx70qIylnrCQvnNCPfseNNMHru9UWmVrQzc6Lw55gA/out-0.png'    

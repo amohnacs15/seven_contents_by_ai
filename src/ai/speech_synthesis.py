@@ -1,9 +1,10 @@
 import sys
+import os
 sys.path.append("../src")
 
 import azure.cognitiveservices.speech as speechsdk
 import appsecrets as appsecrets
-import storage.firebase_storage as firebase
+from storage.firebase_storage import firebase_storage_instance
 import audioread
 
 def text_to_speech( text ):
@@ -11,7 +12,7 @@ def text_to_speech( text ):
     child_remote_path = subtext_title + '.mp3'
     full_remote_path = 'ai_content_machine/' + child_remote_path
 
-    full_local_path = 'src/output_downloads/'+child_remote_path
+    full_local_path=os.path.join('src', 'output_downloads', child_remote_path)
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
     speech_config = speechsdk.SpeechConfig(
         subscription = appsecrets.AZURE_SUBSCRIPTION_KEY, 
@@ -26,18 +27,20 @@ def text_to_speech( text ):
     
     if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         print("Speech synthesized!")
-        firebase.upload_mp3(
+        firebase_storage_instance.upload_mp3(
             remote_storage_path = full_remote_path,
             local_path = full_local_path
-        )
+        ) 
         audio = audioread.audio_open(full_local_path)
         return { 
             "speech_duration": audio.duration,
             "speech_remote_path": full_remote_path
         }
     elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
+
         cancellation_details = speech_synthesis_result.cancellation_details
         print("Speech synthesis canceled: {}".format(cancellation_details.reason))
+
         if cancellation_details.reason == speechsdk.CancellationReason.Error:
             if cancellation_details.error_details:
                 print("Error details: {}".format(cancellation_details.error_details))

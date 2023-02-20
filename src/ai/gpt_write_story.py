@@ -10,51 +10,53 @@ import appsecrets as appsecrets
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
 def create_story_and_scenes( story, media_url ):
+    print(f'\nstory:\n{story}\n')
 
     # turn story into scenes
     file_path = os.path.join("src", "input_prompts", "scenes.txt")
     storyscene = utils.open_file(file_path).replace('<<STORY>>', story)
     gpt_story_scene = gpt3_story_scene(storyscene)
-    
+    print(f'\story scenes:\n{gpt_story_scene}\n')
     # Save each scene in its own file
-    pathfolder = "output_story_scenes"
-    utils.save_file(pathfolder + '/storyscene.txt', gpt_story_scene)
-    split_story_into_scenes(pathfolder)
+    story_scene_path=os.path.join('src', 'output_story_scenes', 'storyscene.txt')
+    utils.save_file(story_scene_path, gpt_story_scene)
+    split_story_into_scenes(story_scene_path)
 
-    scenes = [utils.open_file(f'{pathfolder}/scene1.txt'),
-              utils.open_file(f'{pathfolder}/scene2.txt'),
-              utils.open_file(f'{pathfolder}/scene3.txt'),
-              utils.open_file(f'{pathfolder}/scene4.txt'),
-              utils.open_file(f'{pathfolder}/scene5.txt'),
-              utils.open_file(f'{pathfolder}/scene6.txt'),
-              utils.open_file(f'{pathfolder}/scene7.txt'),
-              utils.open_file(f'{pathfolder}/scene8.txt'),
-              utils.open_file(f'{pathfolder}/scene9.txt'),
-              utils.open_file(f'{pathfolder}/scene10.txt')]
+    scenes = [utils.open_file(os.path.join('src', 'output_story_scenes', 'scene1.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene2.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene3.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene4.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene5.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene6.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene7.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene8.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene9.txt')),
+              utils.open_file(os.path.join('src', 'output_story_scenes', 'scene10.txt'))]
     
     # Turn our scenes into AI prompts
     count = 0
-    filename = "/mjv4_output.txt"
-    utils.save_file(pathfolder + filename, '')
+    mjv4_output_path=os.path.join('src', 'output_story_scenes', "mjv4_output.txt")
+    utils.save_file(mjv4_output_path, '')
     for scene in scenes:
         count += 1    
         file_path = os.path.join("src", "input_prompts", "mjv4prompts.txt")
         mjv4 = utils.open_file(file_path).replace('<<SCENE>>', scene)
         desc = gpt3_story_scene(mjv4)
 
-        print(desc)
+        print(f'\nstory scene one at a time:\n{desc}\n')
 
         # and write to the same file
-        current_file = open(pathfolder + filename, 'a')
+        current_file = open(mjv4_output_path, 'a')
         current_file.write('\n' + desc)
         current_file.close()
 
         if count > 10:
-            return pathfolder+filename
+            return file_path
 
-def split_story_into_scenes(folder_path):
+def split_story_into_scenes(story_file_path):
   # Open the story file
-  with open(f"{folder_path}/storyscene.txt", "r", encoding='UTF-8') as story_file:
+  folder_path=os.path.join('src', 'output_story_scenes')
+  with open(story_file_path, "r", encoding='UTF-8') as story_file:
     # Read the entire file into a single string
     story = story_file.read()
 
@@ -65,7 +67,8 @@ def split_story_into_scenes(folder_path):
   for i, scene in enumerate(scenes):
     # Write each scene to a separate file
     if (i > 0):
-        with open(f"{folder_path}/scene{i}.txt", "w", encoding='UTF-8') as scene_file:
+        scene_path=os.path.join(folder_path, f'scene{i}.txt')
+        with open(scene_path, "w", encoding='UTF-8') as scene_file:
             scene_file.write(scene)
         
 def gpt3_story_scene(

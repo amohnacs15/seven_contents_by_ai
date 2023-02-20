@@ -40,9 +40,9 @@ def mp3_to_transcript(mp3_filename):
     model = whisper.load_model("medium")
     result = model.transcribe(sound, fp16=False)
     yttrans = (result['text'])
-    # print(yttrans)
     result_path = mp3_filename + '_transcript.txt'
     utils.save_file(result_path, yttrans)
+    print(f'saved mp3 transcript: {yttrans}')
     return result_path
 
 def transcript_to_summary(transcriptname, filename):
@@ -61,21 +61,22 @@ def transcript_to_summary(transcriptname, filename):
     file_path_output = os.path.join("src", "outputs", "summary_output.txt")    
     utils.save_file(file_path_output, '\n\n'.join(result))
 
-"""Convert a single file of language to another using chat GPT and upload to dropbox
-        
-    Args:
-        feedin_source (str): The path to the file.
-        prompt_source (str): The path for the GPT prompt.
-        type (str): simple categorization to help with naming
-        dropbox_file_path (str): The path to the file in the Dropbox app directory.
-
-    Example:
-        dropbox_upload_file('.', 'test.csv', '/stuff/test.csv')
-
-    Returns: 
-        Nothing
-"""
 def prompt_to_file( prompt_source, type, image_query_term, upload_func ):
+    """
+    Convert a single file of language to another using chat GPT and upload to dropbox
+        
+        Args:
+            feedin_source (str): The path to the file.
+            prompt_source (str): The path for the GPT prompt.
+            type (str): simple categorization to help with naming
+            dropbox_file_path (str): The path to the file in the Dropbox app directory.
+
+        Example:
+            dropbox_upload_file('.', 'test.csv', '/stuff/test.csv')
+
+        Returns: 
+            Nothing
+    """
     print(f'gpt status: processing {type}')
 
     feedin_source_file = os.path.join("src", "outputs", "summary_output.txt")

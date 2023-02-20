@@ -7,7 +7,7 @@ import json
 import appsecrets as appsecrets
 import utility.utils as utils
 import media.image_creator as image_creator
-import storage.firebase_storage as firebase
+from storage.firebase_storage import firebase_storage_instance
 import ai.speech_synthesis as speech_synthesis
 import time
 import constants
@@ -42,24 +42,24 @@ def get_edited_movie_url( uploaded_project_id ):
     movie_url = get_response_movie_url(response)
     return movie_url
 
-'''
-Send the request to get create our movie programmatically.
-
-WARNING: This influences our quota
-
-We pull the data from files.  To create our video scenes.
-Then we poll the get request until the video is ready, giving us the url.
-
-@returns: remote URL for our video
-'''
 def edit_movie_for_remote_url():
+    '''
+    Send the request to get create our movie programmatically.
+
+    WARNING: This influences our quota
+
+    We pull the data from files.  To create our video scenes.
+    Then we poll the get request until the video is ready, giving us the url.
+
+    @returns: remote URL for our video
+    '''
+    # setting up the request
     post_headers = {
         'x-api-key': appsecrets.JSON_TO_VIDEO_API_KEY
     }
 
     # preparing the pieces
     scene_images = get_scene_images_array()
-    # scene_images = debug_image_array
     file_path = os.path.join("src", "outputs", "story_output.txt")
     story_text = utils.open_file(file_path)
     speech_bundle = speech_synthesis.text_to_speech(story_text)
@@ -86,7 +86,7 @@ def edit_movie_for_remote_url():
         return movie_url
     else:
         print('error processing project id')
-        return ''    
+        return ''
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
 '''
@@ -97,13 +97,16 @@ WARNING: This procedure costs money.  Use a dummy list where possible.
 @returns: array of image urls
 '''
 def get_scene_images_array():
+    print('get images array')
     images = []
 
     file_path = os.path.join("src", "output_story_scenes", "mjv4_output.txt")
     promptfile = open(file_path, 'r')
     prompts = promptfile.readlines()
+    print(f'\npromptfile\n {promptfile}\n')
 
     for prompt in prompts:
+        print(f'prompt: {prompt}')
         image = image_creator.get_ai_image(prompt)
         images.append(image)
 
@@ -116,30 +119,41 @@ Transitions, inclusions of audio, and quality are hard-coded.
 @returns: json formatted string
 '''
 def create_video_json( image_array, mp3_duration, mp3_remote_path ):
-    scene_duration = mp3_duration / len(image_array)
-    mp3_ref_url = firebase.get_url(mp3_remote_path)
+    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images')
+    if (isinstance(mp3_duration, str)):
+        return "error: mp3_duration is not a number"
 
-    # scene_comments = get_scene_comment_array()
+    scene_duration = mp3_duration / len(image_array)
+    mp3_ref_url = firebase_storage_instance.get_url(mp3_remote_path)
+
+    scene_comments = get_scene_comment_array()
+
+    print('scene comments')
+    print(scene_comments)
+    print('\nvs,\n')
+    print(image_array)
 
     video_params = {
-        "resolution": "full-hd",
+        "resolution": "instagram-story",
         "quality": "high",
         "elements": [
             {
                 "type": "audio",
                 "src": mp3_ref_url,
                 "volume": 0.8,
-                "duration": -2,
-                "fade-out": 2
+                "duration": -2
             }
         ],
         "scenes": []
     }
-    print('process image array making movie')
     for index in range(len(image_array)):
+        if (index < len(scene_comments)): 
+            scene_comment = scene_comments[index] 
+        else: 
+            scene_comment = ''
         video_params['scenes'].append(
         {
-            'comment': "placeholder comment",
+            'comment': scene_comment,
             "transition": {
                 "style": "fade",
                 "duration": 1.5
@@ -148,11 +162,7 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
                 {
                     "type": "image",
                     "src": image_array[index],
-                    "duration": scene_duration,
-                    "scale": {
-                        "width": constants.VIDEO_IMAGE_WIDTH,
-                        "height": constants.VIDEO_IMAGE_HEIGHT
-                    }
+                    "duration": scene_duration
                 }
             ] 
         }
@@ -166,18 +176,18 @@ Simply reads from our file system to get the description of scenes created by Ch
 @returns: array of strings
 '''
 def get_scene_comment_array():
-    pathfolder = "output_story_scenes"
+    folder_path = os.path.join("src", "output_story_scenes")
     return [
-        utils.open_file(f'{pathfolder}/scene1.txt'),
-        utils.open_file(f'{pathfolder}/scene2.txt'),
-        utils.open_file(f'{pathfolder}/scene3.txt'),
-        utils.open_file(f'{pathfolder}/scene4.txt'),
-        utils.open_file(f'{pathfolder}/scene5.txt'),
-        utils.open_file(f'{pathfolder}/scene6.txt'),
-        utils.open_file(f'{pathfolder}/scene7.txt'),
-        utils.open_file(f'{pathfolder}/scene8.txt'),
-        utils.open_file(f'{pathfolder}/scene9.txt'),
-        utils.open_file(f'{pathfolder}/scene10.txt')
+        utils.open_file(os.path.join(folder_path, 'scene1.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene2.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene3.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene4.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene5.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene6.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene7.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene8.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene9.txt')),
+        utils.open_file(os.path.join(folder_path, 'scene10.txt'))
     ]
 
 
@@ -311,17 +321,3 @@ example_video = {
         }
     ]
 }    
-
-debug_image_array = [
-    'https://replicate.delivery/pbxt/WrtDmWw5PxbVJReeVFUm9tpH7e0krMO6gYsmfAaD394WK0zBB/out-0.png',
-'https://replicate.delivery/pbxt/HaZnj2LLsGJSIldnJM14zW0huQehlCRkHoA0CaNPlrfBD9cQA/out-0.png',
-'https://replicate.delivery/pbxt/mCmFeIWNs0waIKYDlUyxHXwcS5Xntnb2aS7LbQEnyTHvhecQA/out-0.png',
-'https://replicate.delivery/pbxt/v7y3iIxJyxodKli51JbirWB1EiFf4hgtKBDa4qcyuvu9hecQA/out-0.png',
-'https://replicate.delivery/pbxt/TyUDoj0MBhoCCZxHfZFAjn58kOz4LkQVioxeJFg2T5yZE9cQA/out-0.png',
-'https://replicate.delivery/pbxt/FXfpe8snGdv8806vUqzlv1dVFW3TXIvBPEkUbFM8cB11E9cQA/out-0.png',
-'https://replicate.delivery/pbxt/ub8mc64FKFboB9Jk8R0t2kLnFPp0soQRlFZuAVdO84sURPHE/out-0.png',
-'https://replicate.delivery/pbxt/019BYlT3CHbnPFlTGcbURpILOwUfBiOfcBOQlIPukGZvF9cQA/out-0.png',
-'https://replicate.delivery/pbxt/XWuuGzTPBm56A5ffTennSuyssbgMQmv32PFA3gfl3ugsY0zBB/out-0.png',
-'https://replicate.delivery/pbxt/PYkMeED09pwqJaA2PGlQIHRogbjglF9Ql8GL6Q1UFS4UjecQA/out-0.png',
-'https://replicate.delivery/pbxt/0kPXCfJICiSUaSdaCiXbja1IWaNQBSXYSnMdtKwpiYCjjecQA/out-0.png'
-]
