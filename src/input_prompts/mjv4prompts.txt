@@ -1,8 +1,5 @@
-Imagine and write the perfect compressed description with action, surroundings, adjectives and nouns from the following scene:
+Imagine and write the perfect phrase to describe an image that represents the following scene:
 
-Scene 1:
+<<SCENE>>
 
-The humid air of the living was filled with the sound of cookin and the rustle of leaves in the breeze. Sunlight streamed down through the window and illuminated the narrow path that Jake and Eve had worn into the carpet. They made their way down the sidewalk outside and into a small clearing, feeling the dampness of the grass on their shoes and clothes. The clearing was peaceful, as if untouched by modern society. As they looked around, what had first appeared as an unremarkable path turned out to lead to a cafe.
-
-
-IMAGINE AND WRITE THE PERFECT COMPRESSED DESCRIPTION WITH ACTION, SURROUNDINGS, ADJECTIVES AND NOUNS FROM THE SCENE ABOVE:
+IMAGINE AND WRITE THE PERFECT PHRASE TO DESCRIBE AN IMAGE THAT REPRESENTS FROM THE SCENE ABOVE:

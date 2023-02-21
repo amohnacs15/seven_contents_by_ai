@@ -11,7 +11,8 @@ import constants
 def get_unsplash_image_url( search_query ):
     url = 'https://api.unsplash.com/search/photos'
     params = {
-        'query': search_query
+        'query': search_query,
+        'orientation': 'portrait'
     }
     headers = {
         'Accept-Version': "v1",

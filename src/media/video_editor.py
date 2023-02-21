@@ -107,7 +107,7 @@ def get_scene_images_array():
 
     for prompt in prompts:
         print(f'prompt: {prompt}')
-        image = image_creator.get_ai_image(prompt)
+        image = image_creator.get_unsplash_image_url(prompt)
         images.append(image)
 
     return images    
@@ -128,11 +128,6 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
 
     scene_comments = get_scene_comment_array()
 
-    print('scene comments')
-    print(scene_comments)
-    print('\nvs,\n')
-    print(image_array)
-
     video_params = {
         "resolution": "instagram-story",
         "quality": "high",
@@ -146,14 +141,14 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
         ],
         "scenes": []
     }
-    for index in range(len(image_array)):
-        if (index < len(scene_comments)): 
-            scene_comment = scene_comments[index] 
+    for index in range(len(scene_comments)):
+        if (index < len(image_array)): 
+            image = image_array[index] 
         else: 
-            scene_comment = ''
+            image = ''
         video_params['scenes'].append(
         {
-            'comment': scene_comment,
+            'comment': scene_comments[index],
             "transition": {
                 "style": "fade",
                 "duration": 1.5
@@ -161,8 +156,11 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
             "elements": [
                 {
                     "type": "image",
-                    "src": image_array[index],
-                    "duration": scene_duration
+                    "src": image,
+                    "duration": scene_duration,
+                    "scale": {
+                        "height": 1080
+                    }
                 }
             ] 
         }

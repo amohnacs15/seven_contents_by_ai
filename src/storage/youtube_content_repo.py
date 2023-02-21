@@ -11,6 +11,7 @@ import ai.gpt as gpt3
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import media.video_downloader as video_downloader
 import utility.time_utils as time_utils
+import utility.utils as utils
 import json
 
 # Build the YouTube API client
@@ -48,21 +49,22 @@ def get_youtube_credentials():
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     # Get credentials and create an API client
+    # Get the path to the parent directory
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    file_path = os.path.join(parent_dir, CLIENT_SECRET_FILE)
     flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
-        CLIENT_SECRET_FILE, 
+        file_path, 
         SCOPES
     )
 
     # get cached values
-    with open("token.pickle", "rb") as input_file:
-        credentials = pickle.load(input_file)
+    token_file = os.path.join('src', 'yt_access_token.txt')
+    token = utils.open_file(token_file)
 
-    if (credentials == ''):
+    if (token == ''):
         credentials = flow.run_local_server()
-            
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(credentials, token)
-            
+        utils.save_file(token_file, credentials.token)
+                
     print('\nYoutube authentication complete\n')
     return credentials
 
@@ -97,9 +99,16 @@ def post_upload_video_to_youtube():
         )
         post_params = json.loads(post_params_json)
 
-        upload_file_path = video_downloader.download_video(
-            post_params['remote_video_url']
-        )
+        print('\npost_params: ', post_params, '\n')
+
+        try:
+            upload_file_path = video_downloader.download_video(
+                post_params['remote_video_url']
+            )
+        except Exception as e:
+            print(f'Error downloading video: {e}')
+            return
+    
         youtube = googleapiclient.discovery.build(
             API_SERVICE_NAME, 
             API_VERSION, 

@@ -47,7 +47,10 @@ def create_story_and_scenes( story, media_url ):
 
         # and write to the same file
         current_file = open(mjv4_output_path, 'a')
-        current_file.write('\n' + desc)
+        if (count == 1):
+            current_file.write(desc)
+        else:
+            current_file.write('\n' + desc)
         current_file.close()
 
         if count > 10:
