@@ -92,7 +92,7 @@ def get_fb_page_access_token():
 
         response = make_api_call( url=post_url, endpointParams=params, type='GET' )
         params['page_access_token'] = response['json_data']['access_token']
-        utils.save_file("fb_access_token.txt", params['page_access_token'])
+        utils.save_file(token_path, params['page_access_token'])
 
     return params
 

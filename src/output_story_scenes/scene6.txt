@@ -1,6 +1,3 @@
-: The post office 
-Environment: The post office is filled with people, the sound of chatter filling the air. The walls are lined with a variety of mailboxes and the floor is covered with a thick carpet. There are lines of people waiting to be helped, and the smell of freshly-printed stamps.
+ 6
+The woman knocks on the door of the first house on the list, and a moment later she is greeted by an elderly woman. The woman invites her inside, gesturing for her to take a seat in the living room. The woman notices that the room is sparsely decorated, with only a few pieces of old furniture and a single plant in the corner.
 
-People: The protagonist is standing in line, quietly observing the people around her. She is wearing a light-blue dress and a white sunhat, her hands clasped in front of her. She is patiently waiting her turn, her eyes scanning the walls as she waits.
-
-7. 

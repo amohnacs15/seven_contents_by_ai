@@ -47,8 +47,8 @@ def post_shopify_blog_article():
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
 
-    if (ready_to_post):
-    # if (True):
+    # if (ready_to_post):
+    if (True):
         earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         print(f'SH last posted time iso {earliest_scheduled_iso}')
 
@@ -85,6 +85,7 @@ def post_shopify_blog_article():
 
 def schedule_shopify_blog_article(blog, image_query):
     bloglines = blog.split()
+    print(f'bloglines: {bloglines}')
     title = text_utils.simplify_H1_header(bloglines[0])
     blog = text_utils.groom_titles(blog)
 

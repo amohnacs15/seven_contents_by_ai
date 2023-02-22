@@ -29,8 +29,8 @@ def post_tweet():
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
 
-    if (ready_to_post):
-    # if (True):
+    # if (ready_to_post):
+    if (True):
         earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         print(f'TW last posted time iso {earliest_scheduled_iso}')
 

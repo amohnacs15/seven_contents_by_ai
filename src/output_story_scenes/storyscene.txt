@@ -1,49 +1,29 @@
-1. Scene: The protagonist's house 
-Environment: The protagonist's house is a cozy single-story home, with a warm and inviting living room. The walls are a light blue and adorned with family photos and hand-crafted art pieces. The wooden floors creak as the protagonist walks across them. In the living room, there's an old, worn couch and an armchair, both covered in a faded floral print. The windows are lined with white curtains and are filled with natural light.
+Scene 1
+The scene begins in a small, run-down office in the middle of an urban neighborhood. The walls are painted a dull gray and the floor is covered in worn-out linoleum tiles. The only light in the room comes from a single window, through which a stream of sunlight pours in, casting a yellowish glow on the room. In the center of the room is a large, wooden desk with a single chair in front of it. Behind the desk sits a middle-aged man in a wrinkled dress shirt, his hands folded as he stares at the floor in deep thought.
 
-People: The protagonist is an elderly woman, with gray hair and a warm, kind face. She is wearing a light-blue cardigan over a white blouse, with a string of pearls around her neck. She is walking across the room slowly, her hands clasped in front of her.
+Scene 2
+The man looks up as the door to the office swings open, revealing a young woman in her mid-20s. She is wearing a bright blue dress and a pair of white sneakers. Her hair is pulled back in a messy bun, and her dark eyes scan the room as she takes in her surroundings. She looks nervously around the room before finally making eye contact with the man behind the desk.
 
-2. Scene: The protagonist's garden 
-Environment: The protagonist's garden is filled with a variety of colorful flowers and plants. The grass is lush and green and a small pond is filled with fish and frogs. The air is filled with the scent of flowers and the sound of birds chirping. There is a wooden bench by the edge of the pond, surrounded by vibrant roses and daisies.
+Scene 3
+The man behind the desk breaks the silence between them, his voice a low rumble. He introduces himself as the owner of the office and informs the woman that he is looking for someone to help him with a project he is working on. He goes on to explain that the project involves gathering data from the neighborhood and that he is willing to pay her a fair wage for her efforts.
 
-People: The protagonist is sitting on the bench, admiring the beauty of her garden. She is wearing a white sunhat and a light blue dress, with a white shawl draped over her shoulders. She is humming softly to herself as she gazes out at the pond, her hands clasped together in her lap.
+Scene 4
+The woman takes a moment to consider the man’s offer before finally agreeing to take on the job. He thanks her and explains that the job will involve going door-to-door to collect data from the people living in the neighborhood. He hands her a stack of papers with instructions and then directs her to the first house on the list.
 
-3. Scene: The neighborhood park 
-Environment: The neighborhood park is a small but vibrant green space, filled with trees, flowers, and benches. The air is filled with the sound of children playing and the scent of freshly-cut grass. There is a small pond in the center of the park, surrounded by a gazebo and picnic tables.
+Scene 5
+The woman steps out of the office and into the neighborhood, squinting as the bright sunlight greets her. She takes in her surroundings, noting the run-down houses and the litter-strewn streets. She begins walking towards the first house on the list, her steps echoing off of the pavement.
 
-People: The protagonist is walking slowly around the park, her hands clasped behind her back. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is silently admiring the beauty of the park, taking in the sights, sounds, and smells.
+Scene 6
+The woman knocks on the door of the first house on the list, and a moment later she is greeted by an elderly woman. The woman invites her inside, gesturing for her to take a seat in the living room. The woman notices that the room is sparsely decorated, with only a few pieces of old furniture and a single plant in the corner.
 
-4. Scene: The grocery store 
-Environment: The grocery store is a bustling shopping center, filled with bright lights and the sound of carts rolling across the floor. Shelves are lined with a variety of food items and products, and the air is filled with the scent of fresh produce.
+Scene 7
+The elderly woman begins to tell the woman about the neighborhood, her voice soft and kind. She speaks of the people who used to live in the area, of the businesses that used to thrive here. As she speaks, the woman takes notes on the papers she was given, writing down the woman’s stories.
 
-People: The protagonist is standing in the produce section, carefully examining the fruits and vegetables. She is wearing a light-blue dress and a white sunhat, her hands clasped in front of her. She is humming softly to herself as she selects the items she needs for her recipes.
+Scene 8
+After a few hours, the woman leaves the house and continues to the next one on the list. As she walks, she takes in her surroundings, noting the changes in the neighborhood over the years. She passes by a park, noting the children playing on the swings and the elderly couple walking hand-in-hand.
 
-5. Scene: The library 
-Environment: The library is an old and stately building, filled with stacks of books and the smell of old paper. The walls are adorned with paintings and photographs, and the floor is covered with a thick carpet. The lights are dim, giving the room a cozy and inviting atmosphere.
+Scene 9
+The woman knocks on the door of the next house, and is greeted by a young couple. They invite her inside, and the woman notices that the house is filled with the couple’s belongings. The walls are adorned with photos of the couple’s trips abroad, and the shelves are filled with books and knick-knacks.
 
-People: The protagonist is sitting on one of the couches, her hands clasped in her lap. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is quietly reading a book, her eyes scanning the pages as she turns them.
-
-6. Scene: The post office 
-Environment: The post office is filled with people, the sound of chatter filling the air. The walls are lined with a variety of mailboxes and the floor is covered with a thick carpet. There are lines of people waiting to be helped, and the smell of freshly-printed stamps.
-
-People: The protagonist is standing in line, quietly observing the people around her. She is wearing a light-blue dress and a white sunhat, her hands clasped in front of her. She is patiently waiting her turn, her eyes scanning the walls as she waits.
-
-7. Scene: The cafe 
-Environment: The cafe is a small and cozy space, filled with the smell of freshly-brewed coffee and the sound of conversation. The walls are lined with old books and the floor is covered with a rug. There are a few small tables and chairs scattered around the room, and a counter with a coffee machine.
-
-People: The protagonist is sitting at one of the tables, a cup of coffee in front of her. She is wearing a light-blue dress and a white sunhat, her hands clasped in front of her. She is quietly sipping her coffee, her eyes scanning the room as she takes in the atmosphere.
-
-8. Scene: The park bench 
-Environment: The park bench is nestled in a small grove of trees, surrounded by lush green grass and a variety of flowering plants. The air is filled with the scent of blooming flowers, and birds are chirping in the trees. The bench is made of wood, and is slightly weathered from the elements.
-
-People: The protagonist is sitting on the bench, her hands clasped in her lap. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is quietly admiring the beauty of her surroundings, her eyes scanning the trees and flowers.
-
-9. Scene: The church 
-Environment: The church is an old building, with a high ceiling and large stained-glass windows. The walls are lined with pews, and the floor is covered with a thick carpet. The air is filled with the sound of the choir and the smell of incense.
-
-People: The protagonist is sitting in one of the pews, her hands clasped in her lap. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is listening to the choir and quietly praying, her eyes closed in prayer.
-
-10. Scene: The beach 
-Environment: The beach is a tranquil place, filled with the sound of waves crashing against the shore. The sand is soft and white, and the sun is shining brightly in the sky. The air is filled with the scent of salt and the sound of seagulls.
-
-People: The protagonist is standing at the edge of the shore, her hands clasped in front of her. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is silently admiring the beauty of the ocean, taking in the sights, sounds, and smells.
+Scene 10
+The couple tells the woman about the neighborhood, their voices a mix of enthusiasm and nostalgia. They talk about the changes in the area since they moved in, and the woman takes notes as they speak. After a few hours, the woman thanks them for their time and leaves, her stack of papers filled with stories of the neighborhood.

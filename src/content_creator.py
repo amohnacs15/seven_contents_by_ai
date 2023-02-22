@@ -15,7 +15,6 @@ import meta_graph_api.ig_content_repo as ig_content_repo
 import meta_graph_api.fb_content_repo as fb_content_repo
 import text_posts.shopify_content_repo as shopify_content_repo
 import text_posts.twitter_content_repo as twitter_content_repo
-import ai.speech_synthesis as speech_synthesis
 
 CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
 
@@ -63,61 +62,60 @@ if __name__ == '__main__':
     print("Starting content generation...")
     print("\n")
 
-    speech_synthesis.text_to_speech("The quick brown fox jumps over the lazy dog. The five boxing wizards jump quickly. Jackdaws love my big sphinx of quartz. How vexingly quick daft zebras jump. Bright vixens jump; dozy fowl quack.")
-     
-    # # Iterate through each row of sheet
-    # sh=get_google_sheets()
-    # sheet=sh.worksheet("Sheet1")
-    # cell_list=sheet.get_all_values()
-
-    # for i, row in enumerate(cell_list):
-    #     if (row.count('Scheduled') == 0):
-    #         # Take action on the row
-    #         # For example, print the values of each cell in the row
-    #         print(f"Processing Row {i+1}: {row}")
-    #         youtube_url = row[0]
-    #         content_description = row[1]
-
-    #         # download the video, convert to mp3, and generate a transcript
-    #         process_initial_video_download_transcript(youtube_url)
-
-    #         # begin our block for long running creation
-    #         gpt.prompt_to_file(
-    #             type = 'facebook', 
-    #             prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
-    #             image_query_term = content_description, 
-    #             upload_func = fb_content_repo.schedule_fb_post
-    #         )
-    #         gpt.prompt_to_file(
-    #             type='instagram', 
-    #             prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
-    #             image_query_term=content_description,
-    #             upload_func=ig_content_repo.schedule_ig_image_post
-    #         )
-    #         gpt.prompt_to_file(
-    #             type="shopify_blog", 
-    #             prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
-    #             image_query_term=content_description,
-    #             upload_func=shopify_content_repo.schedule_shopify_blog_article
-    #         )
-    #         gpt.prompt_to_file(
-    #             type='tweetstorm',
-    #             prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
-    #             image_query_term=content_description,
-    #             upload_func=twitter_content_repo.schedule_tweets
-    #         )
-    #         schedule_video_story()
-
-    #         # updated cell is the length of the row + 1
-    #         success_value = 'Scheduled'
-    #         sheet.update_cell(i+1, len(row)+1, success_value)
-    
-    # # put our post calls here
+    # Quickly process our posts
+    # put our post calls here. this will need to be first with the proper implementation
     # post('Shopify', shopify_content_repo.post_shopify_blog_article())
-    # post('Facebook', fb_content_repo.post_fb_image())
-    # post('Instagram', ig_content_repo.post_ig_media_post())
-    # post('Twitter', twitter_content_repo.post_tweet())
-    # post_youtube_video()
+    post('Facebook', fb_content_repo.post_fb_image())
+    post('Instagram', ig_content_repo.post_ig_media_post())
+    post('Twitter', twitter_content_repo.post_tweet())
+    post_youtube_video()
+     
+    # Iterate through each row of sheet
+    sh=get_google_sheets()
+    sheet=sh.worksheet("Sheet1")
+    cell_list=sheet.get_all_values()
+
+    for i, row in enumerate(cell_list):
+        if (row.count('Scheduled') == 0):
+            # Take action on the row
+            # For example, print the values of each cell in the row
+            print(f"Processing Row {i+1}: {row}")
+            youtube_url = row[0]
+            content_description = row[1]
+
+            # download the video, convert to mp3, and generate a transcript
+            process_initial_video_download_transcript(youtube_url)
+
+            # begin our block for long running creation
+            gpt.prompt_to_file(
+                type = 'facebook', 
+                prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
+                image_query_term = content_description, 
+                upload_func = fb_content_repo.schedule_fb_post
+            )
+            gpt.prompt_to_file(
+                type='instagram', 
+                prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
+                image_query_term=content_description,
+                upload_func=ig_content_repo.schedule_ig_image_post
+            )
+            gpt.prompt_to_file(
+                type="shopify_blog", 
+                prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
+                image_query_term=content_description,
+                upload_func=shopify_content_repo.schedule_shopify_blog_article
+            )
+            gpt.prompt_to_file(
+                type='tweetstorm',
+                prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
+                image_query_term=content_description,
+                upload_func=twitter_content_repo.schedule_tweets
+            )
+            schedule_video_story()
+
+            # updated cell is the length of the row + 1
+            success_value = 'Scheduled'
+            sheet.update_cell(i+1, len(row)+1, success_value)
 
 # Stalled 
     # upload these to dropbox
