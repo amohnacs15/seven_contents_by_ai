@@ -4,8 +4,7 @@ import sys
 import os
 sys.path.append("../src")
 
-import argparse
-
+import gspread
 import ai.gpt as gpt
 import storage.dropbox_uploader as dropbox_upload
 from ai.gpt_write_story import create_story_and_scenes
@@ -14,15 +13,26 @@ import media.video_downloader as video_downloader
 import storage.youtube_content_repo as youtube_content_repo
 import meta_graph_api.ig_content_repo as ig_content_repo
 import meta_graph_api.fb_content_repo as fb_content_repo
-import utility.utils as utils
 import text_posts.shopify_content_repo as shopify_content_repo
-import text_posts.twitter_content_repo as tweet_repo
+import text_posts.twitter_content_repo as twitter_content_repo
+import ai.speech_synthesis as speech_synthesis
+
+CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
 
 # Initializations
 dbx = dropbox_upload.initialize_dropbox() 
-shopify_content_repo.initialize_shopify()     
+shopify = shopify_content_repo.initialize_shopify()
 
-# Functionality
+# Posting Functionality
+def post(type, post_fun): 
+    successful_post = post_fun
+    print(f'{type} post processed.  Result: {successful_post}')
+
+def post_youtube_video():    
+    response = youtube_content_repo.post_upload_video_to_youtube()
+    print(response) 
+
+# Scheduling Functionality
 def process_initial_video_download_transcript(youtube_url):
     filename = video_downloader.save_to_mp3(youtube_url)
     transcriptname = gpt.mp3_to_transcript(filename)
@@ -40,25 +50,74 @@ def schedule_video_story():
     result = youtube_content_repo.schedule_youtube_video(video_remote_url)
     print(f'youtube schedule result\n\n{result}')
 
+def get_google_sheets():
+    file_path=os.path.join('src', CLIENT_SECRET_FILE)
+    sa = gspread.service_account(filename=file_path)  
+    sh = sa.open('AI Content Machine')  
+    return sh
+
 # Begin the running of our application
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-url", "--parse_url", help="Youtube video to parse")
-    parser.add_argument("-content-desc", "--content_desc", help="query term to be used when generating images and video")
-    args = parser.parse_args()
-
-    youtube_url = args.parse_url
-    content_description = args.content_desc
 
     print("\n")
-    print("I will be wealthy...")
+    print("Starting content generation...")
     print("\n")
 
-    # put our post calls here
+    speech_synthesis.text_to_speech("The quick brown fox jumps over the lazy dog. The five boxing wizards jump quickly. Jackdaws love my big sphinx of quartz. How vexingly quick daft zebras jump. Bright vixens jump; dozy fowl quack.")
+     
+    # # Iterate through each row of sheet
+    # sh=get_google_sheets()
+    # sheet=sh.worksheet("Sheet1")
+    # cell_list=sheet.get_all_values()
+
+    # for i, row in enumerate(cell_list):
+    #     if (row.count('Scheduled') == 0):
+    #         # Take action on the row
+    #         # For example, print the values of each cell in the row
+    #         print(f"Processing Row {i+1}: {row}")
+    #         youtube_url = row[0]
+    #         content_description = row[1]
+
+    #         # download the video, convert to mp3, and generate a transcript
+    #         process_initial_video_download_transcript(youtube_url)
+
+    #         # begin our block for long running creation
+    #         gpt.prompt_to_file(
+    #             type = 'facebook', 
+    #             prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
+    #             image_query_term = content_description, 
+    #             upload_func = fb_content_repo.schedule_fb_post
+    #         )
+    #         gpt.prompt_to_file(
+    #             type='instagram', 
+    #             prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
+    #             image_query_term=content_description,
+    #             upload_func=ig_content_repo.schedule_ig_image_post
+    #         )
+    #         gpt.prompt_to_file(
+    #             type="shopify_blog", 
+    #             prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
+    #             image_query_term=content_description,
+    #             upload_func=shopify_content_repo.schedule_shopify_blog_article
+    #         )
+    #         gpt.prompt_to_file(
+    #             type='tweetstorm',
+    #             prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
+    #             image_query_term=content_description,
+    #             upload_func=twitter_content_repo.schedule_tweets
+    #         )
+    #         schedule_video_story()
+
+    #         # updated cell is the length of the row + 1
+    #         success_value = 'Scheduled'
+    #         sheet.update_cell(i+1, len(row)+1, success_value)
     
-    # begin our block for long running creation
-    # process_initial_video_download_transcript(youtube_url)
-    schedule_video_story()
+    # # put our post calls here
+    # post('Shopify', shopify_content_repo.post_shopify_blog_article())
+    # post('Facebook', fb_content_repo.post_fb_image())
+    # post('Instagram', ig_content_repo.post_ig_media_post())
+    # post('Twitter', twitter_content_repo.post_tweet())
+    # post_youtube_video()
 
 # Stalled 
     # upload these to dropbox
@@ -67,30 +126,4 @@ if __name__ == '__main__':
     
     # v2 instagram video just needs a time and a place
     # file_path = os.path.join("src", "outputs", "instagram_output.txt")
-    # gpt.prompt_to_file(summary_output_file, 'instagram_video', video_remote_url, ig_content_repo.schedule_ig_video_post)
-
-# completely done and ready to be scheduled
-    # gpt.prompt_to_file(
-    #     type = 'facebook', 
-    #     prompt_source = os.path.join('src', 'outputs', 'facebook_output.txt')
-    #     image_query_term = content_description, 
-    #     upload_func = fb_content_repo.schedule_fb_post
-    # )
-    # gpt.prompt_to_file(
-    #     type='instagram', 
-    #     prompt_source=os.path.join('src', 'outputs', 'instagram_output.txt')
-    #     image_query_term=content_description,
-    #     upload_func=ig_content_repo.schedule_ig_image_post
-    # )
-    # gpt.prompt_to_file(
-    #     type="shopify_blog", 
-    #     prompt_source=os.path.join('src', 'outputs', 'shopify_blog_output.txt'),
-    #     image_query_term=content_description,
-    #     upload_func=shopify_content_repo.schedule_shopify_blog_article
-    # )
-    # gpt.prompt_to_file(
-    #     type='tweestorm',
-    #     prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
-    #     image_query_term=content_description,
-    #     upload_func=tweet_repo.schedule_tweets
-    # )
+    # gpt.prompt_to_file(summary_output_file, 'instagram_video', video_remote_url, ig_content_repo.schedule_ig_video_post)    

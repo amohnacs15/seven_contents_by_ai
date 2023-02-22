@@ -1,3 +1,6 @@
- 8:
-Avery is in a library. The library is large and quiet, with shelves filled with books from floor to ceiling. Avery is sitting at a table, reading a book. She takes her time, savoring the words and thoughts of the author.
+: The park bench 
+Environment: The park bench is nestled in a small grove of trees, surrounded by lush green grass and a variety of flowering plants. The air is filled with the scent of blooming flowers, and birds are chirping in the trees. The bench is made of wood, and is slightly weathered from the elements.
 
+People: The protagonist is sitting on the bench, her hands clasped in her lap. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is quietly admiring the beauty of her surroundings, her eyes scanning the trees and flowers.
+
+9. 

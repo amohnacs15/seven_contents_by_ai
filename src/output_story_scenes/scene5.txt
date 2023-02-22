@@ -1,3 +1,6 @@
- 5:
-Avery is in a dimly lit bar. The walls are covered in old posters and the bar is full of people talking and laughing. Avery takes a seat at the bar and orders a beer. She takes a sip and looks around, taking in the atmosphere of the bar.
+: The library 
+Environment: The library is an old and stately building, filled with stacks of books and the smell of old paper. The walls are adorned with paintings and photographs, and the floor is covered with a thick carpet. The lights are dim, giving the room a cozy and inviting atmosphere.
 
+People: The protagonist is sitting on one of the couches, her hands clasped in her lap. She is wearing a light-blue dress and a white sunhat, her face lit up with a gentle smile. She is quietly reading a book, her eyes scanning the pages as she turns them.
+
+6. 

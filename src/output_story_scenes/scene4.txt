@@ -1,3 +1,6 @@
- 4:
-Avery is walking down a quiet street in the middle of the night. The street is deserted, and the only sound is the occasional car driving by. The streetlights cast a soft glow on the pavement, and Avery feels a chill go down her spine. She hurries to her destination, her heart pounding with anticipation.
+: The grocery store 
+Environment: The grocery store is a bustling shopping center, filled with bright lights and the sound of carts rolling across the floor. Shelves are lined with a variety of food items and products, and the air is filled with the scent of fresh produce.
 
+People: The protagonist is standing in the produce section, carefully examining the fruits and vegetables. She is wearing a light-blue dress and a white sunhat, her hands clasped in front of her. She is humming softly to herself as she selects the items she needs for her recipes.
+
+5. 

@@ -11,7 +11,7 @@ import ai.gpt as gpt3
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import media.video_downloader as video_downloader
 import utility.time_utils as time_utils
-import utility.utils as utils
+import pickle
 import json
 
 # Build the YouTube API client
@@ -58,13 +58,16 @@ def get_youtube_credentials():
     )
 
     # get cached values
-    token_file = os.path.join('src', 'yt_access_token.txt')
-    token = utils.open_file(token_file)
+    token_file = os.path.join('src', 'yt_access_token.pickle')
+    with open(token_file, "rb") as input_file:
+        credentials = pickle.load(input_file)
 
-    if (token == ''):
+    if (credentials == ''):
         credentials = flow.run_local_server()
-        utils.save_file(token_file, credentials.token)
-                
+        
+        with open(token_file, 'wb') as token:
+            pickle.dump(credentials, token)
+                    
     print('\nYoutube authentication complete\n')
     return credentials
 
@@ -132,4 +135,8 @@ def post_upload_video_to_youtube():
             media_body=MediaFileUpload(upload_file_path)
         )
         response = request.execute()
+        firebase_storage_instance.delete_post(
+            PostingPlatform.YOUTUBE, 
+            earliest_scheduled_iso
+        )
         return response

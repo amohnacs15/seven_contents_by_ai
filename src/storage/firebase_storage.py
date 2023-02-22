@@ -27,8 +27,8 @@ class FirebaseStorage():
 
     @classmethod
     def upload_mp3( self, remote_storage_path, local_path ):
-        self.storage.child(remote_storage_path).put(local_path)
-        print(f'successful firebase storage upload {remote_storage_path}')
+        result = self.storage.child(remote_storage_path).put(local_path)
+        print(f'successful firebase storage upload {result}')
 
     @classmethod
     def get_url( self, child_path_to_file ):

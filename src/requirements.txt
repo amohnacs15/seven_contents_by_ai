@@ -23,7 +23,8 @@ toml==0.10.2
 tqdm==4.62.3
 urllib3==1.26.7
 Werkzeug==2.0.2
-youtube_dl==2021.12.17
+# this needs to be updated to the latest version of youtube-dl using github master
+git+https://github.com/ytdl-org/youtube-dl.git@master
 dropbox==11.36.0
 azure-cognitiveservices-speech==1.25.0
 oauthlib==3.2.2 
@@ -34,3 +35,4 @@ audioread==3.0.0
 google-api-python-client==2.77.0
 google-auth-oauthlib==1.0.0
 flask==2.0.2
+gspread==5.7.2

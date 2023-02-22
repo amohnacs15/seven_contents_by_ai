@@ -73,6 +73,10 @@ def post_shopify_blog_article():
             new_article.published = post_params['published']
             result = new_article.save()
             print(f'Shopify blog upload successful {result}')
+            firebase_storage_instance.delete_post(
+                PostingPlatform.SHOPIFY, 
+                earliest_scheduled_iso
+            )
             return result
         else:
             print (new_blog.errors.full_messages())

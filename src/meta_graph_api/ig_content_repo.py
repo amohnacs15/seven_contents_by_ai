@@ -137,6 +137,10 @@ def post_ig_media_post():
         url = params['endpoint_base'] + params['instagram_account_id'] + '/media'
 
         remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST')
+        firebase_storage_instance.delete_post(
+            PostingPlatform.INSTAGRAM, 
+            earliest_scheduled_iso
+        )
         return pretty_publish_ig_media(remote_media_obj, params, publish_ig_media) 
 
 '''

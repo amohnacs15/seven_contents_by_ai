@@ -7,12 +7,11 @@ import requests
 import json
 import constants
 
-
 def get_unsplash_image_url( search_query ):
     url = 'https://api.unsplash.com/search/photos'
     params = {
         'query': search_query,
-        'orientation': 'portrait'
+        'orientation': 'landscape'
     }
     headers = {
         'Accept-Version': "v1",
@@ -25,7 +24,8 @@ def get_unsplash_image_url( search_query ):
     )
     json_content = json.loads( response.content )
     if (json_content['total'] > 0):
-        return json_content['results'][0]['urls']['full']
+        result_url=json_content['results'][0]['urls']['full']
+        return result_url
     else:
         return ''    
 

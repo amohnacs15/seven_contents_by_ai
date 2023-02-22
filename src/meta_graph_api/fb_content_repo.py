@@ -20,7 +20,7 @@ def post_fb_image():
     earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.FACEBOOK)
     print(f' FB last posted time: {earliest_scheduled_datetime}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(last_posted_datetime)
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
     
     earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
     print(f'last posted time iso {earliest_scheduled_iso}')
@@ -37,9 +37,14 @@ def post_fb_image():
         print(post_json_object)
 
         url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
-        return make_api_call( url=url, endpointJson=post_json_object, type='POST' )
+        result =  make_api_call( url=url, endpointJson=post_json_object, type='POST' )
+        firebase_storage_instance.delete_post(
+            PostingPlatform.FACEBOOK, 
+            earliest_scheduled_iso
+         )
+        return result
 
-def schedule_facebook_post( caption, image_query ):
+def schedule_fb_post( caption, image_query ):
     image_url = image_creator.get_unsplash_image_url(image_query)
 
     payload = {

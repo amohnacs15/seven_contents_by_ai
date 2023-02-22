@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append("../src")
 
 from meta_graph_api.meta_definition import make_api_call
@@ -34,7 +35,8 @@ def create_ig_access_token_creds():
 def get_ig_access_creds() :
 
     params = create_ig_access_token_creds()
-    cachedToken = utils.open_file("ig_access_token.txt")
+    token_path=os.path.join('src', 'ig_access_token.txt')
+    cachedToken = utils.open_file(token_path)
 
     if (cachedToken != ''):
         params['access_token'] = cachedToken
@@ -67,7 +69,8 @@ def get_ig_access_creds() :
 
 def get_fb_page_access_token():
 
-    cachedToken = utils.open_file("fb_access_token.txt")
+    token_path=os.path.join('src', 'fb_access_token.txt')
+    cachedToken = utils.open_file(token_path)
 
     if (cachedToken != ''):
         params = dict()
