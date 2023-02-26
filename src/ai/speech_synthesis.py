@@ -2,7 +2,6 @@ import sys
 import os
 sys.path.append("../src")
 
-import azure.cognitiveservices.speech as speechsdk
 import appsecrets as appsecrets
 from storage.firebase_storage import firebase_storage_instance
 import audioread
@@ -13,6 +12,7 @@ import random
 eleven_labs_url = 'https://api.elevenlabs.io/v1'
 
 def parse_error_response( response ):
+    print(response.json())
     if response.status_code == 422:
         error_detail = response.json()["detail"]
         for error in error_detail:

@@ -24,8 +24,9 @@ def get_unsplash_image_url( search_query ):
     )
     json_content = json.loads( response.content )
     if (json_content['total'] > 0):
-        result_url=json_content['results'][0]['urls']['regular']
-        return result_url
+        result_url=json_content['results'][0]['urls']['full']
+        conact_url=result_url + '&width=' + str(constants.VIDEO_IMAGE_WIDTH) + '&height=' + str(constants.VIDEO_IMAGE_HEIGHT)
+        return conact_url
     else:
         return ''    
 

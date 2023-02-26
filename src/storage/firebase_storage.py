@@ -40,18 +40,25 @@ class FirebaseStorage():
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
 
         collection = self.firestore.child(scheduled_posts_path).get().each()
+        if (collection is None):
+            return ''
         if (len(collection) > 0):
             earliest_scheduled_datetime_str = collection[0].key()
-            print(f'earliest_scheduled_datetime_str: {earliest_scheduled_datetime_str}')
-
-            earliest_scheduled_datetime = datetime.datetime.fromisoformat(earliest_scheduled_datetime_str)
-            return earliest_scheduled_datetime
+            return earliest_scheduled_datetime_str
+        else:
+            print('something went wrong with get_earliest_scheduled_datetime( self, platform )')  
+            return ''
 
     @classmethod
     def get_latest_scheduled_datetime( self, platform ):
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
 
         collection = self.firestore.child(scheduled_posts_path).get().each()
+        if (collection is None):
+            return scheduler.get_best_posting_time(
+                posting_platform=platform,
+                posting_time=datetime.datetime.now()
+            )
         if (len(collection) > 0):
             latest_scheduled_datetime_str = collection[len(collection) - 1].key()
             print(f'latest_scheduled_datetime_str: {latest_scheduled_datetime_str}')
@@ -74,21 +81,20 @@ class FirebaseStorage():
     '''
     def get_specific_post( self, platform, posting_time ):
         specific_collection = f'{platform.value}_{self.POSTS_COLLECTION}'
-        print(f'specific collection {specific_collection}')
         result = self.firestore.child(specific_collection).get()
         if result.each() is None:
-            print("No document found with the specified property value.")
-            return ''
+            return "No document found with the specified property value."
         else:
             for document in result.each():
-                print(f'current doc: {document.key()} == {posting_time}')
+                print(f'{specific_collection} result: {result.key()} -> {result.val()}')
                 if (document.key() == posting_time):
                     document_json = json.dumps(document.val())
                     return document_json
 
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_latest_scheduled_datetime(platform)
-        assert last_posted_time != ''
+        if (last_posted_time != ''):
+            return 'could not get last posted time'
 
         future_publish_date = scheduler.get_best_posting_time(platform, last_posted_time)
 

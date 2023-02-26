@@ -24,7 +24,8 @@ tqdm==4.62.3
 urllib3==1.26.7
 Werkzeug==2.0.2
 # this needs to be updated to the latest version of youtube-dl using github master
-git+https://github.com/ytdl-org/youtube-dl.git@master
+git+https://github.com/ytdl-org/youtube-dl.git@master#egg=youtube-dl
+whisper.ai==1.0.0.1
 dropbox==11.36.0
 azure-cognitiveservices-speech==1.25.0
 oauthlib==3.2.2 
@@ -35,4 +36,6 @@ audioread==3.0.0
 google-api-python-client==2.77.0
 google-auth-oauthlib==1.0.0
 flask==2.0.2
-gspread==5.7.2
+gspread>=5.0.0
+replicate==0.5.0
+ShopifyAPI==12.2.0

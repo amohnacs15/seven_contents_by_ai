@@ -4,7 +4,6 @@ import sys
 import os
 sys.path.append("../src")
 
-import gspread
 import ai.gpt as gpt
 import storage.dropbox_uploader as dropbox_upload
 from ai.gpt_write_story import create_story_and_scenes
@@ -15,6 +14,7 @@ import meta_graph_api.ig_content_repo as ig_content_repo
 import meta_graph_api.fb_content_repo as fb_content_repo
 import text_posts.shopify_content_repo as shopify_content_repo
 import text_posts.twitter_content_repo as twitter_content_repo
+import gspread
 
 CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
 
@@ -55,30 +55,17 @@ def get_google_sheets():
     sh = sa.open('AI Content Machine')  
     return sh
 
-# Begin the running of our application
-if __name__ == '__main__':
-
-    print("\n")
-    print("Starting content generation...")
-    print("\n")
-
-    # Quickly process our posts
-    # put our post calls here. this will need to be first with the proper implementation
-    # post('Shopify', shopify_content_repo.post_shopify_blog_article())
-    post('Facebook', fb_content_repo.post_fb_image())
-    post('Instagram', ig_content_repo.post_ig_media_post())
-    post('Twitter', twitter_content_repo.post_tweet())
-    post_youtube_video()
-     
+def schedule_content():
     # Iterate through each row of sheet
     sh=get_google_sheets()
     sheet=sh.worksheet("Sheet1")
     cell_list=sheet.get_all_values()
 
     for i, row in enumerate(cell_list):
+        # if we do not find the word 'Scheduled' in the row, 
+        # then we have not processed it yet
+        # take action on the row
         if (row.count('Scheduled') == 0):
-            # Take action on the row
-            # For example, print the values of each cell in the row
             print(f"Processing Row {i+1}: {row}")
             youtube_url = row[0]
             content_description = row[1]
@@ -116,6 +103,23 @@ if __name__ == '__main__':
             # updated cell is the length of the row + 1
             success_value = 'Scheduled'
             sheet.update_cell(i+1, len(row)+1, success_value)
+
+# Begin the running of our application
+if __name__ == '__main__':
+
+    print("\n")
+    print("Starting to print money ...")
+    print("\n")
+
+    # Quickly process our posts
+    # put our post calls here. this will need to be first with the proper implementation
+    # post('Shopify', shopify_content_repo.post_shopify_blog_article())
+    # post('Facebook', fb_content_repo.post_fb_image())
+    # post('Instagram', ig_content_repo.post_ig_media_post())
+    # post('Twitter', twitter_content_repo.post_tweet())
+    # post_youtube_video()
+    # and schedule
+    schedule_content()
 
 # Stalled 
     # upload these to dropbox

@@ -24,29 +24,33 @@ def initialize_tweepy():
 def post_tweet():
     tweepy_api = initialize_tweepy()
 
-    earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
-    print(f'TW last posted time: {earliest_scheduled_datetime}')
+    earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
+    if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
+    print(f'TW earliest posted time: {earliest_scheduled_datetime_str}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
-
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
+    
     # if (ready_to_post):
     if (True):
-        earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-        print(f'TW last posted time iso {earliest_scheduled_iso}')
-
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.TWITTER, 
-            earliest_scheduled_iso
+            earliest_scheduled_datetime_str
         )
-        post_params = json.loads(post_params_json)
-        print(f'post params return {post_params}')
+        try:
+            post_params = json.loads(post_params_json)
+            print(f'post params return {post_params}')
+        except:
+            print('error parsing json')
+            print(post_params_json)
+            return 'error parsing json'  
+            
         tweet = post_params['tweet']
 
         try:
             value = tweepy_api.update_status(status = tweet)  
             firebase_storage_instance.delete_post(
                 PostingPlatform.TWITTER, 
-                earliest_scheduled_iso
+                earliest_scheduled_datetime_str
             )
             return value
         except Exception as e:
@@ -61,7 +65,7 @@ def schedule_tweets( tweet, image_query ):
     for tweet in tweets:
         payload = dict()
         payload['tweet'] = tweet
-        result = firebase_storage_instance.upload_scheduled_post(
+        firebase_storage_instance.upload_scheduled_post(
             PostingPlatform.TWITTER, 
             payload
         )

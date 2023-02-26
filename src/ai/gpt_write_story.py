@@ -10,8 +10,6 @@ import appsecrets as appsecrets
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
 def create_story_and_scenes( story, media_url ):
-    print(f'\nstory:\n{story}\n')
-
     # turn story into scenes
     file_path = os.path.join("src", "input_prompts", "scenes.txt")
     storyscene = utils.open_file(file_path).replace('<<STORY>>', story)
@@ -42,8 +40,6 @@ def create_story_and_scenes( story, media_url ):
         file_path = os.path.join("src", "input_prompts", "mjv4prompts.txt")
         mjv4 = utils.open_file(file_path).replace('<<SCENE>>', scene)
         desc = gpt3_story_scene(mjv4)
-
-        print(f'\nstory scene one at a time:\n{desc}\n')
 
         # and write to the same file
         current_file = open(mjv4_output_path, 'a')

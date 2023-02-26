@@ -112,23 +112,26 @@ def publish_ig_media( mediaObjectId, params ) :
 
 """
 def post_ig_media_post():
-    earliest_posted_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
-    print(f' FB last posted time: {earliest_posted_datetime}')
+    earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
+    if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
+    print(f' FB earliest time: {earliest_scheduled_datetime_str}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_posted_datetime)
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
 
     # if (ready_to_post):
     if (True):
-        earliest_posted_time_iso = earliest_posted_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-        print(f'IG last posted time iso {earliest_posted_time_iso}')
-
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.INSTAGRAM, 
-            earliest_posted_time_iso
+            earliest_scheduled_datetime_str
         )
         
-        post_params_json = json.loads(post_params_json)
-        print(post_params_json)
+        try:
+            post_params_json = json.loads(post_params_json)
+            print(post_params_json)
+        except:
+            print('IG error parsing json')
+            print(post_params_json)
+            return 'Error parsing json'    
         post_parms = dict()
         post_parms['access_token'] = post_params_json['access_token']
         post_parms['caption'] = post_params_json['caption']
@@ -141,7 +144,7 @@ def post_ig_media_post():
         remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST')
         firebase_storage_instance.delete_post(
             PostingPlatform.INSTAGRAM, 
-            earliest_posted_time_iso
+            earliest_scheduled_datetime_str
         )
         return pretty_publish_ig_media(remote_media_obj, params, publish_ig_media) 
 
