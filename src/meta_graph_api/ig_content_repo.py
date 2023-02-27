@@ -9,7 +9,7 @@ from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
 import utility.time_utils as time_utils
 
-def create_ig_media_object( params ):
+def create_ig_media_object( params, with_token ):
     """ Create media object
 
         Args:
@@ -26,7 +26,8 @@ def create_ig_media_object( params ):
 
     endpointParams = dict() # parameter to send to the endpoint
     endpointParams['caption'] = params['caption']  # caption for the post
-    # endpointParams['access_token'] = params['access_token'] # access token
+    if with_token:
+        endpointParams['access_token'] = params['access_token']
     endpointParams['published'] = True
 
     if 'IMAGE' == params['media_type'] : # posting image
@@ -45,10 +46,10 @@ def schedule_ig_video_post( caption, media_url ):
     params['media_url'] = media_url 
     params['caption'] = caption
 
-    remote_media_obj = create_ig_media_object( params )
+    remote_media_obj = create_ig_media_object( params, False )
     firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
-def get_ig_media_object_status( mediaObjectId, params ) :
+def get_ig_media_object_status( mediaObjectId, params ):
     """ Check the status of a media object
 
         Args:
@@ -132,7 +133,7 @@ def post_ig_media_post():
         
         url = post_params['endpoint_base'] + post_params['instagram_account_id'] + '/media'
 
-        remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST')
+        remote_media_obj = make_api_call( url=url, endpointJson=post_params, type='POST')
         firebase_storage_instance.delete_post(
             PostingPlatform.INSTAGRAM, 
             earliest_scheduled_datetime_str
@@ -153,7 +154,7 @@ def schedule_ig_image_post( multi_caption, image_query ):
         params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
         params['caption'] = caption
         
-        remote_media_obj = create_ig_media_object( params ) 
+        remote_media_obj = create_ig_media_object( params, False ) 
         firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
 
