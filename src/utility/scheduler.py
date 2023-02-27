@@ -3,6 +3,7 @@ sys.path.append("../src")
 
 import datetime
 import storage.firebase_storage as firebase_storage
+import utility.time_utils as time_utils
 
 # 6 posts daily
 # 2 posts per video
@@ -99,7 +100,8 @@ def get_best_posting_time(
     last_posted_time
 ):
     if type(last_posted_time) == str:
-        last_posted_time = datetime.datetime.fromisoformat(last_posted_time)
+        formatted_iso = time_utils.convert_str_to_iso_format(last_posted_time)
+        last_posted_time = datetime.datetime.fromisoformat(formatted_iso)
 
     if (posting_platform == firebase_storage.PostingPlatform.FACEBOOK):
         times_array = facebook_times_array
@@ -112,7 +114,8 @@ def get_best_posting_time(
         times_array = instagram_times_array
 
     for str_posting_time in times_array:
-        potential_posting_time = datetime.datetime.fromisoformat(str_posting_time)
+        formatted_iso = time_utils.convert_str_to_iso_format(str_posting_time)
+        potential_posting_time = datetime.datetime.fromisoformat(formatted_iso)
         potential_posting_time = potential_posting_time.replace(
             year=last_posted_time.year, 
             month=last_posted_time.month, 
@@ -125,7 +128,8 @@ def get_best_posting_time(
 
     # This means we need to go to the next day. Get the first posting time tomorrow   
     potential_tomorrow_posting_time = last_posted_time + datetime.timedelta(days=1)    
-    tomorrow_posting_time = datetime.datetime.fromisoformat(times_array[0])
+    formatted_iso = time_utils.convert_str_to_iso_format(times_array[0])
+    tomorrow_posting_time = datetime.datetime.fromisoformat(formatted_iso)
     str_posting_time = tomorrow_posting_time.replace(
         year = potential_tomorrow_posting_time.year,
         month=potential_tomorrow_posting_time.month,
