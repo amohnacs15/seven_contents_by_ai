@@ -42,45 +42,55 @@ def get_image_asset_url(image_query):
             return result_asset.public_url   
 
 def post_shopify_blog_article(): 
-    earliest_scheduled_datetime = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
-    print(f'SH last posted time: {earliest_scheduled_datetime}')
+    earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
+    if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
+    print(f'SH earliest scheduled time: {earliest_scheduled_datetime_str}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime)
-
-    if (ready_to_post):
-    # if (True):
-        earliest_scheduled_iso = earliest_scheduled_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-        print(f'SH last posted time iso {earliest_scheduled_iso}')
-
+    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
+    # if (ready_to_post):
+    if (True):
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.SHOPIFY, 
-            earliest_scheduled_iso
+            earliest_scheduled_datetime_str
         )
-        post_params = json.loads(post_params_json)
+        try:
+            post_params = json.loads(post_params_json)
+        except:
+            print('SH error parsing json')
+            print(post_params_json)
+            return 'error parsing json'    
 
-        new_blog = shopify.Blog.create({"title": post_params['title']})
+        if (post_params['title'] != ''):
 
-        if (new_blog.save()):
-            new_article = shopify.Article()
+            new_blog = shopify.Blog.create({"title": post_params['title']})
 
-            new_article.blog_id = new_blog.id
-            new_article.title = post_params['title']
-            new_article.author = post_params['author']
-            new_article.body_html = post_params['body_html']
+            if (new_blog.save()):
+                new_article = shopify.Article()
 
-            new_article.image = post_params['image']['src']
+                new_article.blog_id = new_blog.id
+                new_article.title = post_params['title']
+                new_article.author = post_params['author']
+                new_article.body_html = post_params['body_html']
 
-            new_article.published = post_params['published']
-            result = new_article.save()
-            print(f'Shopify blog upload successful {result}')
-            return result
+                new_article.image = post_params['image']['src']
+
+                new_article.published = post_params['published']
+                result = new_article.save()
+                print(f'Shopify blog upload successful {result}')
+                firebase_storage_instance.delete_post(
+                    PostingPlatform.SHOPIFY, 
+                    earliest_scheduled_datetime_str
+                )
+                return result
+            else:
+                return new_blog.errors.full_messages()
         else:
-            print (new_blog.errors.full_messages())
-            return result
+            return 'Null title found'
     
 
 def schedule_shopify_blog_article(blog, image_query):
-    bloglines = blog.split()
+    bloglines = blog.split('\n')
+    print(f'bloglines: {bloglines}')
     title = text_utils.simplify_H1_header(bloglines[0])
     blog = text_utils.groom_titles(blog)
 

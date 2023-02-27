@@ -27,8 +27,8 @@ class FirebaseStorage():
 
     @classmethod
     def upload_mp3( self, remote_storage_path, local_path ):
-        self.storage.child(remote_storage_path).put(local_path)
-        print(f'successful firebase storage upload {remote_storage_path}')
+        result = self.storage.child(remote_storage_path).put(local_path)
+        print(f'successful firebase storage upload {result}')
 
     @classmethod
     def get_url( self, child_path_to_file ):
@@ -40,20 +40,27 @@ class FirebaseStorage():
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
 
         collection = self.firestore.child(scheduled_posts_path).get().each()
+        if (collection is None):
+            return ''
         if (len(collection) > 0):
             earliest_scheduled_datetime_str = collection[0].key()
-            print(f'earliest_scheduled_datetime_str: {earliest_scheduled_datetime_str}')
-
-            earliest_scheduled_datetime = datetime.datetime.fromisoformat(earliest_scheduled_datetime_str)
-            return earliest_scheduled_datetime
+            return earliest_scheduled_datetime_str
+        else:
+            print('something went wrong with get_earliest_scheduled_datetime( self, platform )')  
+            return ''
 
     @classmethod
     def get_latest_scheduled_datetime( self, platform ):
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
 
         collection = self.firestore.child(scheduled_posts_path).get().each()
+        if (collection is None):
+            return scheduler.get_best_posting_time(
+                platform,
+                datetime.datetime.now()
+            )
         if (len(collection) > 0):
-            latest_scheduled_datetime_str = collection[len(collection) - 1].key()
+            latest_scheduled_datetime_str = collection[len(collection) - 1].key().strip()
             print(f'latest_scheduled_datetime_str: {latest_scheduled_datetime_str}')
 
             latest_scheduled_datetime = datetime.datetime.fromisoformat(latest_scheduled_datetime_str)
@@ -62,33 +69,35 @@ class FirebaseStorage():
             print('something went wrong with get_latest_scheduled_datetime( self, platform )')  
             return ''  
 
-    '''
-        Get the actual post that we stored earlier in firebase document/JSON format
-
-        Args:
-            string platform: The value from our enum determing the platform we are working with
-            string posting_time: Specific ISO formatted datetime used to fetch
-
-        Returns:
-            string. JSON string translated from the specific document fetched from firebase
-    '''
+    
     def get_specific_post( self, platform, posting_time ):
+        '''
+            Get the actual post that we stored earlier in firebase document/JSON format
+
+            Args:
+                string platform: The value from our enum determing the platform we are working with
+                string posting_time: Specific ISO formatted datetime used to fetch
+
+            Returns:
+                string. JSON string translated from the specific document fetched from firebase
+        '''
         specific_collection = f'{platform.value}_{self.POSTS_COLLECTION}'
-        print(f'specific collection {specific_collection}')
         result = self.firestore.child(specific_collection).get()
         if result.each() is None:
-            print("No document found with the specified property value.")
-            return ''
+            return "No document found with the specified property value."
         else:
             for document in result.each():
-                print(f'current doc: {document.key()} == {posting_time}')
+                print(f'{specific_collection} result: {result.key()} -> {result.val()}')
                 if (document.key() == posting_time):
                     document_json = json.dumps(document.val())
                     return document_json
 
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_latest_scheduled_datetime(platform)
-        assert last_posted_time != ''
+        print(f'last_posted_time: {last_posted_time}')
+        if (last_posted_time == ''):
+            last_posted_time = datetime.datetime.now()
+            print(f'last_posted_time was empty, setting to now: {type(last_posted_time)}')
 
         future_publish_date = scheduler.get_best_posting_time(platform, last_posted_time)
 
@@ -101,13 +110,9 @@ class FirebaseStorage():
 
     def delete_post( self, platform, datetime_key ):
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
-        result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
-        print('\n')
-        print(self.firestore.child(scheduled_posts_path).child(datetime_key).get())
-        print(self.firestore.child(scheduled_posts_path).child(datetime_key).get().key())
-        print(self.firestore.child(scheduled_posts_path).child(datetime_key).get())
-        print('\n')
-        return result
+        # result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
+        # print(f'firebase delete result \n{result}')
+        # return result
 
 #static instances
 firebase_storage_instance = FirebaseStorage()

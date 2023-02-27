@@ -3,7 +3,6 @@ sys.path.append("../src")
 
 import json
 import requests
-import appsecrets
 
 #Reuse this facebook and instagram
 def make_api_call( url, endpointParams = '', endpointJson = '', type = '' ):

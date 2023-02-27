@@ -14,12 +14,12 @@ import constants
 
 movies_url = 'https://api.json2video.com/v2/movies'
 
-'''
-Polls to get our movie response. Repeatedly pining off the server until we get the response we want.
-
-@returns: remote movie url
-'''
 def get_edited_movie_url( uploaded_project_id ):
+    '''
+    Polls to get our movie response. Repeatedly pining off the server until we get the response we want.
+
+    @returns: remote movie url
+    '''
     # status states: not started, done, in progress
     video_upload_status='not started'
 
@@ -70,23 +70,20 @@ def edit_movie_for_remote_url():
         mp3_duration = speech_bundle['speech_duration'],
         mp3_remote_path = speech_bundle['speech_remote_path']
     )
-    # making the actual request
     response = requests.post(
         url = movies_url, 
         json = video_json, 
         headers = post_headers
     )
     project_id = post_response_project_id(response)
+    print(f'\n project id {project_id}\n')
 
-    print('\n project id \n')
-    print(project_id)
-
-    if (project_id != '-1'):
+    if (project_id != -1):
         movie_url = get_edited_movie_url(project_id)
         return movie_url
     else:
         print('error processing project id')
-        return ''
+    return ''
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
 '''
@@ -119,7 +116,6 @@ Transitions, inclusions of audio, and quality are hard-coded.
 @returns: json formatted string
 '''
 def create_video_json( image_array, mp3_duration, mp3_remote_path ):
-    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images')
     if (isinstance(mp3_duration, str)):
         return "error: mp3_duration is not a number"
 
@@ -127,9 +123,10 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     mp3_ref_url = firebase_storage_instance.get_url(mp3_remote_path)
 
     scene_comments = get_scene_comment_array()
+    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images and {len(scene_comments)} comments')
 
     video_params = {
-        "resolution": "instagram-story",
+        "resolution": 'instagram-story',
         "quality": "high",
         "elements": [
             {
@@ -141,14 +138,13 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
         ],
         "scenes": []
     }
-    for index in range(len(scene_comments)):
-        if (index < len(image_array)): 
-            image = image_array[index] 
-        else: 
-            image = ''
-        video_params['scenes'].append(
-        {
-            'comment': scene_comments[index],
+    if (len(scene_comments) != len(image_array)): 
+        print('error: scene comments and images are not the same length')
+        return ''
+
+    for index, (comment, image) in enumerate(zip(scene_comments, image_array)):
+        scene = {
+            'comment': comment,
             "transition": {
                 "style": "fade",
                 "duration": 1.5
@@ -157,15 +153,11 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
                 {
                     "type": "image",
                     "src": image,
-                    "duration": scene_duration,
-                    "scale": {
-                        "height": 1080
-                    }
+                    "duration": scene_duration
                 }
             ] 
         }
-    )
-
+        video_params['scenes'].append(scene)
     return video_params
 
 '''

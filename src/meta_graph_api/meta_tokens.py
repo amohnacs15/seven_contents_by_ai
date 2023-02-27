@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append("../src")
 
 from meta_graph_api.meta_definition import make_api_call
@@ -34,11 +35,12 @@ def create_ig_access_token_creds():
 def get_ig_access_creds() :
 
     params = create_ig_access_token_creds()
-    cachedToken = utils.open_file("ig_access_token.txt")
+    token_path=os.path.join('src', 'ig_access_token.txt')
+    cachedToken = utils.open_file(token_path)
 
     if (cachedToken != ''):
         params['access_token'] = cachedToken
-        print(f"found cached token!")
+        print(f"IG found cached token!")
         
         return params
     else:
@@ -49,8 +51,8 @@ def get_ig_access_creds() :
         get_token_params['fb_exchange_token'] = params['access_token'] # access token to get exchange for a long lived token
 
         token_url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
-
         token_response = make_api_call( url=token_url, endpointParams=get_token_params, type=params['debug'] ) # make the api call
+        
         print(token_response['json_data'])
         access_token = token_response['json_data']['access_token']
         utils.save_file("ig_access_token.txt", access_token)
@@ -67,7 +69,8 @@ def get_ig_access_creds() :
 
 def get_fb_page_access_token():
 
-    cachedToken = utils.open_file("fb_access_token.txt")
+    token_path=os.path.join('src', 'fb_access_token.txt')
+    cachedToken = utils.open_file(token_path)
 
     if (cachedToken != ''):
         params = dict()
@@ -89,7 +92,7 @@ def get_fb_page_access_token():
 
         response = make_api_call( url=post_url, endpointParams=params, type='GET' )
         params['page_access_token'] = response['json_data']['access_token']
-        utils.save_file("fb_access_token.txt", params['page_access_token'])
+        utils.save_file(token_path, params['page_access_token'])
 
     return params
 
