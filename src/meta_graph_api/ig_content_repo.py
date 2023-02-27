@@ -9,24 +9,24 @@ from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
 import utility.time_utils as time_utils
 
-""" Create media object
+def create_ig_media_object( params ):
+    """ Create media object
 
-    Args:
-        params: dictionary of params
-    
-    API Endpoint:
-        https://graph.facebook.com/v5.0/{ig-user-id}/media?image_url={image-url}&caption={caption}&access_token={access-token}
-        https://graph.facebook.com/v5.0/{ig-user-id}/media?video_url={video-url}&caption={caption}&access_token={access-token}
+        Args:
+            params: dictionary of params
+        
+        API Endpoint:
+            https://graph.facebook.com/v5.0/{ig-user-id}/media?image_url={image-url}&caption={caption}&access_token={access-token}
+            https://graph.facebook.com/v5.0/{ig-user-id}/media?video_url={video-url}&caption={caption}&access_token={access-token}
 
-    Returns:
-        object: data from the endpoint
+        Returns:
+            object: data from the endpoint
 
-"""
-def create_ig_media_object( params ) :
+    """
 
     endpointParams = dict() # parameter to send to the endpoint
     endpointParams['caption'] = params['caption']  # caption for the post
-    endpointParams['access_token'] = params['access_token'] # access token
+    # endpointParams['access_token'] = params['access_token'] # access token
     endpointParams['published'] = True
 
     if 'IMAGE' == params['media_type'] : # posting image
@@ -37,13 +37,8 @@ def create_ig_media_object( params ) :
     
     return endpointParams
 
-'''
-Method called from main class that creates our endpoint request and makes the API call.
-Also, prints status of uploading the payload.
-
-@returns: nothing
-'''
 def schedule_ig_video_post( caption, media_url ):
+    
     params = meta_tokens.get_ig_access_creds() 
 
     params['media_type'] = 'VIDEO' 
@@ -53,21 +48,19 @@ def schedule_ig_video_post( caption, media_url ):
     remote_media_obj = create_ig_media_object( params )
     firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
-    
-""" Check the status of a media object
-
-    Args:
-        mediaObjectId: id of the media object
-        params: dictionary of params
-    
-    API Endpoint:
-        https://graph.facebook.com/v5.0/{ig-container-id}?fields=status_code
-
-    Returns:
-        object: data from the endpoint
-
-"""
 def get_ig_media_object_status( mediaObjectId, params ) :
+    """ Check the status of a media object
+
+        Args:
+            mediaObjectId: id of the media object
+            params: dictionary of params
+        
+        API Endpoint:
+            https://graph.facebook.com/v5.0/{ig-container-id}?fields=status_code
+
+        Returns:
+            object: data from the endpoint
+    """
     url = params['endpoint_base'] + '/' + mediaObjectId # endpoint url
 
     endpointParams = dict() # parameter to send to the endpoint
@@ -76,20 +69,19 @@ def get_ig_media_object_status( mediaObjectId, params ) :
 
     return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
 
-""" Publish content
-
-    Args:
-        mediaObjectId: id of the media object
-        params: dictionary of params
-    
-    API Endpoint:
-        https://graph.facebook.com/v5.0/{ig-user-id}/media_publish?creation_id={creation-id}&access_token={access-token}
-
-    Returns:
-        object: data from the endpoint
-
-"""
 def publish_ig_media( mediaObjectId, params ) :
+    """ Publish content
+
+        Args:
+            mediaObjectId: id of the media object
+            params: dictionary of params
+        
+        API Endpoint:
+            https://graph.facebook.com/v5.0/{ig-user-id}/media_publish?creation_id={creation-id}&access_token={access-token}
+
+        Returns:
+            object: data from the endpoint
+    """
     url = params['endpoint_base'] + params['instagram_account_id'] + '/media_publish' # endpoint url
 
     endpointParams = dict() # parameter to send to the endpoint
@@ -98,23 +90,22 @@ def publish_ig_media( mediaObjectId, params ) :
 
     return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
 
-""" Pulls last posted time form FB and posts ot IG an image
-
-    Args:
-        mediaObjectId: id of the media object
-        params: dictionary of params
-    
-    API Endpoint:
-        https://graph.facebook.com/v5.0/{ig-user-id}/media_publish?creation_id={creation-id}&access_token={access-token}
-
-    Returns:
-        object: data from the endpoint
-
-"""
 def post_ig_media_post():
+    """ Pulls last posted time form FB and posts ot IG an image
+
+        Args:
+            mediaObjectId: id of the media object
+            params: dictionary of params
+        
+        API Endpoint:
+            https://graph.facebook.com/v5.0/{ig-user-id}/media_publish?creation_id={creation-id}&access_token={access-token}
+
+        Returns:
+            object: data from the endpoint
+    """                                 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
     if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f' FB earliest time: {earliest_scheduled_datetime_str}')
+    print(f'FB earliest time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
 
@@ -132,37 +123,38 @@ def post_ig_media_post():
             print('IG error parsing json')
             print(post_params_json)
             return 'Error parsing json'    
-        post_parms = dict()
-        post_parms['access_token'] = post_params_json['access_token']
-        post_parms['caption'] = post_params_json['caption']
-        post_parms['image_url'] = post_params_json['image_url']
-        post_parms['published'] = post_params_json['published']
+        
+        post_params = meta_tokens.get_ig_access_creds() 
+        post_params['caption'] = post_params_json['caption']
+        post_params['image_url'] = post_params_json['image_url']
+        post_params['published'] = post_params_json['published']
 
-        params = meta_tokens.get_ig_access_creds() 
-        url = params['endpoint_base'] + params['instagram_account_id'] + '/media'
+        
+        url = post_params['endpoint_base'] + post_params['instagram_account_id'] + '/media'
 
         remote_media_obj = make_api_call( url=url, endpointJson=post_params_json, type='POST')
         firebase_storage_instance.delete_post(
             PostingPlatform.INSTAGRAM, 
             earliest_scheduled_datetime_str
         )
-        return pretty_publish_ig_media(remote_media_obj, params, publish_ig_media) 
+        return pretty_publish_ig_media(remote_media_obj, post_params, publish_ig_media) 
 
-'''
-Method called from main class that creates our endpoint request and makes the API call.
-Also, prints status of uploading the payload.
+def schedule_ig_image_post( multi_caption, image_query ):
+    '''Method called from main class that creates our endpoint request and makes the API call.
 
-@returns: nothing
-'''
-def schedule_ig_image_post( caption, image_query ):
-    params = meta_tokens.get_ig_access_creds() 
-    params['media_type'] = 'IMAGE' 
-    
-    params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
-    params['caption'] = caption
-    
-    remote_media_obj = create_ig_media_object( params ) 
-    firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
+    @returns: nothing
+    '''
+    caption_list = multi_caption.split('\n!!!\n')
+    for caption in caption_list:
+
+        params = meta_tokens.get_ig_access_creds() 
+        params['media_type'] = 'IMAGE' 
+        
+        params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
+        params['caption'] = caption
+        
+        remote_media_obj = create_ig_media_object( params ) 
+        firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
 
 def pretty_publish_ig_media( imageMediaObjectResponse, params, publish_func ):	
@@ -193,19 +185,18 @@ def pretty_publish_ig_media( imageMediaObjectResponse, params, publish_func ):
     print( publishImageResponse['json_data_pretty'] ) # json response from ig api
     return imageMediaObjectResponse['json_data']
 
-""" Get the api limit for the user
-
-    Args:
-        params: dictionary of params
-    
-    API Endpoint:
-        https://graph.facebook.com/v5.0/{ig-user-id}/content_publishing_limit?fields=config,quota_usage
-
-    Returns:
-        object: data from the endpoint
-
-"""
 def get_content_publishing_limit( params ) :
+    """ Get the api limit for the user
+
+        Args:
+            params: dictionary of params
+        
+        API Endpoint:
+            https://graph.facebook.com/v5.0/{ig-user-id}/content_publishing_limit?fields=config,quota_usage
+
+        Returns:
+            object: data from the endpoint
+    """
     url = params['endpoint_base'] + params['instagram_account_id'] + '/content_publishing_limit' # endpoint url
 
     endpointParams = dict() # parameter to send to the endpoint

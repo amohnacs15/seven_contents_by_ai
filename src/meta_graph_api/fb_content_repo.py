@@ -47,23 +47,24 @@ def post_fb_image():
          )
         return result
 
-def schedule_fb_post( caption, image_query ):
-    image_url = image_creator.get_unsplash_image_url(image_query)
+def schedule_fb_post( multi_caption, image_query ):
 
-    payload = {
-        'url': image_url,
-        'message': caption, 
-        'published' : True
-    }
+    caption_list = multi_caption.split('\n!!!\n')
+    for caption in caption_list:
+        image_url = image_creator.get_unsplash_image_url(image_query)
 
-    print('posting payload')
-    print(payload)
+        payload = {
+            'url': image_url,
+            'message': caption, 
+            'published' : True
+        }
 
-    result = firebase_storage_instance.upload_scheduled_post(
-        PostingPlatform.FACEBOOK, 
-        payload
-    )
+        result = firebase_storage_instance.upload_scheduled_post(
+            PostingPlatform.FACEBOOK, 
+            payload
+        )
 
-    print('upload scheduled post ressult')
-    print(str(result))
+        print('FB upload scheduled post ressult')
+        print(str(result))
     return result
+    

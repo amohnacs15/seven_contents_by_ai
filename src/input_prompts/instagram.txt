@@ -1,5 +1,5 @@
-Imagine and Write a compelling Instgram post that is 2000 characters long including hashtags that creatively explains the following text IN A PROFESSIONAL tone INCLUDING a call to action to go to like, follow, and share from the following text:
+Imagine and Write 2 compelling Instagram posts seperated with '\n!!!\n' that are 2000 characters long including hashtags that creatively explains the following text IN AN EMPATHETIC tone INCLUDING a call to action to go to comment and share from the following text:
 
 <<FEED>>
 
-IMAGINE AND WRITE A COMPELLING INSTAGRAM POST THAT IS 2000 CHARACTERS LONG INCLUDING HASHTAGS THAT CREATIVELY EXPLAINS THE FOLLOWING TEXT IN A PROFESSIONAL TONE INCLUDING A CALL TO ACTION TO GO TO LIKE, FOLLOW, AND SHARE FROM THE TEXT ABOVE:
+IMAGINE AND WRITE 2 COMPELLING INSTAGRAM POSTS THAT ARE2000 CHARACTERS LONG INCLUDING HASHTAGS THAT CREATIVELY EXPLAINS THE FOLLOWING TEXT IN AN EMPATHETIC TONE INCLUDING A CALL TO ACTION TO GO TO COMMENT AND SHARE FROM THE TEXT ABOVE.  EACH POST WILL BE SEPERATED WITH A '\n!!!\n" CHARACTER

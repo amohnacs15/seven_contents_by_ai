@@ -3,6 +3,7 @@ FROM python:3.8-slim-buster
 # Install Git and other dependencies
 RUN apt-get update && \
     apt-get install -y git && \
+    apt-get install -y ffmpeg && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

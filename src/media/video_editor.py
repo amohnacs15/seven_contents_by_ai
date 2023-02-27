@@ -126,10 +126,8 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images and {len(scene_comments)} comments')
 
     video_params = {
-        "resolution": "full-hd",
+        "resolution": 'instagram-story',
         "quality": "high",
-        "width": constants.VIDEO_IMAGE_WIDTH,
-        "height": constants.VIDEO_IMAGE_HEIGHT,
         "elements": [
             {
                 "type": "audio",

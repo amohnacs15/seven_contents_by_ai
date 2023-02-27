@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
         boolean: are we running this close enough to the scheduled date
 '''
 def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
-    scheduled_time = datetime.fromisoformat(earliest_scheduled_datetime_str)
+    scheduled_time = datetime.fromisoformat(earliest_scheduled_datetime_str.strip())
     current_time = datetime.now()
     print(f'current time :{current_time}')
     

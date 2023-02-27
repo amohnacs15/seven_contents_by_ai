@@ -11,7 +11,7 @@ def get_unsplash_image_url( search_query ):
     url = 'https://api.unsplash.com/search/photos'
     params = {
         'query': search_query,
-        'orientation': 'landscape'
+        'orientation': 'portrait'
     }
     headers = {
         'Accept-Version': "v1",
@@ -25,10 +25,10 @@ def get_unsplash_image_url( search_query ):
     json_content = json.loads( response.content )
     if (json_content['total'] > 0):
         result_url=json_content['results'][0]['urls']['full']
-        conact_url=result_url + '&width=' + str(constants.VIDEO_IMAGE_WIDTH) + '&height=' + str(constants.VIDEO_IMAGE_HEIGHT)
+        conact_url=result_url + '&width=' + str(constants.VIDEO_IMAGE_WIDTH)*3 + '&height=' + str(constants.VIDEO_IMAGE_HEIGHT)*3
         return conact_url
     else:
-        return ''    
+        return ''
 
 
 def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = constants.VIDEO_IMAGE_HEIGHT):

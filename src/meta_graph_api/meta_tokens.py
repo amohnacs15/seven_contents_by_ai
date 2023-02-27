@@ -40,7 +40,7 @@ def get_ig_access_creds() :
 
     if (cachedToken != ''):
         params['access_token'] = cachedToken
-        print(f"found cached token!")
+        print(f"IG found cached token!")
         
         return params
     else:
@@ -51,8 +51,8 @@ def get_ig_access_creds() :
         get_token_params['fb_exchange_token'] = params['access_token'] # access token to get exchange for a long lived token
 
         token_url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
-
         token_response = make_api_call( url=token_url, endpointParams=get_token_params, type=params['debug'] ) # make the api call
+        
         print(token_response['json_data'])
         access_token = token_response['json_data']['access_token']
         utils.save_file("ig_access_token.txt", access_token)

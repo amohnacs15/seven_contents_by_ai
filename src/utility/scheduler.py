@@ -4,6 +4,8 @@ sys.path.append("../src")
 import datetime
 import storage.firebase_storage as firebase_storage
 
+# 6 posts daily
+# 2 posts per video
 facebook_times_array = [
     '0001-01-01T08:00:00', #8am
     '0001-01-01T10:00:00', #10am
@@ -12,6 +14,8 @@ facebook_times_array = [
     '0001-01-01T16:00:00', #4pm
     '0001-01-01T18:00:00'  #6pm
 ]
+# 6 posts daily
+# 2 posts per video
 instagram_times_array = [
     '0001-01-01T09:00:00', #9am
     '0001-01-01T11:00:00', #11am
@@ -20,11 +24,15 @@ instagram_times_array = [
     '0001-01-01T17:00:00', #5pm
     '0001-01-01T19:00:00' #7pm
 ]
+# 3 videos per day
+# 1 video per video
 youtube_times_array = [
     '0001-01-01T09:00:00', #9am
     '0001-01-01T16:00:00', #4pm
     '0001-01-01T19:00:00' #7pm
 ]
+# 48 tweets daily
+# 16 tweets from 1 video
 twitter_times_array = [
     '0001-01-01T00:00:00',
     '0001-01-01T00:30:00',
@@ -90,6 +98,9 @@ def get_best_posting_time(
     posting_platform,
     last_posted_time
 ):
+    if type(last_posted_time) == str:
+        last_posted_time = datetime.datetime.fromisoformat(last_posted_time)
+
     if (posting_platform == firebase_storage.PostingPlatform.FACEBOOK):
         times_array = facebook_times_array
     elif (posting_platform == firebase_storage.PostingPlatform.YOUTUBE):
@@ -97,7 +108,7 @@ def get_best_posting_time(
     elif (posting_platform == firebase_storage.PostingPlatform.TWITTER):
         times_array = twitter_times_array    
     else:
-        #this will need to be updated
+        #this will need to be updated for an error handling system
         times_array = instagram_times_array
 
     for str_posting_time in times_array:
