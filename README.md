@@ -52,3 +52,11 @@ set FLASK_APP=hello.py
 $env:FLASK_APP = "hello.py"
 flask run
 ```
+
+### Here are the commands we're using to get into a gcloud instance:
+```
+docker build --tag seven_contents_by_ai_docker_flamingo . 
+docker tag seven_contents_by_ai_docker_flamingo gcr.io/ai-content-machine/seven_contents_by_ai_docker_flamingo
+docker run gcr.io/ai-content-machine/seven_contents_by_ai_docker_flamingo 
+docker push gcr.io/ai-content-machine/seven_contents_by_ai_docker_flamingo
+```
