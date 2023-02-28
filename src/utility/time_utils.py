@@ -20,9 +20,12 @@ def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
     lower_bound=scheduled_time - timedelta(minutes=5)
     upper_bound=scheduled_time + timedelta(minutes=5)
 
+    print(f'Checking if {current_time} is between {lower_bound} and {upper_bound}')
     if lower_bound < current_time < upper_bound:
+        print('Yes, it is. Posting now.')
         return True
     else:
+        print('No, it is not. Not posting now.')
         return False
 
 def convert_str_to_iso_format(date_str):

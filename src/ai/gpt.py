@@ -62,10 +62,17 @@ def transcript_to_summary(transcriptname, filename):
     utils.save_file(file_path_output, '\n\n'.join(result))
 
 def get_gpt_generated_text( prompt_source ):
+    # get the first draft of the generated text
     feedin_source_file = os.path.join("src", "outputs", "summary_output.txt")
     feed_source = utils.open_file(feedin_source_file)
     applied_prompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
-    return gpt_3(applied_prompt)
+    draft = gpt_3(applied_prompt)
+
+    # get the second draft stripped of identifying material
+    polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
+    polished_source = utils.open_file(polish_source_file)
+    polished_applied_prompt = utils.open_file(polished_source).replace('<<FEED>>', draft)
+    return gpt_3(polished_applied_prompt)
 
 def generate_prompt_response( prompt_source, type, image_query_term, post_num, upload_func ):
     """

@@ -35,7 +35,7 @@ def process_initial_video_download_transcript(youtube_url):
     gpt.transcript_to_summary(transcriptname, filename) 
 
 def schedule_video_story():
-    gpt.generate_prompt_to_file(
+    gpt.generate_prompt_response(
         prompt_source=os.path.join("src", "input_prompts", "story.txt"), 
         type='story', 
         image_query_term='old',
@@ -59,7 +59,12 @@ if __name__ == '__main__':
     print("Starting to print money ...")
     print("\n")
     
-    shopify_content_repo.post_shopify_blog_article()
+    # shopify_content_repo.post_shopify_blog_article()
+    # fb_content_repo.post_fb_image()
+    # ig_content_repo.post_ig_media_post()
+    # twitter_content_repo.post_tweet()
+    # post_youtube_video()
+
     # Quickly process our posts
     # put our post calls here. this will need to be first with the proper implementation
     post('Shopify', shopify_content_repo.post_shopify_blog_article())
@@ -88,28 +93,28 @@ if __name__ == '__main__':
                 type = 'facebook', 
                 prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
                 image_query_term = content_description, 
-                post_num=3,
+                post_num=2,
                 upload_func = fb_content_repo.schedule_fb_post
             )
             gpt.generate_prompt_response(
                 type='instagram', 
                 prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
                 image_query_term=content_description,
-                post_num=3,
+                post_num=2,
                 upload_func=ig_content_repo.schedule_ig_image_post
             )
             gpt.generate_prompt_response(
                 type="shopify_blog", 
                 prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
                 image_query_term=content_description,
-                post_num=3,
+                post_num=1,
                 upload_func=shopify_content_repo.schedule_shopify_blog_article
             )
             gpt.generate_prompt_response(
                 type='tweet',
                 prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
                 image_query_term=content_description,
-                post_num=12,
+                post_num=16,
                 upload_func=twitter_content_repo.schedule_tweet
             )
             schedule_video_story()

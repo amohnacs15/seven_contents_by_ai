@@ -99,9 +99,6 @@ def gpt3_story_scene(
                 stop=stop)
                 
             text = response['choices'][0]['text'].strip()
-            #text = re.sub('\s+', ' ', text)
-            filename = '%s_gpt3.txt' % time()
-            # utils.save_file('logger/%s' % filename, prompt + '\n\n==========\n\n' + text)
             return text
         except Exception as oops:
             retry += 1
