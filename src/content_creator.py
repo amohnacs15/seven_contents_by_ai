@@ -9,12 +9,13 @@ import storage.dropbox_uploader as dropbox_upload
 from ai.gpt_write_story import create_story_and_scenes
 import media.video_editor as video_editor
 import media.video_downloader as video_downloader
-import storage.youtube_content_repo as youtube_content_repo
-import meta_graph_api.ig_content_repo as ig_content_repo
-import meta_graph_api.fb_content_repo as fb_content_repo
-import text_posts.shopify_content_repo as shopify_content_repo
-import text_posts.twitter_content_repo as twitter_content_repo
+import content.youtube_content_repo as youtube_content_repo
+import content.ig_content_repo as ig_content_repo
+import content.fb_content_repo as fb_content_repo
+import content.shopify_content_repo as shopify_content_repo
+import content.twitter_content_repo as twitter_content_repo
 import gspread
+import datetime
 
 CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
 
@@ -78,6 +79,8 @@ if __name__ == '__main__':
     sh=get_google_sheets()
     sheet=sh.worksheet("Sheet1")
     cell_list=sheet.get_all_values()
+
+    sheet.update_cell(1, 1, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) 
 
     for i, row in enumerate(cell_list):
         # if we do not find the word 'Scheduled' in the row, 
