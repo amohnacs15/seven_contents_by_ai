@@ -153,7 +153,11 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
                 {
                     "type": "image",
                     "src": image,
-                    "duration": scene_duration
+                    "duration": scene_duration,
+                    "scale": {
+                        "height":constants.VIDEO_IMAGE_HEIGHT,
+                        "width": constants.VIDEO_IMAGE_WIDTH
+                    }
                 }
             ] 
         }
@@ -305,7 +309,11 @@ example_video = {
                 {
                     "type": "image",
                     "src": "https://assets.json2video.com/assets/images/london-03.jpg",
-                    "duration": 10
+                    "duration": 10,
+                    "scale": {
+                        "height":constants.VIDEO_IMAGE_HEIGHT,
+                        "width": constants.VIDEO_IMAGE_WIDTH
+                    }
                 }
             ]
         }

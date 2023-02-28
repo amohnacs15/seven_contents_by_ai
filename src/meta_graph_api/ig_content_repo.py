@@ -130,7 +130,6 @@ def post_ig_media_post():
         post_params['image_url'] = post_params_json['image_url']
         post_params['published'] = post_params_json['published']
 
-        
         url = post_params['endpoint_base'] + post_params['instagram_account_id'] + '/media'
 
         remote_media_obj = make_api_call( url=url, endpointJson=post_params, type='POST')
@@ -140,22 +139,19 @@ def post_ig_media_post():
         )
         return pretty_publish_ig_media(remote_media_obj, post_params, publish_ig_media) 
 
-def schedule_ig_image_post( multi_caption, image_query ):
+def schedule_ig_image_post( caption, image_query ):
     '''Method called from main class that creates our endpoint request and makes the API call.
 
     @returns: nothing
     '''
-    caption_list = multi_caption.split('\n!!!\n')
-    for caption in caption_list:
-
-        params = meta_tokens.get_ig_access_creds() 
-        params['media_type'] = 'IMAGE' 
+    params = meta_tokens.get_ig_access_creds() 
+    params['media_type'] = 'IMAGE' 
         
-        params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
-        params['caption'] = caption
+    params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
+    params['caption'] = caption
         
-        remote_media_obj = create_ig_media_object( params, False ) 
-        firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
+    remote_media_obj = create_ig_media_object( params, False ) 
+    firebase_storage_instance.upload_scheduled_post(PostingPlatform.INSTAGRAM, remote_media_obj)
 
 
 def pretty_publish_ig_media( imageMediaObjectResponse, params, publish_func ):	

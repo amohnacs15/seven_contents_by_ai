@@ -17,29 +17,7 @@ def initialize_shopify():
     # Create and activate a new session
     session = shopify.Session(shop_url, api_version, admin_api_key)
     shopify.ShopifyResource.activate_session(session)
-    print('Shopify initialized successfully')
-
-def get_image_asset_url(image_query):
-    return image_creator.get_unsplash_image_url(image_query)
-
-    themes = shopify.Theme.find()
-    for theme in themes:
-        print(f'theme {theme.name} has ID: {theme.id}')
-        # how do we make recognizing the most recent theme dynamic?
-        if (theme.name == 'Caregiver Modern v3'):
-            print(f'got the right theme {theme.name} has ID: {theme.id}')
-            current_theme_id = theme.id
-
-            asset = shopify.Asset({"theme_id": current_theme_id})
-            asset.key = 'grid_1'
-            asset.value = {
-                'image': {
-                    'src': unsplash_url
-                }
-            }
-            result_asset = asset.save()
-            print(result_asset)
-            return result_asset.public_url   
+    print('Shopify initialized successfully')  
 
 def post_shopify_blog_article(): 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
@@ -62,47 +40,46 @@ def post_shopify_blog_article():
 
         if (post_params['title'] != ''):
 
-            new_blog = shopify.Blog.create({"title": post_params['title']})
+            list_of_blogs = shopify.Blog.find()
 
-            if (new_blog.save()):
-                new_article = shopify.Article()
+            for blog in list_of_blogs:
+                if (blog.title == 'Caregiver Help & How-To'):
 
-                new_article.blog_id = new_blog.id
-                new_article.title = post_params['title']
-                new_article.author = post_params['author']
-                new_article.body_html = post_params['body_html']
+                    new_article = shopify.Article()
 
-                new_article.image = post_params['image']['src']
+                    new_article.blog_id = blog.id
+                    new_article.title = post_params['title']
+                    new_article.author = post_params['author']
+                    new_article.body_html = post_params['body_html']
+                    new_article.published = post_params['published']
 
-                new_article.published = post_params['published']
-                result = new_article.save()
-                print(f'Shopify blog upload successful {result}')
-                firebase_storage_instance.delete_post(
-                    PostingPlatform.SHOPIFY, 
-                    earliest_scheduled_datetime_str
-                )
-                return result
-            else:
-                return new_blog.errors.full_messages()
-        else:
-            return 'Null title found'
+                    image = shopify.Image()
+                    image.src = post_params['image']['src']
+                    new_article.image = image
+
+                    result = new_article.save()
+                    print(f'Shopify blog upload successful {result}')
+                    firebase_storage_instance.delete_post(
+                        PostingPlatform.SHOPIFY, 
+                        earliest_scheduled_datetime_str
+                    )
+                    return result
     
 
 def schedule_shopify_blog_article(blog, image_query):
-    bloglines = blog.split('\n')
-    print(f'bloglines: {bloglines}')
-    title = text_utils.simplify_H1_header(bloglines[0])
     blog = text_utils.groom_titles(blog)
 
-    print('begin asset processing')
-    get_image_asset_url(image_query)
+    parts = blog.split('\n\n', 1)
+    title = text_utils.simplify_H1_header(parts[0])
+    
+    image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
 
     payload = dict()
     payload['title'] = title
     payload['author'] = 'Caregiver Modern'
-    payload['body_html'] = blog
+    payload['body_html'] = parts[1]
     payload['image'] = dict()
-    payload['image']['src'] = ''
+    payload['image']['src'] = image_src
     payload['published'] = 'TRUE'
     
     result = firebase_storage_instance.upload_scheduled_post(

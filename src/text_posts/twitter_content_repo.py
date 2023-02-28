@@ -56,15 +56,12 @@ def post_tweet():
         except Exception as e:
             return e
 
-def schedule_tweets( multi_tweets, image_query ):
-    
-    tweets = multi_tweets.split('\n!!!\n')
-    for tweet in tweets:
-        if (tweet != ''):
-            payload = dict()
-            payload['tweet'] = tweet
-            firebase_storage_instance.upload_scheduled_post(
-                PostingPlatform.TWITTER, 
-                payload
-            )
-    return tweets  
+def schedule_tweet( tweet, image_query ):
+    if (tweet != ''):
+        payload = dict()
+        payload['tweet'] = tweet
+        firebase_storage_instance.upload_scheduled_post(
+            PostingPlatform.TWITTER, 
+            payload
+        )
+    return tweet  

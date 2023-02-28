@@ -13,13 +13,12 @@ import utility.time_utils as time_utils
         boolean: are we running this close enough to the scheduled date
 '''
 def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
-    formatted_iso = time_utils.convert_str_to_iso_format(earliest_scheduled_datetime_str.strip())
-    scheduled_time = datetime.fromisoformat(formatted_iso)
-    current_time = datetime.now()
-    print(f'current time :{current_time}')
+    formatted_iso=time_utils.convert_str_to_iso_format(earliest_scheduled_datetime_str.strip())
+    scheduled_time=datetime.fromisoformat(formatted_iso)
+    current_time=datetime.now()
     
-    lower_bound = scheduled_time - timedelta(minutes=5)
-    upper_bound = scheduled_time + timedelta(minutes=5)
+    lower_bound=scheduled_time - timedelta(minutes=5)
+    upper_bound=scheduled_time + timedelta(minutes=5)
 
     if lower_bound < current_time < upper_bound:
         return True
@@ -38,9 +37,9 @@ def convert_str_to_iso_format(date_str):
     """
     try:
         # First, parse the input string to create a datetime object
-        date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        date_obj=datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
         # Then, format the datetime object to the desired ISO format
-        iso_format_str = date_obj.strftime("%Y-%m-%dT%H:%M:%S")
+        iso_format_str=date_obj.strftime("%Y-%m-%dT%H:%M:%S")
         return iso_format_str
 
     except ValueError as e:

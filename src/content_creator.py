@@ -18,11 +18,9 @@ import gspread
 
 CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
 
-# Initializations
 dbx = dropbox_upload.initialize_dropbox() 
 shopify = shopify_content_repo.initialize_shopify()
 
-# Posting Functionality
 def post(type, post_fun): 
     successful_post = post_fun
     print(f'{type} post processed.  Result: {successful_post}')
@@ -31,18 +29,17 @@ def post_youtube_video():
     response = youtube_content_repo.post_upload_video_to_youtube()
     print(response) 
 
-# Scheduling Functionality
 def process_initial_video_download_transcript(youtube_url):
     filename = video_downloader.save_to_mp3(youtube_url)
     transcriptname = gpt.mp3_to_transcript(filename)
     gpt.transcript_to_summary(transcriptname, filename) 
 
 def schedule_video_story():
-    file_path = os.path.join("src", "input_prompts", "story.txt")
-    gpt.prompt_to_file(
-        prompt_source=file_path, 
+    gpt.generate_prompt_to_file(
+        prompt_source=os.path.join("src", "input_prompts", "story.txt"), 
         type='story', 
         image_query_term='old',
+        post_num=1,
         upload_func=create_story_and_scenes
     )
     video_remote_url = video_editor.edit_movie_for_remote_url()
@@ -53,10 +50,26 @@ def get_google_sheets():
     file_path=os.path.join('src', CLIENT_SECRET_FILE)
     sa = gspread.service_account(filename=file_path)  
     sh = sa.open('AI Content Machine')  
-    return sh
+    return sh    
 
-def schedule_content():
-    # Iterate through each row of sheet
+# Begin the running of our application
+if __name__ == '__main__':
+
+    print("\n")
+    print("Starting to print money ...")
+    print("\n")
+    
+    shopify_content_repo.post_shopify_blog_article()
+    # Quickly process our posts
+    # put our post calls here. this will need to be first with the proper implementation
+    post('Shopify', shopify_content_repo.post_shopify_blog_article())
+    post('Facebook', fb_content_repo.post_fb_image())
+    post('Instagram', ig_content_repo.post_ig_media_post())
+    post('Twitter', twitter_content_repo.post_tweet())
+    post_youtube_video()
+
+    # Begin our block for long running creation
+    # Schedule our content by iterating through each row of sheet
     sh=get_google_sheets()
     sheet=sh.worksheet("Sheet1")
     cell_list=sheet.get_all_values()
@@ -70,58 +83,43 @@ def schedule_content():
             youtube_url = row[0]
             content_description = row[1]
 
-            # download the video, convert to mp3, and generate a transcript
             process_initial_video_download_transcript(youtube_url)
-
-            # begin our block for long running creation
-            gpt.prompt_to_file(
+            gpt.generate_prompt_response(
                 type = 'facebook', 
                 prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
                 image_query_term = content_description, 
+                post_num=3,
                 upload_func = fb_content_repo.schedule_fb_post
             )
-            gpt.prompt_to_file(
+            gpt.generate_prompt_response(
                 type='instagram', 
                 prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
                 image_query_term=content_description,
+                post_num=3,
                 upload_func=ig_content_repo.schedule_ig_image_post
             )
-            gpt.prompt_to_file(
+            gpt.generate_prompt_response(
                 type="shopify_blog", 
                 prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
                 image_query_term=content_description,
+                post_num=3,
                 upload_func=shopify_content_repo.schedule_shopify_blog_article
             )
-            gpt.prompt_to_file(
-                type='tweetstorm',
+            gpt.generate_prompt_response(
+                type='tweet',
                 prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
                 image_query_term=content_description,
-                upload_func=twitter_content_repo.schedule_tweets
+                post_num=12,
+                upload_func=twitter_content_repo.schedule_tweet
             )
             schedule_video_story()
 
             # updated cell is the length of the row + 1
-            success_value = 'Scheduled'
-            sheet.update_cell(i+1, len(row)+1, success_value)
-
-# Begin the running of our application
-if __name__ == '__main__':
-
-    print("\n")
-    print("Starting to print money ...")
-    print("\n")
-
-    
-    # Quickly process our posts
-    # put our post calls here. this will need to be first with the proper implementation
-    post('Shopify', shopify_content_repo.post_shopify_blog_article())
-    post('Facebook', fb_content_repo.post_fb_image())
-    post('Instagram', ig_content_repo.post_ig_media_post())
-    post('Twitter', twitter_content_repo.post_tweet())
-    post_youtube_video()
-
-    # Schedule our content
-    schedule_content()
+            # check if last cell is empty before updating
+            last_cell = sheet.cell(i+1, len(row)+1)
+            if last_cell.is_blank():
+                success_value = 'Scheduled'
+                sheet.update_cell(i+1, len(row)+1, success_value)
 
 # Stalled 
     # upload these to dropbox

@@ -67,7 +67,7 @@ def get_gpt_generated_text( prompt_source ):
     applied_prompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
     return gpt_3(applied_prompt)
 
-def prompt_to_file( prompt_source, type, image_query_term, upload_func ):
+def generate_prompt_response( prompt_source, type, image_query_term, post_num, upload_func ):
     """
     Convert a single file of language to another using chat GPT and upload to dropbox
         
@@ -83,14 +83,11 @@ def prompt_to_file( prompt_source, type, image_query_term, upload_func ):
         Returns: 
             Nothing
     """
-    print(f'gpt status: processing {type}')
-    gpt_text = get_gpt_generated_text(prompt_source)
-
-    saveFilePath = os.path.join('src', 'outputs', f'{type}_output.txt')
-    utils.save_file(saveFilePath, gpt_text)
-    print(f'gpt status: saved file for {type}. Moving to scheduling')
-
-    upload_func(gpt_text, image_query_term)
+    for num in range(post_num):
+        print(f'gpt status: processing {type} number {num + 1} of {post_num}')
+        gpt_text = get_gpt_generated_text(prompt_source)
+        print(f'Moving to {type} scheduling')
+        upload_func(gpt_text, image_query_term)
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     dbx = content_creator.dbx
