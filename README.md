@@ -1,32 +1,18 @@
-![artwork-digital-art-dark-cthulhu-red-eyes-hd-wallpaper-thumb](https://user-images.githubusercontent.com/7444521/215304936-dd08274a-5862-4947-ac58-5e9eecf5c77c.jpeg)
+# AI Content Machine 
+A script to turn one YouTube video into content. Uploads automatically.
 
+![57f43290c988cd447f8e5a5c3e6a09ad](https://user-images.githubusercontent.com/7444521/222048539-cd7220fe-ec96-45cc-985a-d4027c35b203.jpg)
 
-# AI Content Machine
-A script to turn one YouTube video into content.  Uploads automatically to:
-- Twitter
-- Shopify Blogs
-- Instagram
-- Facebook
+|           Dependencies               |         Install Lib:                         |
+| :----------------------------------------- | :------------------------------ |
+| Remember OpenAI API Key                                      |  pip install git+https://github.com/openai/whisper.git                               |
+|  Run the script                             |  pip install numpy                                 |
+| 1. Insert a YouTube URL in line 66                                    |  pip install openai                                |
+| 2. Set your PATH folder in line 70                                    |  pip install Youtube_dl                                  |
+| 3. Run the script                      |     pip install textwrap                               |
 
-Install Lib:
-- pip install git+https://github.com/openai/whisper.git 
-- pip install numpy
-- pip install openai
-- pip install Youtube_dl
-- pip install textwrap
-
-Install FFmpeg - Links in YouTube Tutorial:
-https://youtu.be/o-jQHQzjEjo
-
-Remember OpenAI API Key
-
-
-Run the script
-1. Insert a YouTube URL in line 66
-2. Set your PATH folder in line 70
-3. Run the script
-
-Discord if you have any Questions
+Install FFmpeg - Links in YouTube Tutorial: https://youtu.be/o-jQHQzjEjo 
+Discord if you have any Questions 
 
 ### My Personal Notes
 install everything with pip3
