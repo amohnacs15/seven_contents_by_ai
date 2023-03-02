@@ -7,6 +7,7 @@ from enum import Enum
 import json
 import utility.scheduler as scheduler
 import datetime
+import utility.time_utils as time_utils
 
 class PostingPlatform(Enum):
         FACEBOOK = 'facebook'
@@ -63,7 +64,8 @@ class FirebaseStorage():
             latest_scheduled_datetime_str = collection[len(collection) - 1].key().strip()
             print(f'latest_scheduled_datetime_str: {latest_scheduled_datetime_str}')
 
-            latest_scheduled_datetime = datetime.datetime.fromisoformat(latest_scheduled_datetime_str)
+            formatted_iso = time_utils.convert_str_to_iso_format(latest_scheduled_datetime_str)
+            latest_scheduled_datetime = datetime.datetime.fromisoformat(formatted_iso)
             return latest_scheduled_datetime
         else:
             print('something went wrong with get_latest_scheduled_datetime( self, platform )')  
@@ -94,8 +96,9 @@ class FirebaseStorage():
 
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_latest_scheduled_datetime(platform)
+        current_time = last_posted_time = datetime.datetime.now()
         print(f'last_posted_time: {last_posted_time}')
-        if (last_posted_time == ''):
+        if (last_posted_time == '' or last_posted_time < current_time):
             last_posted_time = datetime.datetime.now()
             print(f'last_posted_time was empty, setting to now: {type(last_posted_time)}')
 
@@ -110,9 +113,9 @@ class FirebaseStorage():
 
     def delete_post( self, platform, datetime_key ):
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
-        # result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
-        # print(f'firebase delete result \n{result}')
-        # return result
+        result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
+        print(f'firebase delete result \n{result}')
+        return result
 
 #static instances
 firebase_storage_instance = FirebaseStorage()

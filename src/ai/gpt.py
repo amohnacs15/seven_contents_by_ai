@@ -38,7 +38,8 @@ def gpt_3 (prompt):
 def mp3_to_transcript(mp3_filename):
     sound = mp3_filename
     model = whisper.load_model("medium")
-    result = model.transcribe(sound, fp16=False)
+    result = model.transcribe(sound, fp16=False, language = 'en')
+
     yttrans = (result['text'])
     result_path = mp3_filename + '_transcript.txt'
     utils.save_file(result_path, yttrans)
@@ -62,12 +63,18 @@ def transcript_to_summary(transcriptname, filename):
     utils.save_file(file_path_output, '\n\n'.join(result))
 
 def get_gpt_generated_text( prompt_source ):
+    # get the first draft of the generated text
     feedin_source_file = os.path.join("src", "outputs", "summary_output.txt")
     feed_source = utils.open_file(feedin_source_file)
     applied_prompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
-    return gpt_3(applied_prompt)
+    draft = gpt_3(applied_prompt)
 
-def prompt_to_file( prompt_source, type, image_query_term, upload_func ):
+    # get the second draft stripped of identifying material
+    polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
+    polished_applied_prompt = utils.open_file(polish_source_file).replace('<<FEED>>', draft)
+    return gpt_3(polished_applied_prompt)
+
+def generate_prompt_response( prompt_source, image_query_term, post_num, upload_func ):
     """
     Convert a single file of language to another using chat GPT and upload to dropbox
         
@@ -83,14 +90,9 @@ def prompt_to_file( prompt_source, type, image_query_term, upload_func ):
         Returns: 
             Nothing
     """
-    print(f'gpt status: processing {type}')
-    gpt_text = get_gpt_generated_text(prompt_source)
-
-    saveFilePath = os.path.join('src', 'outputs', f'{type}_output.txt')
-    utils.save_file(saveFilePath, gpt_text)
-    print(f'gpt status: saved file for {type}. Moving to scheduling')
-
-    upload_func(gpt_text, image_query_term)
+    for num in range(post_num):
+        gpt_text = get_gpt_generated_text(prompt_source)
+        upload_func(gpt_text, image_query_term)
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     dbx = content_creator.dbx

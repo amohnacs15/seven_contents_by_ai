@@ -10,11 +10,13 @@ import appsecrets as appsecrets
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
 def create_story_and_scenes( story, media_url ):
+    # save a hard copy of the story
+    story_file_path=os.path.join('src', 'outputs', 'story_output.txt')
+    utils.save_file(story_file_path, story)
     # turn story into scenes
     file_path = os.path.join("src", "input_prompts", "scenes.txt")
     storyscene = utils.open_file(file_path).replace('<<STORY>>', story)
     gpt_story_scene = gpt3_story_scene(storyscene)
-    print(f'\story scenes:\n{gpt_story_scene}\n')
     # Save each scene in its own file
     story_scene_path=os.path.join('src', 'output_story_scenes', 'storyscene.txt')
     utils.save_file(story_scene_path, gpt_story_scene)
@@ -58,7 +60,7 @@ def split_story_into_scenes(story_file_path):
   with open(story_file_path, "r", encoding='UTF-8') as story_file:
     # Read the entire file into a single string
     story = story_file.read()
-
+    
   # Split the story into a list of scenes, using the word "Scene" as the delimiter
   scenes = story.split("Scene")
 
@@ -97,9 +99,6 @@ def gpt3_story_scene(
                 stop=stop)
                 
             text = response['choices'][0]['text'].strip()
-            #text = re.sub('\s+', ' ', text)
-            filename = '%s_gpt3.txt' % time()
-            # utils.save_file('logger/%s' % filename, prompt + '\n\n==========\n\n' + text)
             return text
         except Exception as oops:
             retry += 1

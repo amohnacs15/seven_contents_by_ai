@@ -125,7 +125,8 @@ def post_upload_video_to_youtube():
             body={
                 "snippet": {
                     "title": post_params['title'],
-                    "description": post_params['description']
+                    "description": post_params['description'],
+                    "publishedAt": earliest_scheduled_datetime_str
                 },
                 "status": {
                     "privacyStatus": "private",

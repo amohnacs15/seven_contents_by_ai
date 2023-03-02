@@ -30,8 +30,8 @@ def post_tweet():
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
     
-    # if (ready_to_post):
-    if (True):
+    if (ready_to_post):
+    # if (True):
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.TWITTER, 
             earliest_scheduled_datetime_str
@@ -56,17 +56,12 @@ def post_tweet():
         except Exception as e:
             return e
 
-def schedule_tweets( tweet, image_query ):
-    file_path = os.path.join('src', 'outputs', 'tweetstorm_output.txt')
-    
-    tweetFile = open(file_path, 'r', encoding="utf8")
-    tweets = tweetFile.readlines()
-
-    for tweet in tweets:
+def schedule_tweet( tweet, image_query ):
+    if (tweet != ''):
         payload = dict()
         payload['tweet'] = tweet
         firebase_storage_instance.upload_scheduled_post(
             PostingPlatform.TWITTER, 
             payload
         )
-    return tweets  
+    return tweet  

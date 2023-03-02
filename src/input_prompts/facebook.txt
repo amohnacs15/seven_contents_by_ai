@@ -1,5 +1,5 @@
-Imagine and Write 2 compelling Facebook posts seperated with '\n!!!\n' that are 2000 characters long including hashtags that creatively explains the following text IN AN EMPATHETIC tone INCLUDING a call to action to go to comment and share from the following text:
+Imagine and Write a compelling Facebook posts that is less than 2000 characters long including hashtags that creatively explains the following text IN AN EMPATHETIC tone from the following text:
 
 <<FEED>>
 
-IMAGINE AND WRITE 2 COMPELLING FACEBOOK POSTS THAT ARE2000 CHARACTERS LONG INCLUDING HASHTAGS THAT CREATIVELY EXPLAINS THE FOLLOWING TEXT IN AN EMPATHETIC TONE INCLUDING A CALL TO ACTION TO GO TO COMMENT AND SHARE FROM THE TEXT ABOVE.  EACH POST WILL BE SEPERATED WITH A '\n!!!\n" CHARACTER
+IMAGINE AND WRITE a COMPELLING FACEBOOK POSTS THAT IS LESS THAN 2000 CHARACTERS LONG INCLUDING HASHTAGS THAT CREATIVELY EXPLAINS THE FOLLOWING TEXT IN AN EMPATHETIC TONE FROM THE TEXT ABOVE:

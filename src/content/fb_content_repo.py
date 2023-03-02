@@ -22,8 +22,8 @@ def post_fb_image():
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
     
-    # if (ready_to_post):
-    if (True):
+    if (ready_to_post):
+    # if (True):
         post_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.FACEBOOK, 
             earliest_scheduled_datetime_str
@@ -47,24 +47,17 @@ def post_fb_image():
          )
         return result
 
-def schedule_fb_post( multi_caption, image_query ):
-
-    caption_list = multi_caption.split('\n!!!\n')
-    for caption in caption_list:
-        image_url = image_creator.get_unsplash_image_url(image_query)
-
-        payload = {
-            'url': image_url,
-            'message': caption, 
-            'published' : True
-        }
-
-        result = firebase_storage_instance.upload_scheduled_post(
-            PostingPlatform.FACEBOOK, 
-            payload
-        )
-
-        print('FB upload scheduled post ressult')
-        print(str(result))
+def schedule_fb_post( caption, image_query ):
+    image_url = image_creator.get_unsplash_image_url(image_query)
+    payload = {
+        'url': image_url,
+        'message': caption, 
+        'published' : True
+    }
+    result = firebase_storage_instance.upload_scheduled_post(
+        PostingPlatform.FACEBOOK, 
+        payload
+    )
+    print('FB upload scheduled post ressult' + str(result))
     return result
     

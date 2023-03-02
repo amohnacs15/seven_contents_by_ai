@@ -7,7 +7,7 @@ import requests
 import json
 import constants
 
-def get_unsplash_image_url( search_query ):
+def get_unsplash_image_url( search_query, orientation = 'portrait' ):
     url = 'https://api.unsplash.com/search/photos'
     params = {
         'query': search_query,
@@ -25,13 +25,12 @@ def get_unsplash_image_url( search_query ):
     json_content = json.loads( response.content )
     if (json_content['total'] > 0):
         result_url=json_content['results'][0]['urls']['full']
-        conact_url=result_url + '&width=' + str(constants.VIDEO_IMAGE_WIDTH)*3 + '&height=' + str(constants.VIDEO_IMAGE_HEIGHT)*3
-        return conact_url
+        return result_url
     else:
         return ''
 
 
-def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = constants.VIDEO_IMAGE_HEIGHT):
+def get_ai_image(visual_prompt, width = 512, height = 1024):
     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
     model = api.models.get("tstramer/midjourney-diffusion")
     version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")
@@ -39,9 +38,10 @@ def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = co
 #     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
     inputs = {
 #         # Input prompt
-        'prompt': visual_prompt,
+        'prompt': f'mdjrny-v4 style midjourney -v4 style {visual_prompt}',
 
-#         # Specify things to not see in the output # 'negative_prompt': ...,
+#         # Specify things to not see in the output  
+        'negative_prompt': 'people person man lady hand hands she he them woman face faces',
 
 #         # Width of output image. Maximum size is 1024x768 or 768x1024 because # of memory limits
         'width': width,
