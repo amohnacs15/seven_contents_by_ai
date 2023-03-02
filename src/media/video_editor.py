@@ -135,8 +135,8 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
             {
                 "type": "audio",
                 "src": mp3_ref_url,
-                "volume": 0.8,
-                "duration": -2
+                "volume": 1,
+                "duration": -1
             }
         ],
         "scenes": []

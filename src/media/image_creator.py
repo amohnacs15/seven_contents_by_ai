@@ -38,9 +38,10 @@ def get_ai_image(visual_prompt, width = 512, height = 1024):
 #     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
     inputs = {
 #         # Input prompt
-        'prompt': visual_prompt,
+        'prompt': f'mdjrny-v4 style midjourney -v4 style {visual_prompt}',
 
-#         # Specify things to not see in the output # 'negative_prompt': ...,
+#         # Specify things to not see in the output  
+        'negative_prompt': 'people person man lady hand hands she he them woman face faces',
 
 #         # Width of output image. Maximum size is 1024x768 or 768x1024 because # of memory limits
         'width': width,

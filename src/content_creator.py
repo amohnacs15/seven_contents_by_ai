@@ -115,7 +115,7 @@ if __name__ == '__main__':
             if (last_cell.value is None or last_cell.value == ''):
                 success_value = 'Scheduled'
                 sheet.update_cell(i+1, len(row), success_value)
-
+    print('COMPLETE SUCCESS.')
 # Stalled 
     # upload these to dropbox
     # gpt.prompt_to_file_upload(filename, summary_ouput_file, 'input_prompts/email.txt', "email")
