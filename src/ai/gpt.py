@@ -38,7 +38,8 @@ def gpt_3 (prompt):
 def mp3_to_transcript(mp3_filename):
     sound = mp3_filename
     model = whisper.load_model("medium")
-    result = model.transcribe(sound, fp16=False)
+    result = model.transcribe(sound, fp16=False, language = 'en')
+
     yttrans = (result['text'])
     result_path = mp3_filename + '_transcript.txt'
     utils.save_file(result_path, yttrans)
@@ -70,11 +71,10 @@ def get_gpt_generated_text( prompt_source ):
 
     # get the second draft stripped of identifying material
     polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
-    polished_source = utils.open_file(polish_source_file)
-    polished_applied_prompt = utils.open_file(polished_source).replace('<<FEED>>', draft)
+    polished_applied_prompt = utils.open_file(polish_source_file).replace('<<FEED>>', draft)
     return gpt_3(polished_applied_prompt)
 
-def generate_prompt_response( prompt_source, type, image_query_term, post_num, upload_func ):
+def generate_prompt_response( prompt_source, image_query_term, post_num, upload_func ):
     """
     Convert a single file of language to another using chat GPT and upload to dropbox
         
@@ -91,9 +91,7 @@ def generate_prompt_response( prompt_source, type, image_query_term, post_num, u
             Nothing
     """
     for num in range(post_num):
-        print(f'gpt status: processing {type} number {num + 1} of {post_num}')
         gpt_text = get_gpt_generated_text(prompt_source)
-        print(f'Moving to {type} scheduling')
         upload_func(gpt_text, image_query_term)
 
 def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):

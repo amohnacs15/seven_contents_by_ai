@@ -57,7 +57,7 @@ def get_speech_mp3_from_text( voice_id, text ):
 
         subtext_title = text[0:64]
         file_name = subtext_title + '.mp3'
-        full_remote_path = 'ai_content_machine/' + file_name
+        full_remote_path = 'ai_content_machine/' + voice_id + '_' + file_name
 
         full_local_path=os.path.join('src', 'output_downloads', file_name)
         with open(full_local_path, "wb") as f:

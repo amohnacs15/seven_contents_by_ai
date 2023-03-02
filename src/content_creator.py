@@ -38,7 +38,6 @@ def process_initial_video_download_transcript(youtube_url):
 def schedule_video_story():
     gpt.generate_prompt_response(
         prompt_source=os.path.join("src", "input_prompts", "story.txt"), 
-        type='story', 
         image_query_term='old',
         post_num=1,
         upload_func=create_story_and_scenes
@@ -59,15 +58,9 @@ if __name__ == '__main__':
     print("\n")
     print("Starting to print money ...")
     print("\n")
-    
-    # shopify_content_repo.post_shopify_blog_article()
-    # fb_content_repo.post_fb_image()
-    # ig_content_repo.post_ig_media_post()
-    # twitter_content_repo.post_tweet()
-    # post_youtube_video()
 
     # Quickly process our posts
-    # put our post calls here. this will need to be first with the proper implementation
+    # # put our post calls here. this will need to be first with the proper implementation
     post('Shopify', shopify_content_repo.post_shopify_blog_article())
     post('Facebook', fb_content_repo.post_fb_image())
     post('Instagram', ig_content_repo.post_ig_media_post())
@@ -80,8 +73,6 @@ if __name__ == '__main__':
     sheet=sh.worksheet("Sheet1")
     cell_list=sheet.get_all_values()
 
-    sheet.update_cell(1, 1, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) 
-
     for i, row in enumerate(cell_list):
         # if we do not find the word 'Scheduled' in the row, 
         # then we have not processed it yet
@@ -93,28 +84,24 @@ if __name__ == '__main__':
 
             process_initial_video_download_transcript(youtube_url)
             gpt.generate_prompt_response(
-                type = 'facebook', 
                 prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
                 image_query_term = content_description, 
                 post_num=2,
                 upload_func = fb_content_repo.schedule_fb_post
             )
             gpt.generate_prompt_response(
-                type='instagram', 
                 prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
                 image_query_term=content_description,
                 post_num=2,
                 upload_func=ig_content_repo.schedule_ig_image_post
             )
             gpt.generate_prompt_response(
-                type="shopify_blog", 
                 prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
                 image_query_term=content_description,
                 post_num=1,
                 upload_func=shopify_content_repo.schedule_shopify_blog_article
             )
             gpt.generate_prompt_response(
-                type='tweet',
                 prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
                 image_query_term=content_description,
                 post_num=16,
@@ -124,10 +111,10 @@ if __name__ == '__main__':
 
             # updated cell is the length of the row + 1
             # check if last cell is empty before updating
-            last_cell = sheet.cell(i+1, len(row)+1)
-            if last_cell.is_blank():
+            last_cell = sheet.cell(i+1, len(row))
+            if (last_cell.value is None):
                 success_value = 'Scheduled'
-                sheet.update_cell(i+1, len(row)+1, success_value)
+                sheet.update_cell(i+1, len(row), success_value)
 
 # Stalled 
     # upload these to dropbox

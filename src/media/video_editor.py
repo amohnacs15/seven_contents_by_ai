@@ -104,7 +104,10 @@ def get_scene_images_array():
 
     for prompt in prompts:
         print(f'prompt: {prompt}')
-        image = image_creator.get_unsplash_image_url(prompt)
+        image = image_creator.get_ai_image(
+            visual_prompt=prompt,
+            
+        )
         images.append(image)
 
     return images    
