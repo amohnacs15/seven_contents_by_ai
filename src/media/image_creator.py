@@ -30,7 +30,7 @@ def get_unsplash_image_url( search_query, orientation = 'portrait' ):
         return ''
 
 
-def get_ai_image(visual_prompt, width = constants.VIDEO_IMAGE_WIDTH, height = constants.VIDEO_IMAGE_HEIGHT):
+def get_ai_image(visual_prompt, width = 512, height = 1024):
     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
     model = api.models.get("tstramer/midjourney-diffusion")
     version = model.versions.get("436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b")

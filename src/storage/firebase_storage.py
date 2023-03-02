@@ -96,8 +96,9 @@ class FirebaseStorage():
 
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_latest_scheduled_datetime(platform)
+        current_time = last_posted_time = datetime.datetime.now()
         print(f'last_posted_time: {last_posted_time}')
-        if (last_posted_time == ''):
+        if (last_posted_time == '' or last_posted_time < current_time):
             last_posted_time = datetime.datetime.now()
             print(f'last_posted_time was empty, setting to now: {type(last_posted_time)}')
 

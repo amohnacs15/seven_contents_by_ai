@@ -112,7 +112,7 @@ if __name__ == '__main__':
             # updated cell is the length of the row + 1
             # check if last cell is empty before updating
             last_cell = sheet.cell(i+1, len(row))
-            if (last_cell.value is None):
+            if (last_cell.value is None or last_cell.value == ''):
                 success_value = 'Scheduled'
                 sheet.update_cell(i+1, len(row), success_value)
 
