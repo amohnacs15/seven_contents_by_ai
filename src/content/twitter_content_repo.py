@@ -26,7 +26,7 @@ def post_tweet():
 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
     if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f'TW earliest posted time: {earliest_scheduled_datetime_str}')
+    print(f'TWITTER earliest posted time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
     
@@ -38,10 +38,10 @@ def post_tweet():
         )
         try:
             post_params = json.loads(post_params_json)
-            print(f'post params return {post_params}')
+            print(f'TWITTER post params return {post_params}')
         except:
             print('error parsing json')
-            print(post_params_json)
+            print(f'TWTITTER {post_params_json}')
             return 'error parsing json'  
             
         tweet = post_params['tweet']

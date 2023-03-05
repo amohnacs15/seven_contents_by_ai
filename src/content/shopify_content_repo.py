@@ -22,7 +22,7 @@ def initialize_shopify():
 def post_shopify_blog_article(): 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
     if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f'SH earliest scheduled time: {earliest_scheduled_datetime_str}')
+    print(f'SHOPIFY earliest scheduled time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
     if (ready_to_post):
@@ -34,8 +34,8 @@ def post_shopify_blog_article():
         try:
             post_params = json.loads(post_params_json)
         except:
-            print('SH error parsing json')
-            print(post_params_json)
+            print('SHOPIFY error parsing json')
+            print(f'SHOPIFY {post_params_json}')
             return 'error parsing json'    
 
         if (post_params['title'] != ''):
@@ -58,7 +58,7 @@ def post_shopify_blog_article():
                     new_article.image = image
 
                     result = new_article.save()
-                    print(f'Shopify blog upload successful {result}')
+                    print(f'SHOPIFY blog upload successful {result}')
                     firebase_storage_instance.delete_post(
                         PostingPlatform.SHOPIFY, 
                         earliest_scheduled_datetime_str

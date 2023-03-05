@@ -8,10 +8,10 @@ import json
 import constants
 
 def get_unsplash_image_url( search_query, orientation = 'portrait' ):
-    url = 'https://api.unsplash.com/search/photos'
+    url = 'https://api.unsplash.com/photos/random'
     params = {
         'query': search_query,
-        'orientation': 'portrait'
+        'orientation': orientation
     }
     headers = {
         'Accept-Version': "v1",
@@ -74,5 +74,5 @@ def get_ai_image(visual_prompt, width = 512, height = 1024):
         print(output[0])
         return output[0]
     except Exception as e:
-        print(f'image processing failed: {e}')
+        print(f'Image processing failed: {e}')
         return 'https://replicate.delivery/pbxt/YkWafGlPx70qIylnrCQvnNCPfseNNMHru9UWmVrQzc6Lw55gA/out-0.png'    

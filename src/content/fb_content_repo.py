@@ -18,7 +18,7 @@ Also, prints status of uploading the payload.
 def post_fb_image():
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.FACEBOOK)
     if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f' FB earliest scheduled time: {earliest_scheduled_datetime_str}')
+    print(f'FACEBOOK earliest scheduled time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
     
@@ -31,13 +31,12 @@ def post_fb_image():
         try:
             post_json_object = json.loads(post_json)
         except:
-            print('FB ')
-            print(post_json)
-            return 'error parsing json'
+            print(F'FACEBOOK {post_json}')
+            return 'FACEBOOK error parsing json'
         
         params = meta_tokens.get_fb_page_access_token()
         post_json_object['access_token'] = params['page_access_token']
-        print(post_json_object)
+        print(f'FACEBOOK {post_json_object}')
 
         url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
         result =  make_api_call( url=url, endpointJson=post_json_object, type='POST' )
@@ -58,6 +57,6 @@ def schedule_fb_post( caption, image_query ):
         PostingPlatform.FACEBOOK, 
         payload
     )
-    print('FB upload scheduled post ressult' + str(result))
+    print('FACEBOOK upload scheduled post ressult' + str(result))
     return result
     

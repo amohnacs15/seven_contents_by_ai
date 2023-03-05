@@ -4,8 +4,8 @@ sys.path.append("../src")
 
 from meta_graph_api.meta_definition import make_api_call
 import appsecrets
-import utility.utils as utils
 import json
+from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 
 def create_ig_access_token_creds():
 	""" Get creds required for use in the applications
@@ -35,8 +35,7 @@ def create_ig_access_token_creds():
 def get_ig_access_creds() :
 
     params = create_ig_access_token_creds()
-    token_path=os.path.join('src', 'ig_access_token.txt')
-    cachedToken = utils.open_file(token_path)
+    cachedToken = firebase_storage_instance.get_token(PostingPlatform.INSTAGRAM)
 
     if (cachedToken != ''):
         params['access_token'] = cachedToken
@@ -55,7 +54,7 @@ def get_ig_access_creds() :
         
         print(token_response['json_data'])
         access_token = token_response['json_data']['access_token']
-        utils.save_file("ig_access_token.txt", access_token)
+        firebase_storage_instance.store_token(PostingPlatform.INSTAGRAM, access_token)
 
         print("\n ---- ACCESS TOKEN INFO ----\n") # section header
         print("Access Token:")  # label
@@ -68,9 +67,7 @@ def get_ig_access_creds() :
     return params
 
 def get_fb_page_access_token():
-
-    token_path=os.path.join('src', 'fb_access_token.txt')
-    cachedToken = utils.open_file(token_path)
+    cachedToken = firebase_storage_instance.get_token(PostingPlatform.FACEBOOK)
 
     if (cachedToken != ''):
         params = dict()
@@ -92,7 +89,7 @@ def get_fb_page_access_token():
 
         response = make_api_call( url=post_url, endpointParams=params, type='GET' )
         params['page_access_token'] = response['json_data']['access_token']
-        utils.save_file(token_path, params['page_access_token'])
+        firebase_storage_instance.store_token(PostingPlatform.FACEBOOK, params['page_access_token'])
 
     return params
 

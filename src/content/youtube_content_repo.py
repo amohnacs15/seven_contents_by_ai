@@ -100,9 +100,9 @@ def post_upload_video_to_youtube():
         )
         try:
             post_params = json.loads(post_params_json)
-            print('\npost_params: ', post_params, '\n')
+            print('\nYOUTUBE post_params: ', post_params, '\n')
         except:
-            print('YT error parsing post params')
+            print('YOUTUBE error parsing post params')
             print('post_params_json: ', post_params_json)
             return 'Error parsing post params'
 
@@ -137,9 +137,12 @@ def post_upload_video_to_youtube():
             },
             media_body=MediaFileUpload(upload_file_path)
         )
-        response = request.execute()
-        firebase_storage_instance.delete_post(
-            PostingPlatform.YOUTUBE, 
-            earliest_scheduled_datetime_str
-        )
+        try:
+            response = request.execute()
+            firebase_storage_instance.delete_post(
+                PostingPlatform.YOUTUBE, 
+                earliest_scheduled_datetime_str
+            )
+        except Exception as e:    
+            response = e
         return response
