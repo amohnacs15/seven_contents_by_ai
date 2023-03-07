@@ -1,11 +1,20 @@
 from datetime import datetime, timedelta
 import utility.time_utils as time_utils
-import pytz
 
-_est_timezone=pytz.timezone('America/New_York')
+def is_expired( datetime_str ):
+    '''
+        Checks to see if the current iso string is in the past
+
+        @returns:
+            True of False
+    '''
+    if (datetime.fromisoformat(datetime_str) < get_datetime_now()):
+        return True
+    else:
+        return False
 
 def get_datetime_now():
-    return datetime.now(_est_timezone)
+    return datetime.now()
 
 def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
     '''
@@ -19,6 +28,8 @@ def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
         Returns:
             boolean: are we running this close enough to the scheduled date
     '''
+    if (earliest_scheduled_datetime_str is None):
+        return False
     formatted_iso=time_utils.convert_str_to_iso_format(earliest_scheduled_datetime_str.strip())
     scheduled_time=datetime.fromisoformat(formatted_iso)
     current_time=get_datetime_now()
@@ -28,7 +39,7 @@ def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
     upper_bound=scheduled_time + timedelta(minutes=5)
 
     print(f'Checking if {current_time} is between {lower_bound} and {upper_bound}')
-    if lower_bound.timestamp() < current_time.timestamp() < upper_bound.timestamp():
+    if lower_bound < current_time < upper_bound:
         print('Yes, it is. Posting now.')
         return True
     else:
