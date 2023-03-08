@@ -77,43 +77,46 @@ if __name__ == '__main__':
             youtube_url = row[0]
             content_description = row[1]
 
-            process_initial_video_download_transcript(youtube_url)
-            gpt.generate_prompt_response(
-                prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
-                image_query_term = content_description, 
-                polish_post=True,
-                post_num=2,
-                upload_func = fb_content_repo.schedule_fb_post
-            )
-            gpt.generate_prompt_response(
-                prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
-                image_query_term=content_description,
-                polish_post=True,
-                post_num=2,
-                upload_func=ig_content_repo.schedule_ig_image_post
-            )
-            gpt.generate_prompt_response(
-                prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
-                image_query_term=content_description,
-                polish_post=False,
-                post_num=1,
-                upload_func=shopify_content_repo.schedule_shopify_blog_article
-            )
-            gpt.generate_prompt_response(
-                prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
-                image_query_term=content_description,
-                polish_post=True,
-                post_num=16,
-                upload_func=twitter_content_repo.schedule_tweet
-            )
-            schedule_video_story()
+            try:
+                process_initial_video_download_transcript(youtube_url)   
+                gpt.generate_prompt_response(
+                    prompt_source = os.path.join('src', 'input_prompts', 'facebook.txt'),
+                    image_query_term = content_description, 
+                    polish_post=True,
+                    post_num=2,
+                    upload_func = fb_content_repo.schedule_fb_post
+                )
+                gpt.generate_prompt_response(
+                    prompt_source=os.path.join('src', 'input_prompts', 'instagram.txt'),
+                    image_query_term=content_description,
+                    polish_post=True,
+                    post_num=2,
+                    upload_func=ig_content_repo.schedule_ig_image_post
+                )
+                gpt.generate_prompt_response(
+                    prompt_source=os.path.join('src', 'input_prompts', 'blog.txt'),
+                    image_query_term=content_description,
+                    polish_post=False,
+                    post_num=1,
+                    upload_func=shopify_content_repo.schedule_shopify_blog_article
+                )
+                gpt.generate_prompt_response(
+                    prompt_source=os.path.join('src', 'input_prompts', 'tweetstorm.txt'),
+                    image_query_term=content_description,
+                    polish_post=True,
+                    post_num=16,
+                    upload_func=twitter_content_repo.schedule_tweet
+                )
+                # schedule_video_story()
 
-            # updated cell is the length of the row + 1
-            # check if last cell is empty before updating
-            last_cell = sheet.cell(i+1, len(row))
-            if (last_cell.value is None or last_cell.value == ''):
-                success_value = 'Scheduled'
-                sheet.update_cell(i+1, len(row), success_value)
+                # updated cell is the length of the row + 1
+                # check if last cell is empty before updating
+                last_cell = sheet.cell(i+1, len(row))
+                if (last_cell.value is None or last_cell.value == ''):
+                    success_value = 'Scheduled'
+                    sheet.update_cell(i+1, len(row), success_value)
+            except:
+                print('Finished with error')        
     print('COMPLETE SUCCESS.')
 # Stalled 
     # upload these to dropbox

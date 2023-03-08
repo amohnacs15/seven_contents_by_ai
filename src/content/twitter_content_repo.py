@@ -29,7 +29,6 @@ def post_tweet():
     print(f'TWITTER earliest posted time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-    
     if (ready_to_post):
     # if (True):
         post_params_json = firebase_storage_instance.get_specific_post(
