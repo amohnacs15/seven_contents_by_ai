@@ -116,6 +116,10 @@ def post_upload_video_to_youtube():
             upload_file_path = video_downloader.download_video(
                 post_params['remote_video_url']
             )
+            firebase_storage_instance.upload_file_to_storage(
+                "ai_content_video/" + upload_file_path,
+                upload_file_path
+            )
         except Exception as e:
             print(f'Error downloading video: {e}')
             return

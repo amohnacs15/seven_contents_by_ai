@@ -57,7 +57,7 @@ class FirebaseStorage():
         print(f'successful firebase storage delete {result}')
 
     @classmethod
-    def upload_mp3( self, remote_storage_path, local_path ):
+    def upload_file_to_storage( self, remote_storage_path, local_path ):
         result = self.storage.child(remote_storage_path).put(local_path)
         print(f'successful firebase storage upload {result}')
 
