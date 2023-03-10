@@ -30,7 +30,6 @@ instagram_times_array = [
 youtube_times_array = [
     '2023-03-01T09:00:00', #9am
     '2023-03-01T16:00:00', #4pm
-    '2023-03-01T19:00:00' #7pm
 ]
 # 48 tweets daily
 # 16 tweets from 1 video

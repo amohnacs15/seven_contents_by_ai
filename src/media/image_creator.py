@@ -8,10 +8,10 @@ import json
 import constants
 
 def get_unsplash_image_url( search_query, orientation = 'portrait' ):
-    url = 'https://api.unsplash.com/search/photos'
+    url = 'https://api.unsplash.com/photos/random'
     params = {
         'query': search_query,
-        'orientation': 'portrait'
+        'orientation': orientation
     }
     headers = {
         'Accept-Version': "v1",
@@ -22,13 +22,16 @@ def get_unsplash_image_url( search_query, orientation = 'portrait' ):
         params = params,
         headers = headers
     )
-    json_content = json.loads( response.content )
-    if (json_content['total'] > 0):
-        result_url=json_content['results'][0]['urls']['full']
-        return result_url
-    else:
+    try:
+        json_content = json.loads( response.content )
+        if (json_content['urls'] is not None):
+            result_url=json_content['urls']['full']
+            return result_url
+        else:
+            return ''
+    except:
+        print(f'error with image {response}')
         return ''
-
 
 def get_ai_image(visual_prompt, width = 512, height = 1024):
     api = replicate.Client(appsecrets.REPLICATE_TOKEN)
@@ -38,7 +41,7 @@ def get_ai_image(visual_prompt, width = 512, height = 1024):
 #     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
     inputs = {
 #         # Input prompt
-        'prompt': f'mdjrny-v4 style midjourney -v4 style {visual_prompt}',
+        'prompt': f'mdjrny-v4 style {visual_prompt}',
 
 #         # Specify things to not see in the output  
         'negative_prompt': 'people person man lady hand hands she he them woman face faces',
@@ -74,5 +77,5 @@ def get_ai_image(visual_prompt, width = 512, height = 1024):
         print(output[0])
         return output[0]
     except Exception as e:
-        print(f'image processing failed: {e}')
+        print(f'Image processing failed: {e}')
         return 'https://replicate.delivery/pbxt/YkWafGlPx70qIylnrCQvnNCPfseNNMHru9UWmVrQzc6Lw55gA/out-0.png'    

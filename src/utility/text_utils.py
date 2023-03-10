@@ -30,6 +30,8 @@ no_space_header_pattern = [
 
 def simplify_H1_header(input_string):
     print(f'starter title: {input_string}')
+    title = input_string.replace("#H1: ", " ")
+    title = input_string.replace("H1: ", " ")
     title = input_string.replace("# H1: ", " ")
     title = input_string.replace("#H1 - ", " ")
     title = input_string.replace("#H1 ", " ")

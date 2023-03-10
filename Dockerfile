@@ -1,5 +1,5 @@
 FROM python:3.8-slim-buster
-
+ENV TZ=US/Eastern
 # Install Git and other dependencies
 RUN apt-get update && \
     apt-get install -y git && \

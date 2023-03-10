@@ -106,10 +106,9 @@ def post_ig_media_post():
     """                                 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
     if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f'FB earliest time: {earliest_scheduled_datetime_str}')
+    print(f'INSTAGRAM earliest time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-
     if (ready_to_post):
     # if (True):
         post_params_json = firebase_storage_instance.get_specific_post(
@@ -119,10 +118,10 @@ def post_ig_media_post():
         
         try:
             post_params_json = json.loads(post_params_json)
-            print(post_params_json)
+            print(f'INSTAGRAM {post_params_json}')
         except:
-            print('IG error parsing json')
-            print(post_params_json)
+            print('INSTAGRAM error parsing json')
+            print(f'INSTAGRAM {post_params_json}')
             return 'Error parsing json'    
         
         post_params = meta_tokens.get_ig_access_creds() 

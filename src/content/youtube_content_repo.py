@@ -91,18 +91,23 @@ def post_upload_video_to_youtube():
     print(f'YT last posted time: {earliest_scheduled_datetime_str}')
     
     ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-
-    # if (ready_to_post):
-    if (True):    
+    if (ready_to_post):   
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.YOUTUBE, 
             earliest_scheduled_datetime_str
         )
         try:
             post_params = json.loads(post_params_json)
-            print('\npost_params: ', post_params, '\n')
+            if (post_params['remote_video_url'] == 'no movie url'):
+                firebase_storage_instance.delete_post(
+                    PostingPlatform.YOUTUBE,
+                    earliest_scheduled_datetime_str
+                )
+                post_upload_video_to_youtube()
+
+            print('\nYOUTUBE post_params: ', post_params, '\n')
         except:
-            print('YT error parsing post params')
+            print('YOUTUBE error parsing post params')
             print('post_params_json: ', post_params_json)
             return 'Error parsing post params'
 
@@ -125,8 +130,7 @@ def post_upload_video_to_youtube():
             body={
                 "snippet": {
                     "title": post_params['title'],
-                    "description": post_params['description'],
-                    "publishedAt": earliest_scheduled_datetime_str
+                    "description": post_params['description']
                 },
                 "status": {
                     "privacyStatus": "private",
@@ -137,9 +141,12 @@ def post_upload_video_to_youtube():
             },
             media_body=MediaFileUpload(upload_file_path)
         )
-        response = request.execute()
-        firebase_storage_instance.delete_post(
-            PostingPlatform.YOUTUBE, 
-            earliest_scheduled_datetime_str
-        )
+        try:
+            response = request.execute()
+            firebase_storage_instance.delete_post(
+                PostingPlatform.YOUTUBE, 
+                earliest_scheduled_datetime_str
+            )
+        except Exception as e:    
+            response = e
         return response

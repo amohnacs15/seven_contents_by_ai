@@ -80,6 +80,7 @@ def edit_movie_for_remote_url():
 
     if (project_id != -1):
         movie_url = get_edited_movie_url(project_id)
+        if (movie_url != ''): firebase_storage_instance.delete_storage_file(speech_bundle['speech_remote_path'])
         return movie_url
     else:
         print('error processing project id')
@@ -112,13 +113,14 @@ def get_scene_images_array():
 
     return images    
 
-'''
-Dynamically generates our movie json for generation using supplied arguments.
-Transitions, inclusions of audio, and quality are hard-coded.
-
-@returns: json formatted string
-'''
+# TODO we need a parameter for draft, this is submitted with the job
 def create_video_json( image_array, mp3_duration, mp3_remote_path ):
+    '''
+    Dynamically generates our movie json for generation using supplied arguments.
+    Transitions, inclusions of audio, and quality are hard-coded.
+
+    @returns: json formatted string
+    '''
     if (isinstance(mp3_duration, str)):
         return "error: mp3_duration is not a number"
 
@@ -131,6 +133,7 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     video_params = {
         "resolution": 'instagram-story',
         "quality": "high",
+        "draft": False,
         "elements": [
             {
                 "type": "audio",

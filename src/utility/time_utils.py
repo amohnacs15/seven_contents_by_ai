@@ -1,18 +1,38 @@
 from datetime import datetime, timedelta
 import utility.time_utils as time_utils
 
-'''
-    Allow for a threshold of a minute in each direction of the scheduled time to allow and honest
-    check of whether or not we are running this at the time of a scheduled post.
+def from_iso_format( iso_str ):
+    return datetime.fromisoformat(iso_str)
 
-    Params:
-        datetime scheduled_time:  the remotely stored value of when we have calculated our next posting should be
-        datetime current_time: the time we have started the run of this app
+def is_expired( posting_datetime_str ):
+    '''
+        Checks to see if the current iso string is in the past
 
-    Returns:
-        boolean: are we running this close enough to the scheduled date
-'''
+        @returns:
+            True of False
+    '''
+    trimmed_datetime_now = datetime.now().replace(microsecond=0)
+    is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
+    print(f'{datetime.fromisoformat(posting_datetime_str)} < {trimmed_datetime_now}? {is_posting_time_before_now}')
+    if (is_posting_time_before_now):
+        return True
+    else:
+        return False
+
 def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
+    '''
+        Allow for a threshold of a minute in each direction of the scheduled time to allow and honest
+        check of whether or not we are running this at the time of a scheduled post.
+
+        Params:
+            datetime scheduled_time:  the remotely stored value of when we have calculated our next posting should be
+            datetime current_time: the time we have started the run of this app
+
+        Returns:
+            boolean: are we running this close enough to the scheduled date
+    '''
+    if (earliest_scheduled_datetime_str is None):
+        return False
     formatted_iso=time_utils.convert_str_to_iso_format(earliest_scheduled_datetime_str.strip())
     scheduled_time=datetime.fromisoformat(formatted_iso)
     current_time=datetime.now()
