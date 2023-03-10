@@ -138,7 +138,7 @@ def create_video_json( image_query, mp3_duration, mp3_remote_path ):
 
     scene_duration = mp3_duration / len(image_array)
     mp3_ref_url = firebase_storage_instance.get_url(mp3_remote_path)
-    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images and {len(scene_comments)} comments')
+    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images')
 
     video_params = {
         "resolution": 'instagram-story',
@@ -154,13 +154,9 @@ def create_video_json( image_query, mp3_duration, mp3_remote_path ):
         ],
         "scenes": []
     }
-    if (len(scene_comments) != len(image_array)): 
-        print('error: scene comments and images are not the same length')
-        return ''
 
-    for index, (comment, image) in enumerate(zip(scene_comments, image_array)):
+    for image in image_array:
         scene = {
-            'comment': comment,
             "transition": {
                 "style": "fade",
                 "duration": 1.5

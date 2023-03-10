@@ -1,7 +1,6 @@
 import sys
 sys.path.append("../src")
 
-import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 import replicate
 import appsecrets as appsecrets
 import requests

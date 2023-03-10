@@ -8,6 +8,7 @@ import utility.text_utils as text_utils
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import utility.time_utils as time_utils
 import json
+import constants
 
 def initialize_shopify():
     # Configure store details
@@ -17,7 +18,7 @@ def initialize_shopify():
     # Create and activate a new session
     session = shopify.Session(shop_url, api_version, admin_api_key)
     shopify.ShopifyResource.activate_session(session)
-    print('Shopify initialized successfully')  
+    print('Shopify initialized successfully')      
 
 def post_shopify_blog_article(): 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
@@ -59,13 +60,13 @@ def post_shopify_blog_article():
 
                     result = new_article.save()
                     print(f'SHOPIFY blog upload successful {result}')
+
                     firebase_storage_instance.delete_post(
                         PostingPlatform.SHOPIFY, 
                         earliest_scheduled_datetime_str
                     )
                     return result
     
-
 def schedule_shopify_blog_article(blog, image_query):
     try:
         blog = text_utils.groom_titles(blog)

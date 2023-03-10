@@ -16,7 +16,7 @@ def is_expired( posting_datetime_str ):
         microsecond=0
     )
     is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
-    print(f'{datetime.fromisoformat(posting_datetime_str)} < {trimmed_datetime_now}? {is_posting_time_before_now}')
+    print(f'Is scheduled {datetime.fromisoformat(posting_datetime_str)} before {trimmed_datetime_now}? {is_posting_time_before_now}')
     if (is_posting_time_before_now):
         return True
     else:

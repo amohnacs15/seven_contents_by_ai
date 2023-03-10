@@ -13,6 +13,7 @@ import media.video_downloader as video_downloader
 import utility.time_utils as time_utils
 import pickle
 import json
+import content.tiktok_content_repo as tiktok_content_repo
 
 # Build the YouTube API client
 API_SERVICE_NAME = "youtube"
@@ -100,6 +101,7 @@ def post_upload_video_to_youtube():
         try:
             post_params = json.loads(post_params_json)
             if (post_params['remote_video_url'] == 'no movie url'):
+                #recursive deletion if we do not have a movie url
                 firebase_storage_instance.delete_post(
                     PostingPlatform.YOUTUBE,
                     earliest_scheduled_datetime_str
@@ -112,17 +114,9 @@ def post_upload_video_to_youtube():
             print('post_params_json: ', post_params_json)
             return 'Error parsing post params'
 
-        try:
-            upload_file_path = video_downloader.download_video(
-                post_params['remote_video_url']
-            )
-            firebase_storage_instance.upload_file_to_storage(
-                "ai_content_video/" + upload_file_path,
-                upload_file_path
-            )
-        except Exception as e:
-            print(f'Error downloading video: {e}')
-            return
+        upload_file_path = video_downloader.get_downloaded_video_local_path(
+            post_params['remote_video_url']
+        )
     
         youtube = googleapiclient.discovery.build(
             API_SERVICE_NAME, 

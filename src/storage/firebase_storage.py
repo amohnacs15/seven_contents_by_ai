@@ -7,6 +7,7 @@ from enum import Enum
 import json
 import utility.scheduler as scheduler
 import utility.time_utils as time_utils
+import time
 
 class PostingPlatform(Enum):
         FACEBOOK = 'facebook'
@@ -14,6 +15,7 @@ class PostingPlatform(Enum):
         TWITTER = 'twitter'
         YOUTUBE = 'youtube'
         SHOPIFY = 'shopify'
+        TIKTOK = 'tiktok'
 
 class FirebaseStorage():
     # Constants
@@ -76,10 +78,12 @@ class FirebaseStorage():
             return ''
         if (len(collection) > 0):
             earliest_scheduled_datetime_str = collection[0].key()
+
             if (earliest_scheduled_datetime_str is not None and earliest_scheduled_datetime_str != ''):
                 if (time_utils.is_expired(earliest_scheduled_datetime_str)):
                     print(f'{platform} posting time expired. Deleting post and checking recursively')
                     self.delete_post(platform, earliest_scheduled_datetime_str)
+                    time.sleep(2)
                     self.get_earliest_scheduled_datetime(platform)
                 else:
                     return earliest_scheduled_datetime_str
@@ -157,7 +161,7 @@ class FirebaseStorage():
     @classmethod
     def upload_if_ready( self, platform, api_fun):
         earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
-        if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
+        if (earliest_scheduled_datetime_str == '' or earliest_scheduled_datetime_str is None): return 'no posts scheduled'
         print(f'{platform} earliest posted time: {earliest_scheduled_datetime_str}')
         
         ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
