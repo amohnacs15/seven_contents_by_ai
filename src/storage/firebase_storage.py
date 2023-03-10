@@ -94,11 +94,10 @@ class FirebaseStorage():
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
 
         collection = self.firestore.child(scheduled_posts_path).get().each()
+
         if (collection is None):
-            return scheduler.get_best_posting_time(
-                platform,
-                time_utils.get_datetime_now()
-            )
+            return scheduler.get_best_posting_time(platform)
+        
         if (len(collection) > 0):
             latest_scheduled_datetime_str = collection[len(collection) - 1].key().strip()
             print(f'{platform} latest_scheduled_datetime_str: {latest_scheduled_datetime_str}')
@@ -124,11 +123,11 @@ class FirebaseStorage():
         '''
         specific_collection = f'{platform.value}_{self.POSTS_COLLECTION}'
         result = self.firestore.child(specific_collection).get()
+
         if result.each() is None:
             return "No document found with the specified property value."
         else:
-            for document in result.each():
-                print(f'{specific_collection} result: {result.key()} -> {result.val()}')
+            for document in result.each():                
                 if (document.key() == posting_time):
                     document_json = json.dumps(document.val())
                     return document_json
@@ -136,17 +135,16 @@ class FirebaseStorage():
     @classmethod
     def upload_scheduled_post( self, platform, payload ):
         last_posted_time = self.get_latest_scheduled_datetime(platform)
-        if (last_posted_time == '' or last_posted_time is None):
-            last_posted_time = time_utils.get_datetime_now()
-            print(f'{platform} last_posted_time was empty, setting to now: {type(last_posted_time)}')
 
-        future_publish_date = scheduler.get_best_posting_time(platform, last_posted_time)
+        if (last_posted_time == '' or last_posted_time is None):
+            future_publish_date = scheduler.get_best_posting_time(platform)
+        else:
+            future_publish_date = scheduler.get_best_posting_time(platform, last_posted_time)
 
         specific_collection = platform.value + "_" + self.POSTS_COLLECTION
         result = self.firestore.child(specific_collection).update({
             future_publish_date: payload
         })
-        print(f'{platform} firebase upload result\n{result}')
         return result
 
     @classmethod

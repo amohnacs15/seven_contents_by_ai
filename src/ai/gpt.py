@@ -70,12 +70,9 @@ def get_gpt_generated_text( prompt_source, polish_output ):
     draft = gpt_3(applied_prompt)
 
     # get the second draft stripped of identifying material
-    if (polish_output):
-        polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
-        polished_applied_prompt = utils.open_file(polish_source_file).replace('<<FEED>>', draft)
-        return gpt_3(polished_applied_prompt)
-    else:
-        return draft
+    polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
+    polished_applied_prompt = utils.open_file(polish_source_file).replace('<<FEED>>', draft)
+    return gpt_3(polished_applied_prompt)
 
 def generate_prompt_response( 
         prompt_source, 

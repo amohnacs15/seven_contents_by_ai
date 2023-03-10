@@ -27,6 +27,7 @@ def schedule_youtube_video ( remote_video_url ):
         os.path.join('src', 'input_prompts', 'youtube_title.txt'),
         feedin_source_file=summary
     )
+    title = title.replace('"', '')
     description = gpt3.prompt_to_string(
         prompt_source=os.path.join('src', 'input_prompts', 'youtube_description.txt'),
         feedin_source_file=summary

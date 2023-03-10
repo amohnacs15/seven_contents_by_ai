@@ -67,24 +67,27 @@ def post_shopify_blog_article():
     
 
 def schedule_shopify_blog_article(blog, image_query):
-    blog = text_utils.groom_titles(blog)
+    try:
+        blog = text_utils.groom_titles(blog)
 
-    parts = blog.split('\n\n', 1)
-    title = text_utils.simplify_H1_header(parts[0])
-    
-    image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
+        parts = blog.split('\n\n', 1)
+        title = text_utils.simplify_H1_header(parts[0])
+        
+        image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
 
-    payload = dict()
-    payload['title'] = title
-    payload['author'] = 'Caregiver Modern'
-    payload['body_html'] = parts[1]
-    payload['image'] = dict()
-    payload['image']['src'] = image_src
-    payload['published'] = 'TRUE'
-    
-    result = firebase_storage_instance.upload_scheduled_post(
-        PostingPlatform.SHOPIFY, 
-        payload
-    )
-    print(result)
+        payload = dict()
+        payload['title'] = title
+        payload['author'] = 'Caregiver Modern'
+        payload['body_html'] = parts[1]
+        payload['image'] = dict()
+        payload['image']['src'] = image_src
+        payload['published'] = 'TRUE'
+        
+        result = firebase_storage_instance.upload_scheduled_post(
+            PostingPlatform.SHOPIFY, 
+            payload
+        )
+        print(result)
+    except Exception as e:
+        print(f'Something went wrong parsing blog {e}')    
         

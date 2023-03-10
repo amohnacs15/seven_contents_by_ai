@@ -11,7 +11,10 @@ def is_expired( posting_datetime_str ):
         @returns:
             True of False
     '''
-    trimmed_datetime_now = datetime.now().replace(microsecond=0)
+    trimmed_datetime_now = datetime.now().replace(
+        second=0,
+        microsecond=0
+    )
     is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
     print(f'{datetime.fromisoformat(posting_datetime_str)} < {trimmed_datetime_now}? {is_posting_time_before_now}')
     if (is_posting_time_before_now):
