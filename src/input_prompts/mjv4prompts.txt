@@ -1,5 +1,5 @@
-Imagine and choose the perfect words to describe an image that represents the following scene:
+Imagine and Create a visual describtion of the following text:
 
-<<SCENE>>
+<<FEED>>
 
-IMAGINE AND CHOOSE THE PERFECT WORDS TO DESCRIBE AN IMAGE THAT REPRESENTS FROM THE SCENE ABOVE:
+IMAGINE AND CREATE A VISUAL DESCRIBTION OF THE FOLLOWING TEXT:

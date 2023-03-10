@@ -1,20 +1,23 @@
 from datetime import datetime, timedelta
 import utility.time_utils as time_utils
 
-def is_expired( datetime_str ):
+def from_iso_format( iso_str ):
+    return datetime.fromisoformat(iso_str)
+
+def is_expired( posting_datetime_str ):
     '''
         Checks to see if the current iso string is in the past
 
         @returns:
             True of False
     '''
-    if (datetime.fromisoformat(datetime_str) < get_datetime_now()):
+    trimmed_datetime_now = datetime.now().replace(microsecond=0)
+    is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
+    print(f'{datetime.fromisoformat(posting_datetime_str)} < {trimmed_datetime_now}? {is_posting_time_before_now}')
+    if (is_posting_time_before_now):
         return True
     else:
         return False
-
-def get_datetime_now():
-    return datetime.now()
 
 def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
     '''
@@ -32,8 +35,7 @@ def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
         return False
     formatted_iso=time_utils.convert_str_to_iso_format(earliest_scheduled_datetime_str.strip())
     scheduled_time=datetime.fromisoformat(formatted_iso)
-    current_time=get_datetime_now()
-    print(current_time)
+    current_time=datetime.now()
     
     lower_bound=scheduled_time - timedelta(minutes=5)
     upper_bound=scheduled_time + timedelta(minutes=5)

@@ -5,7 +5,6 @@ sys.path.append("../src")
 import tweepy
 import appsecrets
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
-import utility.time_utils as time_utils
 import json
 
 def initialize_tweepy():
@@ -21,39 +20,41 @@ def initialize_tweepy():
         print("Error during Tweepy authentication") 
     return api    
 
-def post_tweet():
-    tweepy_api = initialize_tweepy()
+tweepy_api = initialize_tweepy()
 
-    earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
-    if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f'TWITTER earliest posted time: {earliest_scheduled_datetime_str}')
-    
-    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-    if (ready_to_post):
-    # if (True):
-        post_params_json = firebase_storage_instance.get_specific_post(
-            PostingPlatform.TWITTER, 
-            earliest_scheduled_datetime_str
-        )
-        try:
-            post_params = json.loads(post_params_json)
-            print(f'TWITTER post params return {post_params}')
-        except:
-            print('error parsing json')
-            print(f'TWTITTER {post_params_json}')
-            return 'error parsing json'  
+def update_tweet_status( scheduled_datetime_str ):
+    '''
+        Our strict interaction with the Tweepy API
+
+        @params:
+
+        @returns:
+            value: with success. this is the post response
+            none: with error.
+    '''
+    post_params_json = firebase_storage_instance.get_specific_post(
+        PostingPlatform.TWITTER, 
+        scheduled_datetime_str
+    )
+    try:
+        post_params = json.loads(post_params_json)
+        print(f'TWITTER post params return {post_params}')
+    except:
+        print('error parsing json')
+        print(f'TWTITTER {post_params_json}')
+        return 'error parsing json'  
             
-        tweet = post_params['tweet']
+    tweet = post_params['tweet']
 
-        try:
-            value = tweepy_api.update_status(status = tweet)  
-            firebase_storage_instance.delete_post(
-                PostingPlatform.TWITTER, 
-                earliest_scheduled_datetime_str
-            )
-            return value
-        except Exception as e:
-            return e
+    try:
+        value = tweepy_api.update_status(status = tweet)  
+        return value
+    except Exception as e:
+        print(f'TWITTER {e}')
+        return None
+
+def post_tweet(): 
+    return firebase_storage_instance.upload_if_ready(PostingPlatform.TWITTER, update_tweet_status)
 
 def schedule_tweet( tweet, image_query ):
     if (tweet != ''):
