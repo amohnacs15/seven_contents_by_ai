@@ -33,16 +33,17 @@ def post_fb_image():
             print(F'FACEBOOK {post_json}')
             return 'FACEBOOK error parsing json'
         
-        params = meta_tokens.get_fb_page_access_token()
+        params = meta_tokens.fetch_fb_page_access_token()
         post_json_object['access_token'] = params['page_access_token']
         print(f'FACEBOOK {post_json_object}')
 
         url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
-        result =  make_api_call( url=url, endpointJson=post_json_object, type='POST' )
+        result = make_api_call( url=url, endpointJson=post_json_object, type='POST')
+        print(result['json_data_pretty'] )
         firebase_storage_instance.delete_post(
             PostingPlatform.FACEBOOK, 
             earliest_scheduled_datetime_str
-         )
+        )
         return result
 
 def schedule_fb_post( caption, image_query ):

@@ -1,14 +1,15 @@
 import sys
+import os
 sys.path.append("../src")
 
 import shopify
 import appsecrets as appsecrets
 import media.image_creator as image_creator
 import utility.text_utils as text_utils
-from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import utility.time_utils as time_utils
+from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
-import constants
+import ai.gpt as gpt3
 
 def initialize_shopify():
     # Configure store details
@@ -40,10 +41,12 @@ def post_shopify_blog_article():
             return 'error parsing json'    
 
         if (post_params['title'] != ''):
+            shopify.DiscountCode
 
             list_of_blogs = shopify.Blog.find()
 
             for blog in list_of_blogs:
+                print(f'processing blogs')
                 if (blog.title == 'Caregiver Help & How-To'):
 
                     new_article = shopify.Article()
@@ -59,22 +62,26 @@ def post_shopify_blog_article():
                     new_article.image = image
 
                     result = new_article.save()
-                    print(f'SHOPIFY blog upload successful {result}')
 
+                    print(f'SHOPIFY blog upload successful {result}')
                     firebase_storage_instance.delete_post(
-                        PostingPlatform.SHOPIFY, 
-                        earliest_scheduled_datetime_str
-                    )
-                    return result
+                            PostingPlatform.SHOPIFY, 
+                            earliest_scheduled_datetime_str
+                        )
+                    return result    
     
 def schedule_shopify_blog_article(blog, image_query):
     try:
         blog = text_utils.groom_titles(blog)
-
         parts = blog.split('\n\n', 1)
-        title = text_utils.simplify_H1_header(parts[0])
-        
         image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
+
+        title = text_utils.simplify_H1_header(parts[0])
+        if (len(title) > 200):
+            title = gpt3.prompt_to_string(
+                prompt_source_file=os.path.join('src', 'input_prompts', 'youtube_title.txt'),
+                feedin_source=parts[0]
+            )
 
         payload = dict()
         payload['title'] = title

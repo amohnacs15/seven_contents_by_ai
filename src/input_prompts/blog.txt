@@ -1,5 +1,5 @@
-Imagine and Write a professional blog post with H1`s and H2`s, replacing H1 with # and H2 with ##, from the following text:
+Imagine and Write an informative and educational blog post with H1`s and H2`s, replacing H1 with # and H2 with ##, from the following text:
 
 <<FEED>>
 
-IMAGINE AND WRITE A PROFESSIONAL BLOG POST WITH H1`S AND H2`S, REPLACING H1 WITH # AND H2 WITH ##, FROM THE TEXT ABOVE:
+IMAGINE AND WRITE AN INFORMATIVE AND EDUCATIONAL BLOG POST WITH H1`S AND H2`S, REPLACING H1 WITH # AND H2 WITH ##, FROM THE TEXT ABOVE:

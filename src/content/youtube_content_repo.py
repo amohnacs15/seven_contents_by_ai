@@ -23,15 +23,15 @@ CLIENT_SECRET_FILE = "client_secret_272470980608-16hgrujprvp3738vhakhc03f0naep0t
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 def schedule_youtube_video ( remote_video_url ):  
-    summary = os.path.join('src', 'outputs', 'summary_output.txt')
-    title = gpt3.prompt_to_string(
+    summary_file = os.path.join('src', 'outputs', 'summary_output.txt')
+    title = gpt3.prompt_to_string_from_file(
         os.path.join('src', 'input_prompts', 'youtube_title.txt'),
-        feedin_source_file=summary
+        feedin_source_file=summary_file
     )
     title = title.replace('"', '')
-    description = gpt3.prompt_to_string(
-        prompt_source=os.path.join('src', 'input_prompts', 'youtube_description.txt'),
-        feedin_source_file=summary
+    description = gpt3.prompt_to_string_from_file(
+        prompt_source_file=os.path.join('src', 'input_prompts', 'youtube_description.txt'),
+        feedin_source_file=summary_file
     )
 
     payload = dict()

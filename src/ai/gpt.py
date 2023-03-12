@@ -124,9 +124,13 @@ def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     )
     utils.remove_file(file_local_path)        
 
-def prompt_to_string( prompt_source, feedin_source_file ):
+def prompt_to_string_from_file( prompt_source_file, feedin_source_file ):
     feed_source = utils.open_file(feedin_source_file)
-    appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
+    appliedprompt = utils.open_file(prompt_source_file).replace('<<FEED>>', feed_source)
     finaltext = gpt_3(appliedprompt)
     return finaltext
 
+def prompt_to_string( prompt_source_file, feedin_source ):
+    appliedprompt = utils.open_file(prompt_source_file).replace('<<FEED>>', feedin_source)
+    finaltext = gpt_3(appliedprompt)
+    return finaltext

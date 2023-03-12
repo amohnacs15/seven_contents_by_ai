@@ -40,7 +40,7 @@ def create_ig_media_object( params, with_token ):
 
 def schedule_ig_video_post( caption, media_url ):
     
-    params = meta_tokens.get_ig_access_creds() 
+    params = meta_tokens.fetch_ig_access_token() 
 
     params['media_type'] = 'VIDEO' 
     params['media_url'] = media_url 
@@ -124,7 +124,7 @@ def post_ig_media_post():
             print(f'INSTAGRAM {post_params_json}')
             return 'Error parsing json'    
         
-        post_params = meta_tokens.get_ig_access_creds() 
+        post_params = meta_tokens.fetch_ig_access_token() 
         post_params['caption'] = post_params_json['caption']
         post_params['image_url'] = post_params_json['image_url']
         post_params['published'] = post_params_json['published']
@@ -143,7 +143,7 @@ def schedule_ig_image_post( caption, image_query ):
 
     @returns: nothing
     '''
-    params = meta_tokens.get_ig_access_creds() 
+    params = meta_tokens.fetch_ig_access_token() 
     params['media_type'] = 'IMAGE' 
         
     params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
