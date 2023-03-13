@@ -58,8 +58,7 @@ def get_google_sheets():
 # Begin the running of our application
 if __name__ == '__main__':
     # Quickly process our posts
-    # # put our post calls here. this will need to be first with the proper implementation
-
+    # put our post calls here. this will need to be first with the proper implementation
     post('Shopify', shopify_content_repo.post_shopify_blog_article())
     post('Facebook', fb_content_repo.post_fb_image())
     post('Instagram', ig_content_repo.post_ig_media_post())
@@ -72,11 +71,14 @@ if __name__ == '__main__':
     sheet=sh.worksheet("Sheet1")
     cell_list=sheet.get_all_values()
 
+    #we only want to process one video per run as to not overload API
+    has_downloaded_video = False
+
     for i, row in enumerate(cell_list):
         # if we do not find the word 'Scheduled' in the row, 
         # then we have not processed it yet
         # take action on the row
-        if (row.count('Scheduled') == 0):
+        if (row.count('Scheduled') == 0 and has_downloaded_video == False):
             print(f"Processing Row {i+1}: {row}")
             youtube_url = row[0]
             content_description = row[1]
@@ -121,6 +123,7 @@ if __name__ == '__main__':
                 if (last_cell.value is None or last_cell.value == ''):
                     success_value = 'Scheduled'
                     sheet.update_cell(i+1, len(row), success_value)
+                    has_downloaded_video = True
             except Exception as e:
                 print(f'Finished witfh error {e}')        
     print('COMPLETE SUCCESS.')

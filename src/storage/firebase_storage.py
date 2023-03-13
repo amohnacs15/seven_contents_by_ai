@@ -164,11 +164,8 @@ class FirebaseStorage():
         if (ready_to_post): 
             # if (True):
             upload_result = api_fun(earliest_scheduled_datetime_str)
-            if (upload_result is not None):
-                self.delete_post(platform, earliest_scheduled_datetime_str)
-                return upload_result
-            else:
-                return f'{platform} something went wrong posting'
+            self.delete_post(platform, earliest_scheduled_datetime_str)
+            return upload_result
         else:
             return f'{platform} not ready to post' 
 
