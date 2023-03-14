@@ -125,7 +125,7 @@ if __name__ == '__main__':
                     sheet.update_cell(i+1, len(row), success_value)
                     has_downloaded_video = True
             except Exception as e:
-                print(f'Finished witfh error {e}')        
+                print(f'Finished with error {e}')        
     print('COMPLETE SUCCESS.')
     
 # Stalled 
