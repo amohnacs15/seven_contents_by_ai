@@ -6,6 +6,18 @@ import openai
 from time import time,sleep
 import utility.utils as utils
 import appsecrets as appsecrets
+import random
+
+art_styles = [
+    "Oil painting style with soft brushstrokes and warm tones",
+    "Watercolor painting style with flowing colors and organic textures",
+    "Pencil sketch style with detailed shading and lifelike textures",
+    "Charcoal sketch style with dramatic contrast and gritty textures",
+    "Realistic digital painting style with precise detailing and vibrant colors",
+    "Acrylic painting style with bold brushstrokes and vivid colors",
+    "Photorealistic digital art style with accurate lighting and shading",
+    "Pen and ink style with intricate linework and organic textures"
+]
 
 openai.api_key = appsecrets.OPEN_AI_API_KEY
 
@@ -37,11 +49,13 @@ def create_story_and_scenes( story, media_url ):
     count = 0
     mjv4_output_path=os.path.join('src', 'output_story_scenes', "mjv4_output.txt")
     utils.save_file(mjv4_output_path, '')
+    selected_style = random.choice(art_styles)
     for scene in scenes:
         count += 1    
         file_path = os.path.join("src", "input_prompts", "mjv4prompts.txt")
         mjv4 = utils.open_file(file_path).replace('<<SCENE>>', scene)
-        desc = gpt3_story_scene(mjv4)
+        mjv4_prompt = mjv4.replace('<<PROMPT>>', selected_style)
+        desc = gpt3_story_scene(mjv4_prompt)
 
         # and write to the same file
         current_file = open(mjv4_output_path, 'a')

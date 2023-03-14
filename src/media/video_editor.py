@@ -42,7 +42,14 @@ def get_edited_movie_url( uploaded_project_id ):
     movie_url = get_response_movie_url(response)
     return movie_url
 
-def edit_movie_for_remote_url():
+def get_simple_scene_images( image_query, scene_array ):
+    images = []
+    for scene in scene_array:
+        new_image = image_creator.get_unsplash_image_url(image_query)
+        images.append(new_image)
+    return images    
+
+def edit_movie_for_remote_url ( image_query ):
     '''
     Send the request to get create our movie programmatically.
 
@@ -59,14 +66,18 @@ def edit_movie_for_remote_url():
     }
 
     # preparing the pieces
-    scene_images = get_scene_images_array()
+    # scene_images = get_scene_images_array(image_query)
+    
     file_path = os.path.join("src", "outputs", "story_output.txt")
     story_text = utils.open_file(file_path)
     speech_bundle = speech_synthesis.text_to_speech(story_text)
     # speech_bundle = {'speech_duration': 96.8125, 'speech_remote_path': 'ai_content_machine/speech_to_text.mp3'}
     print(speech_bundle)
+    if (speech_bundle['speech_duration'] > 60): 
+        speech_bundle['speech_duration'] = 60
+
     video_json = create_video_json(
-        image_array = scene_images, 
+        image_query=image_query,
         mp3_duration = speech_bundle['speech_duration'],
         mp3_remote_path = speech_bundle['speech_remote_path']
     )
@@ -76,15 +87,15 @@ def edit_movie_for_remote_url():
         headers = post_headers
     )
     project_id = post_response_project_id(response)
-    print(f'\n project id {project_id}\n')
 
     if (project_id != -1):
+        print(f'\nproject id {project_id}\n')
         movie_url = get_edited_movie_url(project_id)
-        if (movie_url != ''): firebase_storage_instance.delete_storage_file(speech_bundle['speech_remote_path'])
+        # if (movie_url != ''): firebase_storage_instance.delete_storage_file(speech_bundle['speech_remote_path'])
         return movie_url
     else:
         print('error processing project id')
-    return ''
+        return ''
 
 #--------------- Preparing The Pieces -----------------------------------------------------    
 '''
@@ -94,7 +105,7 @@ WARNING: This procedure costs money.  Use a dummy list where possible.
 
 @returns: array of image urls
 '''
-def get_scene_images_array():
+def get_scene_images_array(image_query):
     print('get images array')
     images = []
 
@@ -104,17 +115,15 @@ def get_scene_images_array():
     print(f'\npromptfile\n {promptfile}\n')
 
     for prompt in prompts:
-        print(f'prompt: {prompt}')
-        image = image_creator.get_ai_image(
-            visual_prompt=prompt,
-            
-        )
-        images.append(image)
+        if (prompt != ''):
+            print(f'prompt: {prompt}')
+            image = image_creator.get_ai_image(prompt)
+            images.append(image)
 
     return images    
 
 # TODO we need a parameter for draft, this is submitted with the job
-def create_video_json( image_array, mp3_duration, mp3_remote_path ):
+def create_video_json( image_query, mp3_duration, mp3_remote_path ):
     '''
     Dynamically generates our movie json for generation using supplied arguments.
     Transitions, inclusions of audio, and quality are hard-coded.
@@ -124,16 +133,17 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
     if (isinstance(mp3_duration, str)):
         return "error: mp3_duration is not a number"
 
+    scene_comments = get_scene_comment_array()
+    image_array = get_simple_scene_images(image_query, scene_comments)
+
     scene_duration = mp3_duration / len(image_array)
     mp3_ref_url = firebase_storage_instance.get_url(mp3_remote_path)
-
-    scene_comments = get_scene_comment_array()
-    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images and {len(scene_comments)} comments')
+    print(f'processing mp3 of duration: {mp3_duration} and {len(image_array)} images')
 
     video_params = {
         "resolution": 'instagram-story',
         "quality": "high",
-        "draft": False,
+        "draft": True,
         "elements": [
             {
                 "type": "audio",
@@ -144,13 +154,9 @@ def create_video_json( image_array, mp3_duration, mp3_remote_path ):
         ],
         "scenes": []
     }
-    if (len(scene_comments) != len(image_array)): 
-        print('error: scene comments and images are not the same length')
-        return ''
 
-    for index, (comment, image) in enumerate(zip(scene_comments, image_array)):
+    for image in image_array:
         scene = {
-            'comment': comment,
             "transition": {
                 "style": "fade",
                 "duration": 1.5

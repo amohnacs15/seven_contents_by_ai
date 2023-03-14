@@ -5,7 +5,6 @@ import replicate
 import appsecrets as appsecrets
 import requests
 import json
-import constants
 
 def get_unsplash_image_url( search_query, orientation = 'portrait' ):
     url = 'https://api.unsplash.com/photos/random'
@@ -41,7 +40,7 @@ def get_ai_image(visual_prompt, width = 512, height = 1024):
 #     # https://replicate.com/tstramer/midjourney-diffusion/versions/436b051ebd8f68d23e83d22de5e198e0995357afef113768c20f0b6fcef23c8b#input
     inputs = {
 #         # Input prompt
-        'prompt': f'mdjrny-v4 style {visual_prompt}',
+        'prompt': visual_prompt,
 
 #         # Specify things to not see in the output  
         'negative_prompt': 'people person man lady hand hands she he them woman face faces',

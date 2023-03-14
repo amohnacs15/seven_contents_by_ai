@@ -70,12 +70,9 @@ def get_gpt_generated_text( prompt_source, polish_output ):
     draft = gpt_3(applied_prompt)
 
     # get the second draft stripped of identifying material
-    if (polish_output):
-        polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
-        polished_applied_prompt = utils.open_file(polish_source_file).replace('<<FEED>>', draft)
-        return gpt_3(polished_applied_prompt)
-    else:
-        return draft
+    polish_source_file = os.path.join("src", "input_prompts", "polish.txt")
+    polished_applied_prompt = utils.open_file(polish_source_file).replace('<<FEED>>', draft)
+    return gpt_3(polished_applied_prompt)
 
 def generate_prompt_response( 
         prompt_source, 
@@ -127,9 +124,13 @@ def prompt_to_file_upload( filename, feedin_source_file, prompt_source, type ):
     )
     utils.remove_file(file_local_path)        
 
-def prompt_to_string( prompt_source, feedin_source_file ):
+def prompt_to_string_from_file( prompt_source_file, feedin_source_file ):
     feed_source = utils.open_file(feedin_source_file)
-    appliedprompt = utils.open_file(prompt_source).replace('<<FEED>>', feed_source)
+    appliedprompt = utils.open_file(prompt_source_file).replace('<<FEED>>', feed_source)
     finaltext = gpt_3(appliedprompt)
     return finaltext
 
+def prompt_to_string( prompt_source_file, feedin_source ):
+    appliedprompt = utils.open_file(prompt_source_file).replace('<<FEED>>', feedin_source)
+    finaltext = gpt_3(appliedprompt)
+    return finaltext

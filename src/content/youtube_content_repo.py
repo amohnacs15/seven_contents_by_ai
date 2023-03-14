@@ -13,6 +13,7 @@ import media.video_downloader as video_downloader
 import utility.time_utils as time_utils
 import pickle
 import json
+import content.tiktok_content_repo as tiktok_content_repo
 
 # Build the YouTube API client
 API_SERVICE_NAME = "youtube"
@@ -22,14 +23,15 @@ CLIENT_SECRET_FILE = "client_secret_272470980608-16hgrujprvp3738vhakhc03f0naep0t
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 def schedule_youtube_video ( remote_video_url ):  
-    summary = os.path.join('src', 'outputs', 'summary_output.txt')
-    title = gpt3.prompt_to_string(
+    summary_file = os.path.join('src', 'outputs', 'summary_output.txt')
+    title = gpt3.prompt_to_string_from_file(
         os.path.join('src', 'input_prompts', 'youtube_title.txt'),
-        feedin_source_file=summary
+        feedin_source_file=summary_file
     )
-    description = gpt3.prompt_to_string(
-        prompt_source=os.path.join('src', 'input_prompts', 'youtube_description.txt'),
-        feedin_source_file=summary
+    title = title.replace('"', '')
+    description = gpt3.prompt_to_string_from_file(
+        prompt_source_file=os.path.join('src', 'input_prompts', 'youtube_description.txt'),
+        feedin_source_file=summary_file
     )
 
     payload = dict()
@@ -99,6 +101,7 @@ def post_upload_video_to_youtube():
         try:
             post_params = json.loads(post_params_json)
             if (post_params['remote_video_url'] == 'no movie url'):
+                #recursive deletion if we do not have a movie url
                 firebase_storage_instance.delete_post(
                     PostingPlatform.YOUTUBE,
                     earliest_scheduled_datetime_str
@@ -111,13 +114,9 @@ def post_upload_video_to_youtube():
             print('post_params_json: ', post_params_json)
             return 'Error parsing post params'
 
-        try:
-            upload_file_path = video_downloader.download_video(
-                post_params['remote_video_url']
-            )
-        except Exception as e:
-            print(f'Error downloading video: {e}')
-            return
+        upload_file_path = video_downloader.get_downloaded_video_local_path(
+            post_params['remote_video_url']
+        )
     
         youtube = googleapiclient.discovery.build(
             API_SERVICE_NAME, 

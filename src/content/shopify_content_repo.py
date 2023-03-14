@@ -1,13 +1,15 @@
 import sys
+import os
 sys.path.append("../src")
 
 import shopify
 import appsecrets as appsecrets
 import media.image_creator as image_creator
 import utility.text_utils as text_utils
-from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import utility.time_utils as time_utils
+from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
+import ai.gpt as gpt3
 
 def initialize_shopify():
     # Configure store details
@@ -17,7 +19,7 @@ def initialize_shopify():
     # Create and activate a new session
     session = shopify.Session(shop_url, api_version, admin_api_key)
     shopify.ShopifyResource.activate_session(session)
-    print('Shopify initialized successfully')  
+    print('Shopify initialized successfully')      
 
 def post_shopify_blog_article(): 
     earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.SHOPIFY)
@@ -39,10 +41,12 @@ def post_shopify_blog_article():
             return 'error parsing json'    
 
         if (post_params['title'] != ''):
+            shopify.DiscountCode
 
             list_of_blogs = shopify.Blog.find()
 
             for blog in list_of_blogs:
+                print(f'processing blogs')
                 if (blog.title == 'Caregiver Help & How-To'):
 
                     new_article = shopify.Article()
@@ -58,33 +62,40 @@ def post_shopify_blog_article():
                     new_article.image = image
 
                     result = new_article.save()
+
                     print(f'SHOPIFY blog upload successful {result}')
                     firebase_storage_instance.delete_post(
-                        PostingPlatform.SHOPIFY, 
-                        earliest_scheduled_datetime_str
-                    )
-                    return result
+                            PostingPlatform.SHOPIFY, 
+                            earliest_scheduled_datetime_str
+                        )
+                    return result    
     
-
 def schedule_shopify_blog_article(blog, image_query):
-    blog = text_utils.groom_titles(blog)
+    try:
+        blog = text_utils.groom_titles(blog)
+        parts = blog.split('\n\n', 1)
+        image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
 
-    parts = blog.split('\n\n', 1)
-    title = text_utils.simplify_H1_header(parts[0])
-    
-    image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
+        title = text_utils.simplify_H1_header(parts[0])
+        if (len(title) > 200):
+            title = gpt3.prompt_to_string(
+                prompt_source_file=os.path.join('src', 'input_prompts', 'youtube_title.txt'),
+                feedin_source=parts[0]
+            )
 
-    payload = dict()
-    payload['title'] = title
-    payload['author'] = 'Caregiver Modern'
-    payload['body_html'] = parts[1]
-    payload['image'] = dict()
-    payload['image']['src'] = image_src
-    payload['published'] = 'TRUE'
-    
-    result = firebase_storage_instance.upload_scheduled_post(
-        PostingPlatform.SHOPIFY, 
-        payload
-    )
-    print(result)
+        payload = dict()
+        payload['title'] = title
+        payload['author'] = 'Caregiver Modern'
+        payload['body_html'] = parts[1]
+        payload['image'] = dict()
+        payload['image']['src'] = image_src
+        payload['published'] = 'TRUE'
+        
+        result = firebase_storage_instance.upload_scheduled_post(
+            PostingPlatform.SHOPIFY, 
+            payload
+        )
+        print(result)
+    except Exception as e:
+        print(f'Something went wrong parsing blog {e}')    
         

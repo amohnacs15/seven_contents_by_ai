@@ -4,20 +4,23 @@ import utility.time_utils as time_utils
 def from_iso_format( iso_str ):
     return datetime.fromisoformat(iso_str)
 
-def is_expired( posting_datetime_str ):
-    '''
-        Checks to see if the current iso string is in the past
+# def is_expired( posting_datetime_str ):
+#     '''
+#         Checks to see if the current iso string is in the past
 
-        @returns:
-            True of False
-    '''
-    trimmed_datetime_now = datetime.now().replace(microsecond=0)
-    is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
-    print(f'{datetime.fromisoformat(posting_datetime_str)} < {trimmed_datetime_now}? {is_posting_time_before_now}')
-    if (is_posting_time_before_now):
-        return True
-    else:
-        return False
+#         @returns:
+#             True of False
+#     '''
+#     trimmed_datetime_now = datetime.now().replace(
+#         second=0,
+#         microsecond=0
+#     )
+#     is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
+#     print(f'Is scheduled {datetime.fromisoformat(posting_datetime_str)} before {trimmed_datetime_now}? {is_posting_time_before_now}')
+#     if (is_posting_time_before_now):
+#         return True
+#     else:
+#         return False
 
 def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
     '''
@@ -32,6 +35,7 @@ def is_current_posting_time_within_window( earliest_scheduled_datetime_str ):
             boolean: are we running this close enough to the scheduled date
     '''
     if (earliest_scheduled_datetime_str is None):
+        print(f'earliest_scheduled_datetime_str is None')
         return False
     formatted_iso=time_utils.convert_str_to_iso_format(earliest_scheduled_datetime_str.strip())
     scheduled_time=datetime.fromisoformat(formatted_iso)

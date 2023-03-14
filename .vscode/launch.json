@@ -1,6 +1,18 @@
 {
     "configurations": [
         {
+            "name": "Debug Content Creator",
+            "type": "python",
+            "request": "launch",
+            "program": "src/content_creator.py",
+            "args": [],
+            "env": {},
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        },
+        {
             "name": "Cloud Run: Run/Debug Locally",
             "type": "cloudcode.cloudrun",
             "request": "launch",

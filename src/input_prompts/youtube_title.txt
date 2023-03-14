@@ -1,5 +1,5 @@
-Imagine and Write n SEO optimized YouTube video title with no quotation marks and no brand or product names from the following text:
+Imagine and Write an SEO optimized YouTube video title with no brand or product names from the following text:
 
 <<FEED>>
 
-IMAGINE AND WRITE A SEO OPTIMIZED YOUTUBE VIDEO TITLE WITH NO QUOTATION MARKS AND NO BRAND OR PRODUCT NAMES FROM THE ABOVE TEXT
+IMAGINE AND WRITE AN SEO OPTIMIZED YOUTUBE VIDEO TITLE WITH NO BRAND OR PRODUCT NAMES FROM THE ABOVE TEXT:

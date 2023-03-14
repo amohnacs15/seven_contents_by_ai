@@ -1,4 +1,5 @@
 import youtube_dl
+from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 
 """Save a YouTube video URL to mp3.
 
@@ -36,3 +37,15 @@ def download_video( url ):
         downloader.download(["" + url + ""]) 
         file_path = downloader.prepare_filename(downloader.extract_info(url, download=False)) 
         return file_path
+    
+def get_downloaded_video_local_path( remote_video_url ):
+    try:
+        upload_file_path = download_video(remote_video_url)
+        firebase_storage_instance.upload_file_to_storage(
+            "ai_content_video/" + upload_file_path,
+            upload_file_path
+        )
+        return upload_file_path
+    except Exception as e:
+        print(f'Error downloading video: {e}')
+        return    

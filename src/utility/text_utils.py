@@ -29,14 +29,15 @@ no_space_header_pattern = [
 ]
 
 def simplify_H1_header(input_string):
-    print(f'starter title: {input_string}')
-    title = input_string.replace("#H1: ", " ")
-    title = input_string.replace("H1: ", " ")
-    title = input_string.replace("# H1: ", " ")
-    title = input_string.replace("#H1 - ", " ")
-    title = input_string.replace("#H1 ", " ")
-    title = input_string.replace("#", " ")
-    title = input_string.replace("<h1>", " ")
+    title = input_string.replace("# H1 - ", "")
+    title = input_string.replace("#H1: ", "")
+    title = input_string.replace("H1: ", "")
+    title = input_string.replace("# H1: ", "")
+    title = input_string.replace("#H1 - ", "")
+    title = input_string.replace("#H1 ", "")
+    title = input_string.replace("#", "")
+    title = input_string.replace("<h1>", "")
+    title = input_string.replace("# ", "")
     print(f'formatted title: {title}')
     return title
 
@@ -45,4 +46,7 @@ def groom_titles(input_string):
         split = list(check)
         solution = f'{split[0]} {split[1]}'
         input_string = input_string.replace(check, solution)
+    input_string = input_string.replace("H2", "")  
+    input_string = input_string.replace("H2 -", "")  
+    
     return input_string    
