@@ -31,7 +31,7 @@ https://github.com/openai/openai-quickstart-python
 ```bash
 # run with each new terminal
 $ python -m venv venv
-$ . venv/bin/activate
+$ & c:/Users/Infinix/Developer/seven_contents_by_ai/venv/Scripts/Activate.ps1
 # only run first time
 $ pip install -r requirements.txt
 $ cp .env.example .env
