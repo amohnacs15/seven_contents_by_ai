@@ -14,6 +14,7 @@ import content.ig_content_repo as ig_content_repo
 import content.fb_content_repo as fb_content_repo
 import content.shopify_content_repo as shopify_content_repo
 import content.twitter_content_repo as twitter_content_repo
+import content.linkedin_content_repo as linkedin_repo
 import gspread
 
 CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
@@ -57,13 +58,15 @@ def get_google_sheets():
 
 # Begin the running of our application
 if __name__ == '__main__':
+    linkedin_repo.post_to_linkedin()
+
     # Quickly process our posts
     # put our post calls here. this will need to be first with the proper implementation
-    post('Shopify', shopify_content_repo.post_shopify_blog_article())
-    post('Facebook', fb_content_repo.post_fb_image())
-    post('Instagram', ig_content_repo.post_ig_media_post())
-    post('Twitter', twitter_content_repo.post_tweet())
-    post_youtube_video()
+    # post('Shopify', shopify_content_repo.post_shopify_blog_article())
+    # post('Facebook', fb_content_repo.post_fb_image())
+    # post('Instagram', ig_content_repo.post_ig_media_post())
+    # post('Twitter', twitter_content_repo.post_tweet())
+    # post_youtube_video()
 
     # Begin our block for long running creation
     # Schedule our content by iterating through each row of sheet

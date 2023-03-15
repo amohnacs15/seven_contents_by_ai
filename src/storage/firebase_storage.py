@@ -16,6 +16,8 @@ class PostingPlatform(Enum):
         YOUTUBE = 'youtube'
         SHOPIFY = 'shopify'
         TIKTOK = 'tiktok'
+        LINKEDIN = 'linkedin'
+        PINTEREST = 'pinterest'
 
 class FirebaseStorage():
     # Constants
@@ -154,17 +156,16 @@ class FirebaseStorage():
         return result
     
     @classmethod
-    def upload_if_ready( self, platform, api_fun):
-        earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
+    def upload_if_ready( self, platform, api_fun, is_test=False ):
+        earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(platform)
         
         if (earliest_scheduled_datetime_str == '' or earliest_scheduled_datetime_str is None): return 'no posts scheduled'
         print(f'{platform} earliest posted time: {earliest_scheduled_datetime_str}')
         
         ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-        if (ready_to_post): 
-            # if (True):
+        if (ready_to_post or is_test == True): 
             upload_result = api_fun(earliest_scheduled_datetime_str)
-            self.delete_post(platform, earliest_scheduled_datetime_str)
+            if(is_test == False): self.delete_post(platform, earliest_scheduled_datetime_str)
             return upload_result
         else:
             return f'{platform} not ready to post' 

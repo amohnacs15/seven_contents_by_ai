@@ -5,7 +5,7 @@ import json
 import requests
 
 #Reuse this facebook and instagram
-def make_api_call( url, endpointParams = '', endpointJson = '', type = '' ):
+def make_api_call( url, headers = '', endpointParams = '', endpointJson = '', type = '' ):
 	""" Request data from endpoint with params
 	
 	Args:
@@ -18,6 +18,7 @@ def make_api_call( url, endpointParams = '', endpointJson = '', type = '' ):
 	if type == 'POST' : # post request
 		data = requests.post( 
 			url = url, 
+			headers=headers,
 			data = endpointParams ,
 			json = endpointJson
 		)

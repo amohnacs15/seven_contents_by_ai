@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append("../src")
 
-from meta_graph_api.meta_definition import make_api_call
+from domain.endpoint_definitions import make_api_call
 import requests
 import appsecrets
 import json

@@ -3,7 +3,7 @@ sys.path.append("../src")
 
 import time
 import meta_graph_api.meta_tokens as meta_tokens
-from meta_graph_api.meta_definition import make_api_call
+from domain.endpoint_definitions import make_api_call
 import media.image_creator as image_creator
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json

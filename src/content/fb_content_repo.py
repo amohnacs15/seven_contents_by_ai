@@ -2,7 +2,7 @@ import sys
 sys.path.append("../src")
 
 import meta_graph_api.meta_tokens as meta_tokens
-from meta_graph_api.meta_definition import make_api_call
+from domain.endpoint_definitions import make_api_call
 import media.image_creator as image_creator
 import appsecrets as appsecrets
 import utility.time_utils as time_utils

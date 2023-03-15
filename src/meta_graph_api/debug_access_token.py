@@ -1,4 +1,7 @@
-from meta_definition import getCreds, make_api_call
+import sys
+sys.path.append("../src")
+
+from domain.endpoint_definitions import getCreds, make_api_call
 import datetime
 
 def debug_access_token( params ) :
