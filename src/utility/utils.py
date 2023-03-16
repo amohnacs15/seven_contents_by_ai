@@ -1,6 +1,12 @@
 # UTILITY
 import os
 import json
+import uuid
+
+def quick_uuid():
+    """Generates a short UUID with 6 characters."""
+    uid = uuid.uuid4()
+    return str(uid.int % (36 ** 6))[0:6].upper()
 
 def open_url(url):
     '''

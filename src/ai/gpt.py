@@ -27,7 +27,7 @@ def gpt_3 (prompt):
         model="text-davinci-003",
         prompt=prompt,
         temperature=1.2,
-        max_tokens=1000,
+        max_tokens=1500,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0
@@ -132,5 +132,10 @@ def prompt_to_string_from_file( prompt_source_file, feedin_source_file ):
 
 def prompt_to_string( prompt_source_file, feedin_source ):
     appliedprompt = utils.open_file(prompt_source_file).replace('<<FEED>>', feedin_source)
+    finaltext = gpt_3(appliedprompt)
+    return finaltext
+
+def link_prompt_to_string( prompt_source_file, feedin_title, feedin_link ):
+    appliedprompt = utils.open_file(prompt_source_file).replace('<<TITLE>>', feedin_title).replace('<<LINK>>', feedin_link)
     finaltext = gpt_3(appliedprompt)
     return finaltext

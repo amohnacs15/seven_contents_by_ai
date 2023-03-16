@@ -7,17 +7,7 @@ import utility.time_utils as time_utils
 
 # 6 posts daily
 # 2 posts per video
-facebook_times_array = [
-    '2023-03-01T08:00:00', #8am
-    '2023-03-01T10:00:00', #10am
-    '2023-03-01T12:00:00', #12pm
-    '2023-03-01T14:00:00', #2pm
-    '2023-03-01T16:00:00', #4pm
-    '2023-03-01T18:00:00'  #6pm
-]
-# 6 posts daily
-# 2 posts per video
-instagram_times_array = [
+pinterest_times_array = [
     '2023-03-01T09:00:00', #9am
     '2023-03-01T11:00:00', #11am
     '2023-03-01T13:00:00', #1pm
@@ -25,10 +15,31 @@ instagram_times_array = [
     '2023-03-01T17:00:00', #5pm
     '2023-03-01T19:00:00' #7pm
 ]
-# 3 videos per day
+# 6 posts daily
+# 2 posts per video
+facebook_times_array = [
+    '2023-03-01T10:00:00', #10am
+    '2023-03-01T14:00:00', #2pm
+    '2023-03-01T18:00:00'  #6pm
+]
+# 6 posts daily
+# 2 posts per video
+instagram_times_array = [
+    '2023-03-01T10:00:00', #11am
+    '2023-03-01T15:00:00', #3pm
+    '2023-03-01T17:00:00', #5pm
+]
+# 1 video per day
 # 1 video per video
 youtube_times_array = [
     '2023-03-01T09:00:00', #9am
+    '2023-03-01T16:00:00', #4pm
+]
+# 3 blogs per day
+# 1 blog per video
+shopify_times_array = [
+    '2023-03-01T09:00:00', #9am
+    '2023-03-01T12:00:00', #12pm,
     '2023-03-01T16:00:00', #4pm
 ]
 # 48 tweets daily
@@ -52,13 +63,13 @@ twitter_times_array = [
     '2023-03-01T07:30:00', 
     '2023-03-01T08:00:00', 
     '2023-03-01T08:30:00', 
-    '2023-03-01T09:00:00', 
+    # '2023-03-01T09:00:00', 
     '2023-03-01T09:30:00', 
     '2023-03-01T10:00:00', 
     '2023-03-01T10:30:00', 
     '2023-03-01T11:00:00', 
     '2023-03-01T11:30:00', 
-    '2023-03-01T12:00:00', 
+    # '2023-03-01T12:00:00', 
     '2023-03-01T12:30:00', 
     '2023-03-01T13:00:00', 
     '2023-03-01T13:30:00', 
@@ -66,7 +77,7 @@ twitter_times_array = [
     '2023-03-01T14:30:00', 
     '2023-03-01T15:00:00', 
     '2023-03-01T15:30:00', 
-    '2023-03-01T16:00:00',
+    # '2023-03-01T16:00:00',
     '2023-03-01T16:30:00', 
     '2023-03-01T17:00:00', 
     '2023-03-01T17:30:00', 
@@ -110,6 +121,10 @@ def get_best_posting_time(
         times_array = twitter_times_array  
     elif (posting_platform == firebase_storage.PostingPlatform.INSTAGRAM):      
         times_array = instagram_times_array
+    elif (posting_platform == firebase_storage.PostingPlatform.SHOPIFY):
+        times_array = shopify_times_array    
+    elif (posting_platform == firebase_storage.PostingPlatform.PINTEREST):
+        times_array = pinterest_times_array    
     else:
         #this will need to be updated for an error handling system
         times_array = youtube_times_array

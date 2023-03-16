@@ -7,17 +7,17 @@ from enum import Enum
 import json
 import utility.scheduler as scheduler
 import utility.time_utils as time_utils
-import time
+import utility.utils as utils
 
 class PostingPlatform(Enum):
-        FACEBOOK = 'facebook'
-        INSTAGRAM = 'instagram'
-        TWITTER = 'twitter'
-        YOUTUBE = 'youtube'
-        SHOPIFY = 'shopify'
-        TIKTOK = 'tiktok'
-        LINKEDIN = 'linkedin'
-        PINTEREST = 'pinterest'
+    FACEBOOK = 'facebook'
+    INSTAGRAM = 'instagram'
+    TWITTER = 'twitter'
+    YOUTUBE = 'youtube'
+    SHOPIFY = 'shopify'
+    TIKTOK = 'tiktok'
+    LINKEDIN = 'linkedin'
+    PINTEREST = 'pinterest'
 
 class FirebaseStorage():
     # Constants
@@ -25,7 +25,8 @@ class FirebaseStorage():
     POSTS_COLLECTION_APPEND_PATH = "_posts"
     TOKEN_COLLECTION = "tokens"
     META_LF_TOKEN_COLLECTION = "meta_long_form_tokens" 
-    META_SF_TOKEN_COLLECTION = "meta_short_form_one_hour_tokens" 
+    META_SF_TOKEN_COLLECTION = "meta_short_form_one_hour_tokens"
+    BLOGS_COLLECTION = "posted_blogs" 
 
     # Initializations    
     firebase = pyrebase.initialize_app(appsecrets.firebase_config)
@@ -164,7 +165,9 @@ class FirebaseStorage():
         
         ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
         if (ready_to_post or is_test == True): 
+            # our main functionality
             upload_result = api_fun(earliest_scheduled_datetime_str)
+            # our main functionality
             if(is_test == False): self.delete_post(platform, earliest_scheduled_datetime_str)
             return upload_result
         else:

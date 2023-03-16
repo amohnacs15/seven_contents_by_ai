@@ -38,6 +38,8 @@ def simplify_H1_header(input_string):
     title = input_string.replace("#", "")
     title = input_string.replace("<h1>", "")
     title = input_string.replace("# ", "")
+    title = input_string.replace('"', '')
+    title = input_string.replace("</h1>", "")
     print(f'formatted title: {title}')
     return title
 
@@ -46,7 +48,6 @@ def groom_titles(input_string):
         split = list(check)
         solution = f'{split[0]} {split[1]}'
         input_string = input_string.replace(check, solution)
-    input_string = input_string.replace("H2", "")  
-    input_string = input_string.replace("H2 -", "")  
+    input_string = input_string.replace("<h2>", "<p></p><h2>")  
     
     return input_string    

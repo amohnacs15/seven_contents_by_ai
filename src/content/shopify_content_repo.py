@@ -10,6 +10,10 @@ import utility.time_utils as time_utils
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
 import ai.gpt as gpt3
+import domain.url_shortener as url_shortener
+import content.fb_content_repo as fb_content_repo
+import content.ig_content_repo as ig_content_repo
+import content.twitter_content_repo as twitter_content_repo
 
 def initialize_shopify():
     # Configure store details
@@ -63,18 +67,33 @@ def post_shopify_blog_article():
 
                     result = new_article.save()
 
+                    #construct and save address of uploaded blog
+                    if (result):
+                        base_path = "https://www.caregivermodern.com/blogs/caregiver-help-how-to/"
+                        updated_title = new_article.title.replace(' ', '-').replace('\'', '').replace(',','').replace('.', '').replace('"', '').replace(':','')
+                        combined_url = base_path + updated_title
+                        
+                        twitter_content_repo.post_blog_promo_tweet(
+                            blog_title=new_article.title,
+                            ref_url=combined_url
+                        )
+                        fb_content_repo.post_blog_promo(
+                            blog_title=new_article.title,
+                            ref_url=combined_url
+                        )
+
                     print(f'SHOPIFY blog upload successful {result}')
                     firebase_storage_instance.delete_post(
-                            PostingPlatform.SHOPIFY, 
-                            earliest_scheduled_datetime_str
-                        )
-                    return result    
+                        PostingPlatform.SHOPIFY, 
+                        earliest_scheduled_datetime_str
+                    )
+                    return True    
     
 def schedule_shopify_blog_article(blog, image_query):
     try:
         blog = text_utils.groom_titles(blog)
         parts = blog.split('\n\n', 1)
-        image_src = image_creator.get_unsplash_image_url(image_query, 'landscape')
+        image_src = image_creator.get_unsplash_image_url(image_query, PostingPlatform.SHOPIFY, 'landscape')
 
         title = text_utils.simplify_H1_header(parts[0])
         if (len(title) > 200):

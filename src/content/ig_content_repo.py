@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append("../src")
 
 import time
@@ -7,7 +8,8 @@ from domain.endpoint_definitions import make_api_call
 import media.image_creator as image_creator
 from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
-import utility.time_utils as time_utils
+import ai.gpt as gpt
+import domain.url_shortener as url_shortener
 
 def create_ig_media_object( params, with_token ):
     """ Create media object
@@ -70,6 +72,31 @@ def get_ig_media_object_status( mediaObjectId, params ):
 
     return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
 
+def make_ig_api_call_with_token( post_json_object ):        
+    post_params = meta_tokens.fetch_ig_access_token() 
+    post_params['caption'] = post_json_object['caption']
+    post_params['image_url'] = post_json_object['image_url']
+    post_params['published'] = post_json_object['published']
+
+    url = post_params['endpoint_base'] + post_params['instagram_account_id'] + '/media'
+
+    result = make_api_call( url=url, endpointJson=post_params, type='POST')
+    print(result['json_data_pretty'])
+
+def post_scheduled_ig_post( schedule_datetime_str ):
+    post_params_json = firebase_storage_instance.get_specific_post(
+        PostingPlatform.INSTAGRAM, 
+        schedule_datetime_str
+    )
+    try:
+        post_params_json = json.loads(post_params_json)
+        print(f'INSTAGRAM {post_params_json}')
+    except:
+        print('INSTAGRAM error parsing json')
+        print(f'INSTAGRAM {post_params_json}')
+        return 'Error parsing json'    
+    return make_ig_api_call_with_token(post_params_json)
+
 def publish_ig_media( mediaObjectId, params ) :
     """ Publish content
 
@@ -92,51 +119,10 @@ def publish_ig_media( mediaObjectId, params ) :
     return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
 
 def post_ig_media_post():
-    """ Pulls last posted time form FB and posts ot IG an image
-
-        Args:
-            mediaObjectId: id of the media object
-            params: dictionary of params
-        
-        API Endpoint:
-            https://graph.facebook.com/v5.0/{ig-user-id}/media_publish?creation_id={creation-id}&access_token={access-token}
-
-        Returns:
-            object: data from the endpoint
-    """                                 
-    earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.INSTAGRAM)
-    if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
-    print(f'INSTAGRAM earliest time: {earliest_scheduled_datetime_str}')
-    
-    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-    if (ready_to_post):
-    # if (True):
-        post_params_json = firebase_storage_instance.get_specific_post(
-            PostingPlatform.INSTAGRAM, 
-            earliest_scheduled_datetime_str
-        )
-        
-        try:
-            post_params_json = json.loads(post_params_json)
-            print(f'INSTAGRAM {post_params_json}')
-        except:
-            print('INSTAGRAM error parsing json')
-            print(f'INSTAGRAM {post_params_json}')
-            return 'Error parsing json'    
-        
-        post_params = meta_tokens.fetch_ig_access_token() 
-        post_params['caption'] = post_params_json['caption']
-        post_params['image_url'] = post_params_json['image_url']
-        post_params['published'] = post_params_json['published']
-
-        url = post_params['endpoint_base'] + post_params['instagram_account_id'] + '/media'
-
-        remote_media_obj = make_api_call( url=url, endpointJson=post_params, type='POST')
-        firebase_storage_instance.delete_post(
-            PostingPlatform.INSTAGRAM, 
-            earliest_scheduled_datetime_str
-        )
-        return pretty_publish_ig_media(remote_media_obj, post_params, publish_ig_media) 
+    return firebase_storage_instance.upload_if_ready(
+        PostingPlatform.INSTAGRAM,
+        post_scheduled_ig_post
+    )
 
 def schedule_ig_image_post( caption, image_query ):
     '''Method called from main class that creates our endpoint request and makes the API call.
@@ -146,7 +132,7 @@ def schedule_ig_image_post( caption, image_query ):
     params = meta_tokens.fetch_ig_access_token() 
     params['media_type'] = 'IMAGE' 
         
-    params['media_url'] = image_creator.get_unsplash_image_url(image_query) 
+    params['media_url'] = image_creator.get_unsplash_image_url(image_query, PostingPlatform.INSTAGRAM) 
     params['caption'] = caption
         
     remote_media_obj = create_ig_media_object( params, False ) 
@@ -201,3 +187,26 @@ def get_content_publishing_limit( params ) :
 
     return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
 
+# does not work
+def post_blog_promo ( blog_title, ref_url, image_url ):
+    short_url = url_shortener.shorten_tracking_url(
+        url_destination=ref_url,
+        slashtag='',
+        platform=PostingPlatform.INSTAGRAM,
+        campaign_medium='blog-reference',
+        campaign_name=blog_title
+    )
+    caption=gpt.link_prompt_to_string(
+        prompt_source_file=os.path.join("src", "input_prompts", "facebook_blog_ref.txt"),
+        feedin_title=blog_title,
+        feedin_link=short_url
+    )
+    if (image_url == ''):
+        image_url = image_creator.get_unsplash_image_url(PostingPlatform.INSTAGRAM, 'old man')
+    payload = {
+        'media_type': 'IMAGE',
+        'image_url': image_url,
+        'caption': caption, 
+        'published' : True
+    }
+    make_ig_api_call_with_token(payload)  
