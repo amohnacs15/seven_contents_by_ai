@@ -107,6 +107,6 @@ def post_linkedin_user_message( scheduled_datetime_str ):
 def post_to_linkedin(): 
     return firebase_storage_instance.upload_if_ready(
         PostingPlatform.LINKEDIN, 
-        post_linkedin_organization_message,
+        post_linkedin_user_message,
         True # in testing mode, will post
     )
