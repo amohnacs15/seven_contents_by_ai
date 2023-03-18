@@ -70,7 +70,7 @@ def get_ig_media_object_status( mediaObjectId, params ):
     endpointParams['fields'] = 'status_code' # fields to get back
     endpointParams['access_token'] = params['access_token'] # access token
 
-    return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
+    return make_api_call( url=url, params=endpointParams, type='GET' ) # make the api call
 
 def make_ig_api_call_with_token( post_json_object ):        
     post_params = meta_tokens.fetch_ig_access_token() 
@@ -80,7 +80,7 @@ def make_ig_api_call_with_token( post_json_object ):
 
     url = post_params['endpoint_base'] + post_params['instagram_account_id'] + '/media'
 
-    result = make_api_call( url=url, endpointJson=post_params, type='POST')
+    result = make_api_call( url=url, json=post_params, type='POST')
     print(result['json_data_pretty'])
 
 def post_scheduled_ig_post( schedule_datetime_str ):
@@ -116,7 +116,7 @@ def publish_ig_media( mediaObjectId, params ) :
     endpointParams['creation_id'] = mediaObjectId # fields to get back
     endpointParams['access_token'] = params['access_token'] # access token
 
-    return make_api_call( url=url, endpointParams=endpointParams, type='POST' ) # make the api call
+    return make_api_call( url=url, params=endpointParams, type='POST' ) # make the api call
 
 def post_ig_media_post():
     return firebase_storage_instance.upload_if_ready(
@@ -185,7 +185,7 @@ def get_content_publishing_limit( params ) :
     endpointParams['fields'] = 'config,quota_usage' # fields to get back
     endpointParams['access_token'] = params['access_token'] # access token
 
-    return make_api_call( url=url, endpointParams=endpointParams, type='GET' ) # make the api call
+    return make_api_call( url=url, params=endpointParams, type='GET' ) # make the api call
 
 # does not work
 def post_blog_promo ( blog_title, ref_url, image_url ):

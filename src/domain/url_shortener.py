@@ -28,7 +28,7 @@ def shorten_tracking_url( url_destination, slashtag, platform, campaign_medium, 
     response = endpoint_definition.make_api_call(
         url=rebrandly_url,
         headers=headers,
-        endpointJson=json_payload,
+        json=json_payload,
         type='POST'
     )
     short_url=response['json_data']['shortUrl']

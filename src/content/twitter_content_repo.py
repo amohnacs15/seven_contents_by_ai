@@ -8,6 +8,9 @@ from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import json
 import ai.gpt as gpt
 import domain.url_shortener as url_shortener
+import requests
+import media.image_creator as image_creator
+import utility.utils as utils
 
 def initialize_tweepy():
     # Authenticate to Twitter
@@ -32,6 +35,21 @@ def update_tweet( text ):
         print(f'TWITTER {e}')
         return None
 
+def update_tweet_with_media(url, message):
+    local_filename = 'temp.jpg'
+    request = requests.get(url, stream=True)
+    if request.status_code == 200:
+        with open(local_filename, 'wb') as image:
+            for chunk in request:
+                image.write(chunk)
+
+        result = tweepy_api.update_status_with_media(filename=local_filename, status=message)
+        os.remove(local_filename)
+        return result
+    else:
+        print("Unable to download image")
+        return None
+    
 def post_blog_promo_tweet( blog_title, ref_url ):
     short_url = url_shortener.shorten_tracking_url(
         url_destination=ref_url,
@@ -70,7 +88,11 @@ def post_scheduled_tweet( scheduled_datetime_str ):
         return 'error parsing json'  
             
     tweet = post_params['tweet']
-    return update_tweet(tweet)
+    media_url = post_params['media_url']
+    if (media_url is not None and media_url != ''):
+        return update_tweet_with_media(media_url, tweet)
+    else:
+        return update_tweet(tweet)
 
 def post_tweet(): 
     return firebase_storage_instance.upload_if_ready(
@@ -82,6 +104,10 @@ def schedule_tweet( tweet, image_query ):
     if (tweet != ''):
         payload = dict()
         payload['tweet'] = tweet
+
+        if (image_query != '' and utils.coin_flip_is_heads()):
+            payload['media_url'] = image_creator.get_unsplash_image_url(image_query)
+
         firebase_storage_instance.upload_scheduled_post(
             PostingPlatform.TWITTER, 
             payload

@@ -68,7 +68,7 @@ def fetch_ig_access_token() :
         token_params['fb_exchange_token'] = params['access_token'] # access token to get exchange for a long lived token
 
         token_url = params['endpoint_base'] + 'oauth/access_token' # endpoint url
-        token_response = make_api_call( url=token_url, endpointParams=token_params, type=params['debug'] ) # make the api call
+        token_response = make_api_call( url=token_url, params=token_params, type=params['debug'] ) # make the api call
         
         pretty_dump = json.dumps( token_response['json_data'], indent = 4 ) 
         print(pretty_dump)
@@ -98,7 +98,7 @@ def make_page_access_token_request():
     params['access_token'] = params['access_token']
 
     # make api call to get long lived token with short lived token
-    response = make_api_call( url=post_url, endpointParams=params, type='GET' )
+    response = make_api_call( url=post_url, params=params, type='GET' )
     print(response['json_data_pretty'])
 
     # access new access token and store remotely

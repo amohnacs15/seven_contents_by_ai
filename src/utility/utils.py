@@ -2,6 +2,7 @@
 import os
 import json
 import uuid
+import random
 
 def quick_uuid():
     """Generates a short UUID with 6 characters."""
@@ -52,3 +53,12 @@ def remove_file(filepath):
 
 def get_title_subquery( text ):
 	return text[0:32]        
+
+def coin_flip_is_heads():
+    """
+    Returns True (heads) or False (tails) randomly with equal probability.
+    """
+    if random.randint(0, 1) == 0:
+        return True
+    else:
+        return False

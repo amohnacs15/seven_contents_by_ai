@@ -16,6 +16,7 @@ import content.shopify_content_repo as shopify_content_repo
 import content.twitter_content_repo as twitter_content_repo
 import content.linkedin_content_repo as linkedin_repo
 import gspread
+import content.reddit_content_repo as reddit_content_repo
 
 CLIENT_SECRET_FILE='ai-content-machine-d8dcc1434069.json'
 
@@ -38,7 +39,7 @@ def process_initial_video_download_transcript(youtube_url):
 def schedule_video_story(image_query):
     gpt.generate_prompt_response(
         prompt_source=os.path.join("src", "input_prompts", "story.txt"), 
-        image_query_term='old',
+        image_query_term=image_query,
         polish_post=True,
         post_num=1,
         upload_func=create_story_and_scenes
@@ -116,13 +117,13 @@ if __name__ == '__main__':
                     post_num=16,
                     upload_func=twitter_content_repo.schedule_tweet
                 )
-                schedule_video_story(content_description)
+                
 
                 # updated cell is the length of the row + 1
                 # check if last cell is empty before updating
-
                 last_cell = sheet.cell(i+1, len(row))
                 if (last_cell.value is None or last_cell.value == ''):
+                    schedule_video_story(content_description)
                     success_value = 'Scheduled'
                     sheet.update_cell(i+1, len(row), success_value)
                     has_downloaded_video = True
