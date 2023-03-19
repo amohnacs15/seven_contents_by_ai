@@ -13,6 +13,9 @@ import media.video_downloader as video_downloader
 import utility.time_utils as time_utils
 import pickle
 import json
+import ai.gpt as gpt
+import media.video_editor as video_editor
+from ai.gpt_write_story import create_story_and_scenes
 
 # Build the YouTube API client
 API_SERVICE_NAME = "youtube"
@@ -149,3 +152,28 @@ def post_upload_video_to_youtube():
         except Exception as e:    
             response = e
         return response
+
+
+def post_youtube_video():    
+    response = post_upload_video_to_youtube()
+    print(f'Youtube response {response}') 
+
+def process_initial_video_download_transcript(youtube_url):
+    filename = video_downloader.save_to_mp3(youtube_url)
+    transcriptname = gpt.mp3_to_transcript(filename)
+    gpt.transcript_to_summary(transcriptname, filename) 
+
+def schedule_video_story(image_query):
+    gpt.generate_prompt_response(
+        prompt_source=os.path.join("src", "input_prompts", "story.txt"), 
+        image_query_term=image_query,
+        polish_post=True,
+        post_num=1,
+        upload_func=create_story_and_scenes
+    )
+    video_remote_url = video_editor.edit_movie_for_remote_url(image_query)
+    if (video_remote_url != ''):
+        result = schedule_youtube_video(video_remote_url)
+        print(f'youtube schedule result\n\n{result}')
+    else:
+        print('something went wrong with our video remote url')    

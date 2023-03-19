@@ -62,6 +62,14 @@ def transcript_to_summary(transcriptname, filename):
     file_path_output = os.path.join("src", "outputs", "summary_output.txt")    
     utils.save_file(file_path_output, '\n\n'.join(result))
 
+def gpt_generate_summary( chunk ):
+    file_path_input = os.path.join("src", "input_prompts", "summary.txt")
+    prompt = utils.open_file(file_path_input).replace('<<SUMMARY>>', chunk)
+    prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
+    summary = gpt_3(prompt)
+    file_path_output = os.path.join("src", "outputs", "summary_output.txt")    
+    utils.save_file(file_path_output, summary)
+
 def get_gpt_generated_text( prompt_source, polish_output ):
     # get the first draft of the generated text
     feedin_source_file = os.path.join("src", "outputs", "summary_output.txt")
