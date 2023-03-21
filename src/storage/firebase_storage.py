@@ -7,7 +7,6 @@ from enum import Enum
 import json
 import utility.scheduler as scheduler
 import utility.time_utils as time_utils
-import utility.utils as utils
 
 class PostingPlatform(Enum):
     FACEBOOK = 'facebook'

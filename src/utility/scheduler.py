@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import storage.firebase_storage as firebase_storage
 import utility.time_utils as time_utils
 
+# posts 64 times daily
+
 # 6 posts daily
 # 2 posts per video
 pinterest_times_array = [
@@ -25,9 +27,12 @@ facebook_times_array = [
 # 6 posts daily
 # 2 posts per video
 instagram_times_array = [
+    '2023-03-01T10:00:00', #10am
     '2023-03-01T10:00:00', #11am
+    '2023-03-01T14:00:00', #2pm
     '2023-03-01T15:00:00', #3pm
     '2023-03-01T17:00:00', #5pm
+    '2023-03-01T18:00:00'  #6pm
 ]
 # 1 video per day
 # 1 video per video
