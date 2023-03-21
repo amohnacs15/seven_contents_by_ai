@@ -77,18 +77,12 @@ def save_shopify_article( schedule_datetime_str ):
                         ref_url=combined_url
                     )
 
-                print(f'SHOPIFY blog upload successful {result}')
-                firebase_storage_instance.delete_post(
-                    PostingPlatform.SHOPIFY, 
-                    schedule_datetime_str
-                )
-                return True    
+                return f'SHOPIFY blog upload successful {result}' 
 
 def post_shopify_blog_article():
     return firebase_storage_instance.upload_if_ready(
         PostingPlatform.SHOPIFY,
-        save_shopify_article,
-        is_test=True
+        save_shopify_article
     )
     
 def schedule_shopify_blog_article(blog, image_query):

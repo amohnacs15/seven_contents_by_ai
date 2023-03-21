@@ -94,8 +94,9 @@ def post_upload_video_to_youtube():
     if (earliest_scheduled_datetime_str == ''): return 'no posts scheduled'
     print(f'YT last posted time: {earliest_scheduled_datetime_str}')
     
-    ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-    if (ready_to_post):   
+    # ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
+    # if (ready_to_post):  
+    if (True): 
         post_params_json = firebase_storage_instance.get_specific_post(
             PostingPlatform.YOUTUBE, 
             earliest_scheduled_datetime_str
@@ -119,7 +120,6 @@ def post_upload_video_to_youtube():
         upload_file_path = video_downloader.get_downloaded_video_local_path(
             post_params['remote_video_url']
         )
-    
         youtube = googleapiclient.discovery.build(
             API_SERVICE_NAME, 
             API_VERSION, 
@@ -138,13 +138,16 @@ def post_upload_video_to_youtube():
                     "privacyStatus": "private",
                     "embeddable": True,
                     "license": "youtube",
-                    "publicStatsViewable": True
+                    "publicStatsViewable": True,
+                    "publishAt": earliest_scheduled_datetime_str
                 }
             },
             media_body=MediaFileUpload(upload_file_path)
         )
         try:
             response = request.execute()
+            print(f'YOUTUBE {response}')
+
             firebase_storage_instance.delete_post(
                 PostingPlatform.YOUTUBE, 
                 earliest_scheduled_datetime_str
