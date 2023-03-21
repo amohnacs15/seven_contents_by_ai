@@ -18,7 +18,7 @@ def make_fb_feed_call_with_token( post_json_object ):
     print(f'FACEBOOK {post_json_object}')
 
     url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/feed'
-    result = make_api_call( url=url, json=post_json_object, type='POST')
+    result = make_api_call( url=url, req_json=post_json_object, type='POST')
     print(result['json_data_pretty'] )
     return result
 
@@ -28,7 +28,7 @@ def make_fb_photos_call_with_token( post_json_object ):
     print(f'FACEBOOK {post_json_object}')
 
     url = params['endpoint_base'] + appsecrets.FACEBOOK_GRAPH_API_PAGE_ID + '/photos'
-    result = make_api_call( url=url, json=post_json_object, type='POST')
+    result = make_api_call( url=url, req_json=post_json_object, type='POST')
     print(result['json_data_pretty'] )
     return result
 

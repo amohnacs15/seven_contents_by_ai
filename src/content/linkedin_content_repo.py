@@ -64,7 +64,7 @@ def post_linkedin_link_message():
     result = make_api_call(
         post_url, 
         headers=gen_headers,
-        json=post_data, 
+        req_json=post_data, 
         type='POST'
     )
     print(f'LINKEDIN {result}')
@@ -98,7 +98,7 @@ def post_linkedin_user_message( scheduled_datetime_str ):
     result = make_api_call(
         post_url, 
         headers=gen_headers,
-        json=post_data, 
+        req_json=post_data, 
         type='POST'
     )
     print(f'LINKEDIN {result}')

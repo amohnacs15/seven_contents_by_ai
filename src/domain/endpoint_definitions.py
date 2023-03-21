@@ -5,7 +5,7 @@ import json
 import requests
 
 #Reuse this facebook and instagram
-def make_api_call( url, headers = '', params = '', json = '', auth = '', type = '' ):
+def make_api_call( url, headers = '', req_params = '', req_json = '', req_auth = '', type = '' ):
 	""" Request data from endpoint with params
 	
 	Args:
@@ -19,25 +19,23 @@ def make_api_call( url, headers = '', params = '', json = '', auth = '', type = 
 		data = requests.post( 
 			url = url, 
 			headers=headers,
-			data = params,
-			json = json,
-			auth=auth
+			data = req_params,
+			json = req_json,
+			auth=req_auth
 		)
 	else : # get request
 		data = requests.get( 
 			url = url, 
 			headers=headers,
-			data = params,
-			json = json,
-			auth=auth
+			data = req_params,
+			json = req_json,
+			auth=req_auth
 		 )
 
 	response = dict() # hold response info
 	response['url'] = url # url we are hitting
 	
-	response['endpoint_params'] = params #parameters for the endpoint
-	response['endpoint_params_pretty'] = json.dumps( params, indent = 4 ) # pretty print for cli
-
+	response['endpoint_params'] = req_params #parameters for the endpoint
 	response['json_data'] = json.loads( data.content ) # response data from the api
 	response['json_data_pretty'] = json.dumps( response['json_data'], indent = 4 ) # pretty print for cli
 

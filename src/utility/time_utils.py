@@ -73,3 +73,18 @@ def convert_str_to_iso_format(date_str):
         # If the input string is not in the expected format, catch the ValueError exception
         # and return None
         return date_str
+
+def is_expired( posting_datetime_str ):
+    '''
+        Checks to see if the current iso string is in the past
+
+        @returns:
+            True of False
+    '''
+    trimmed_datetime_now = datetime.now().replace(microsecond=0, second=0)
+    is_posting_time_before_now = datetime.fromisoformat(posting_datetime_str) < trimmed_datetime_now
+    print(f'Is {datetime.fromisoformat(posting_datetime_str)} < {trimmed_datetime_now}? {is_posting_time_before_now}')
+    if (is_posting_time_before_now):
+        return True
+    else:
+        return False

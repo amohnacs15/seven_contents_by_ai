@@ -106,7 +106,10 @@ def schedule_tweet( tweet, image_query ):
         payload['tweet'] = tweet
 
         if (image_query != '' and utils.coin_flip_is_heads()):
-            payload['media_url'] = image_creator.get_unsplash_image_url(PostingPlatform.TWITTER, image_query)
+            payload['media_url'] = image_creator.get_unsplash_image_url(
+                search_query = image_query,
+                platform = PostingPlatform.TWITTER
+            )
 
         firebase_storage_instance.upload_scheduled_post(
             PostingPlatform.TWITTER, 

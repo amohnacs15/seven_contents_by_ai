@@ -85,7 +85,7 @@ class FirebaseStorage():
             if (earliest_scheduled_datetime_str is not None and earliest_scheduled_datetime_str != ''):
                 return earliest_scheduled_datetime_str
             else:
-                print(f'{platform} earliest_scheduled_datetime_str is not None and earliest_scheduled_datetime_str != ''')
+                print(f'{platform} earliest_scheduled_datetime_str is not None or earliest_scheduled_datetime_str != ''')
                 return ''    
         else:
             print(f'{platform} something went wrong with get_earliest_scheduled_datetime( self, platform )')  
@@ -153,13 +153,21 @@ class FirebaseStorage():
     def delete_post( self, platform, datetime_key ):
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
         result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
-        print(f'{platform} firebase delete result \n{result}')
+        print(f'{platform} firebase deleting @ key {datetime_key}')
         return result
     
     @classmethod
     def upload_if_ready( self, platform, api_fun, is_test=False ):
         earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(platform)
+        while (time_utils.is_expired(earliest_scheduled_datetime_str)):
+            print('expired! deleting post')
+            self.delete_post(platform, earliest_scheduled_datetime_str)
+
+            earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(platform)
+            print(f'new post time: {earliest_scheduled_datetime_str}')
         
+        print(f'not expired! new post: {earliest_scheduled_datetime_str}')
+
         if (earliest_scheduled_datetime_str == '' or earliest_scheduled_datetime_str is None): return 'no posts scheduled'
         print(f'{platform} earliest posted time: {earliest_scheduled_datetime_str}')
         

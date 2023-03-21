@@ -167,7 +167,7 @@ def schedule_video_story(image_query):
     gpt.generate_prompt_response(
         prompt_source=os.path.join("src", "input_prompts", "story.txt"), 
         image_query_term=image_query,
-        polish_post=True,
+        should_polish_post=True,
         post_num=1,
         upload_func=create_story_and_scenes
     )

@@ -14,6 +14,8 @@ def initialize_dropbox():
             print('Error Connecting to Dropbox')
         return dbx
 
+dbx = initialize_dropbox() 
+
 """Upload a file from the local machine to a path in the Dropbox app directory.
 
     Args:
