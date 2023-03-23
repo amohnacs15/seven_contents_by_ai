@@ -28,9 +28,6 @@ def get_google_sheets():
 # Begin the running of our application
 if __name__ == '__main__':
 
-    youtube_content_repo.post_youtube_video()
-    
-
     # Quickly process our posts
     # put our post calls here. this will need to be first with the proper implementation
     post('Shopify', shopify_content_repo.post_shopify_blog_article())

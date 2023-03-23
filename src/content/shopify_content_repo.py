@@ -76,7 +76,6 @@ def save_shopify_article( schedule_datetime_str ):
                         blog_title=new_article.title,
                         ref_url=combined_url
                     )
-
                 return f'SHOPIFY blog upload successful {result}' 
 
 def post_shopify_blog_article():

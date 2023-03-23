@@ -88,11 +88,11 @@ def post_scheduled_tweet( scheduled_datetime_str ):
         return 'error parsing json'  
             
     tweet = post_params['tweet']
-    media_url = post_params['media_url']
-    if (media_url is not None and media_url != ''):
-        return update_tweet_with_media(media_url, tweet)
-    else:
-        return update_tweet(tweet)
+    if ('media_url' in post_params):
+        media_url = post_params['media_url']
+        if (media_url != ''):
+            return update_tweet_with_media(media_url, tweet)
+    return update_tweet(tweet)
 
 def post_tweet(): 
     return firebase_storage_instance.upload_if_ready(
