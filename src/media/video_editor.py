@@ -7,7 +7,7 @@ import json
 import appsecrets as appsecrets
 import utility.utils as utils
 import media.image_creator as image_creator
-from storage.firebase_storage import firebase_storage_instance
+from storage.firebase_storage import firebase_storage_instance, PostingPlatform
 import ai.speech_synthesis as speech_synthesis
 import time
 import constants
@@ -45,7 +45,7 @@ def get_edited_movie_url( uploaded_project_id ):
 def get_simple_scene_images( image_query, scene_array ):
     images = []
     for scene in scene_array:
-        new_image = image_creator.get_unsplash_image_url(image_query)
+        new_image = image_creator.get_unsplash_image_url(image_query, PostingPlatform.YOUTUBE)
         images.append(new_image)
     return images    
 

@@ -5,8 +5,28 @@ import replicate
 import appsecrets as appsecrets
 import requests
 import json
+from storage.firebase_storage import PostingPlatform
 
-def get_unsplash_image_url( search_query, orientation = 'portrait' ):
+# "raw": "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d",
+# "full": "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg",
+# "regular": "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg&w=1080&fit=max",
+# "small": "https://images.unsplash.com/photo-1417325384643-aac51acc9e5d?q=75&fm=jpg&w=400&fit=max",
+# "thumb": "https
+
+def get_unsplash_image_url( search_query, platform, orientation = 'portrait' ):
+    if(platform == PostingPlatform.FACEBOOK):
+        resolution_key='regular'
+    elif(platform == PostingPlatform.INSTAGRAM):
+        resolution_key='regular'
+    elif(platform == PostingPlatform.TWITTER):
+        resolution_key='regular'
+    elif(platform == PostingPlatform.SHOPIFY):
+        resolution_key='regular'    
+    elif(platform == PostingPlatform.YOUTUBE):
+        resolution_key='full'
+    else:
+        resolution_key='regular'        
+
     url = 'https://api.unsplash.com/photos/random'
     params = {
         'query': search_query,
@@ -24,7 +44,7 @@ def get_unsplash_image_url( search_query, orientation = 'portrait' ):
     try:
         json_content = json.loads( response.content )
         if (json_content['urls'] is not None):
-            result_url=json_content['urls']['full']
+            result_url=json_content['urls'][resolution_key]
             return result_url
         else:
             return ''

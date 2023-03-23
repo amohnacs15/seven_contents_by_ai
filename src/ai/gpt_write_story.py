@@ -115,6 +115,7 @@ def gpt3_story_scene(
             text = response['choices'][0]['text'].strip()
             return text
         except Exception as oops:
+            print(oops)
             retry += 1
             if retry >= max_retry:
                 return "GPT3 error: %s" % oops

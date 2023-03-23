@@ -7,15 +7,16 @@ from enum import Enum
 import json
 import utility.scheduler as scheduler
 import utility.time_utils as time_utils
-import time
 
 class PostingPlatform(Enum):
-        FACEBOOK = 'facebook'
-        INSTAGRAM = 'instagram'
-        TWITTER = 'twitter'
-        YOUTUBE = 'youtube'
-        SHOPIFY = 'shopify'
-        TIKTOK = 'tiktok'
+    FACEBOOK = 'facebook'
+    INSTAGRAM = 'instagram'
+    TWITTER = 'twitter'
+    YOUTUBE = 'youtube'
+    SHOPIFY = 'shopify'
+    TIKTOK = 'tiktok'
+    LINKEDIN = 'linkedin'
+    PINTEREST = 'pinterest'
 
 class FirebaseStorage():
     # Constants
@@ -23,7 +24,8 @@ class FirebaseStorage():
     POSTS_COLLECTION_APPEND_PATH = "_posts"
     TOKEN_COLLECTION = "tokens"
     META_LF_TOKEN_COLLECTION = "meta_long_form_tokens" 
-    META_SF_TOKEN_COLLECTION = "meta_short_form_one_hour_tokens" 
+    META_SF_TOKEN_COLLECTION = "meta_short_form_one_hour_tokens"
+    BLOGS_COLLECTION = "posted_blogs" 
 
     # Initializations    
     firebase = pyrebase.initialize_app(appsecrets.firebase_config)
@@ -82,7 +84,7 @@ class FirebaseStorage():
             if (earliest_scheduled_datetime_str is not None and earliest_scheduled_datetime_str != ''):
                 return earliest_scheduled_datetime_str
             else:
-                print(f'{platform} earliest_scheduled_datetime_str is not None and earliest_scheduled_datetime_str != ''')
+                print(f'{platform} earliest_scheduled_datetime_str is not None or earliest_scheduled_datetime_str != ''')
                 return ''    
         else:
             print(f'{platform} something went wrong with get_earliest_scheduled_datetime( self, platform )')  
@@ -150,21 +152,28 @@ class FirebaseStorage():
     def delete_post( self, platform, datetime_key ):
         scheduled_posts_path = platform.value + self.POSTS_COLLECTION_APPEND_PATH
         result = self.firestore.child(scheduled_posts_path).child(datetime_key).remove()
-        print(f'{platform} firebase delete result \n{result}')
+        print(f'{platform} firebase deleting @ key {datetime_key}')
         return result
     
     @classmethod
-    def upload_if_ready( self, platform, api_fun):
-        earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(PostingPlatform.TWITTER)
-        
+    def upload_if_ready( self, platform, api_fun, is_test=False ):
+        earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(platform)
+        while (time_utils.is_expired(earliest_scheduled_datetime_str) and is_test == False):
+            print('expired! deleting post')
+            self.delete_post(platform, earliest_scheduled_datetime_str)
+
+            earliest_scheduled_datetime_str = firebase_storage_instance.get_earliest_scheduled_datetime(platform)
+            print(f'new post time: {earliest_scheduled_datetime_str}')
+
         if (earliest_scheduled_datetime_str == '' or earliest_scheduled_datetime_str is None): return 'no posts scheduled'
         print(f'{platform} earliest posted time: {earliest_scheduled_datetime_str}')
         
         ready_to_post = time_utils.is_current_posting_time_within_window(earliest_scheduled_datetime_str)
-        if (ready_to_post): 
-            # if (True):
+        if (ready_to_post or is_test == True): 
+            # our main functionality
             upload_result = api_fun(earliest_scheduled_datetime_str)
-            self.delete_post(platform, earliest_scheduled_datetime_str)
+            # our main functionality
+            if(is_test == False): self.delete_post(platform, earliest_scheduled_datetime_str)
             return upload_result
         else:
             return f'{platform} not ready to post' 
